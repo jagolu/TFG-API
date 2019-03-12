@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/SignUp",
       "environmentVariables": {
         "saltSize": 16,
         "subkeyLength": 32,
@@ -22,7 +22,7 @@
     "API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/signUp",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

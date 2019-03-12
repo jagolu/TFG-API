@@ -23,9 +23,19 @@ namespace API.Controllers
 
         // GET: api/SignUp
         [HttpGet]
-        public IEnumerable<string> Get()
+        public string Get()
         {
-            return new string[] { "value1", "value2" };
+            string returnValue = "Users: ";
+            foreach(Models.User u in _context.User)
+            {
+                returnValue += "\n\t" + u.email;
+            }
+            returnValue += "\n\nRoles";
+            foreach(Models.Role r in _context.Role)
+            {
+                returnValue += "\n\t" + r.name;
+            }
+            return returnValue;
         }
 
         // GET: api/SignUp/5
@@ -46,7 +56,7 @@ namespace API.Controllers
             var userExists = _context.User.Where(u => u.email == user.email).Count() != 0;
             
             if (userExists) {
-                return Ok(new { adfa = "EmailAlreadyExists"});
+                return Ok(new { error = "EmailAlreadyExists"});
             }
 
             try {
@@ -55,16 +65,16 @@ namespace API.Controllers
                     email = user.email,
                     nickname = user.username,
                     password = user.password ?? user.getHashPassword(),
-                    tokenValidation = null
+                    tokenValidation = (user.password == null) ? null : new Guid().ToString()
                 };
                 _context.User.Add(u);
                 _context.SaveChanges();
-                returnValue = new { adfa="done"};
+                returnValue = new { done="done"};
 
             }catch(Exception e) {
-                returnValue = new { adfa= "ServerError"+e };
+                returnValue = new { error= "ServerError"+e };
             }
-            return Ok(new JsonResult (returnValue));
+            return Ok(returnValue);
         }
 
         // PUT: api/SignUp/5
