@@ -54,14 +54,15 @@ namespace API.Controllers
                 API.Models.User u = new Models.User {
                     email = user.email,
                     nickname = user.username,
-                    password = user.getHashPassword()
+                    password = user.password ?? user.getHashPassword(),
+                    tokenValidation = null
                 };
                 _context.User.Add(u);
                 _context.SaveChanges();
                 returnValue = new { adfa="done"};
 
             }catch(Exception e) {
-                returnValue = new { adfa= "ServerError" };
+                returnValue = new { adfa= "ServerError"+e };
             }
             return Ok(new JsonResult (returnValue));
         }
@@ -80,9 +81,11 @@ namespace API.Controllers
 
         public class User
         {
+            [Required]
             [EmailAddress (ErrorMessage = "This is not a valid email")]
             public string email { get; set; }
 
+            [Required]
             [MinLength(4, ErrorMessage = "Username must have at least 3 characters")]
             [MaxLength(20, ErrorMessage = "Username must have less than 20 characters")]
             public string username { get; set; }
@@ -95,6 +98,7 @@ namespace API.Controllers
 
             public string getHashPassword()
             {
+                if (password == null) return null;
                 return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: password,
                     salt: new byte [int.Parse(Environment.GetEnvironmentVariable("saltSize"))],

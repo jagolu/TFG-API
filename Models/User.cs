@@ -22,8 +22,7 @@ namespace API.Models
         [Required]
         [StringLength(maximumLength:20, MinimumLength =4)]
         public string nickname { get; set; }
-
-        [Required]
+        
         [MaxLength]
         public string password { get; set; }
 
