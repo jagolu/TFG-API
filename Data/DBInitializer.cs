@@ -28,16 +28,12 @@ namespace API.Data
                 new Role{name="GROUP_ADMIN"}
             };
 
-            foreach (Role r in roles) {
-                Boolean isIn = false;
-                foreach(Role r2 in context.Role) {
-                    if (r.name == r2.name) {
-                        isIn = true;
-                        break;
-                    }
-                }
-                if (!isIn) context.Role.Add(r);
-            }
+            var rolesToAdd = from r in roles where 
+                             (context.Role.Where(
+                                 databaseRole => databaseRole.name == r.name).Count() == 0
+                             ) select r;
+
+            foreach (Role r in rolesToAdd) context.Role.Add(r);
         }
 
         public static void Initialize(ApplicationDBContext context)
