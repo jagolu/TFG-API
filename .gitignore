@@ -263,3 +263,4 @@ API.sln
 
 # Migrations
 Migrations/
+Properties/launchSettings.json

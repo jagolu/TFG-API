@@ -65,10 +65,14 @@ namespace API.Controllers
                     email = user.email,
                     nickname = user.username,
                     password = user.password ?? user.getHashPassword(),
-                    tokenValidation = (user.password == null) ? null : new Guid().ToString()
+                    tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N")
                 };
                 _context.User.Add(u);
                 _context.SaveChanges();
+
+                Email email = new Email();
+                email.sendVerificationToken(u.email, u.nickname, u.tokenValidation);
+
                 returnValue = new { done="done"};
 
             }catch(Exception e) {
