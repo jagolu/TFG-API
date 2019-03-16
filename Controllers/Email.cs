@@ -40,7 +40,7 @@ namespace API.Controllers
             string body = "<html><head></head><body>";
             body += "<p>Hello "+name+"</p>";
             body += "<p>Click on the link below to confirm your email: </p>";
-            body += "url--token-->"+tokenVerfication;
+            body += "https://localhost:4200/emailVerification/" + tokenVerfication;
             body += "</body></html>";
             return body;
         }
