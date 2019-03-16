@@ -71,7 +71,7 @@ namespace API.Controllers
                 Email email = new Email();
                 email.sendVerificationToken(u.email, u.nickname, u.tokenValidation);
 
-                return Ok(new { Ok="Success"});
+                return Ok(new { Ok="Success" });
 
             }catch(Exception e) {
                 return StatusCode(500);
