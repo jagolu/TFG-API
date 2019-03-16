@@ -52,15 +52,13 @@ namespace API.Controllers
             /*if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }*/
-            Object returnValue;
             var userExists = _context.User.Where(u => u.email == user.email).Count() != 0;
             
             if (userExists) {
-                return Ok(new { error = "EmailAlreadyExists"});
+                return BadRequest(new { error = "EmailAlreadyExistsError"});
             }
 
             try {
-
                 API.Models.User u = new Models.User {
                     email = user.email,
                     nickname = user.username,
@@ -73,12 +71,11 @@ namespace API.Controllers
                 Email email = new Email();
                 email.sendVerificationToken(u.email, u.nickname, u.tokenValidation);
 
-                returnValue = new { done="done"};
+                return Ok(new { Ok="Success"});
 
             }catch(Exception e) {
-                returnValue = new { error= "ServerError"+e };
+                return StatusCode(500);
             }
-            return Ok(returnValue);
         }
 
         // PUT: api/SignUp/5

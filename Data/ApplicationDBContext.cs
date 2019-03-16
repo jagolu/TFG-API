@@ -31,6 +31,10 @@ namespace API.Data
             mb.Entity<User>()
                 .HasIndex(u => u.tokenValidation)
                 .IsUnique();
+
+            mb.Entity<User>()
+                .HasIndex(u => u.email)
+                .IsUnique();
         }
 
         private void onCreateUserPermission(ModelBuilder mb)
