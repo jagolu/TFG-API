@@ -264,3 +264,4 @@ API.sln
 # Migrations
 Migrations/
 Properties/launchSettings.json
+appsettings.json
