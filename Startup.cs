@@ -38,15 +38,13 @@ namespace API
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
                         ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateAudience = false,
+                        //TODO Check validate Audience info
                         ValidateIssuerSigningKey = true,
-                        //ValidIssuer = Configuration["Jwt:Issuer"],
-                        //ValidAudience = Configuration["Jwt:Issuer"],
-                        ValidIssuer = "https://localhost:4200/",
-                        ValidAudience = "https://localhost:4200/",
-
-                        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ejemplodekey"))
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Issuer"],
+                        
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
 
