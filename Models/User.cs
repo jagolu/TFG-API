@@ -36,6 +36,8 @@ namespace API.Models
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString("N");
 
         [Required]
-        public virtual ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
+        public ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
+
+        public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
     }
 }

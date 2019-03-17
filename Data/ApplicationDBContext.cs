@@ -17,12 +17,13 @@ namespace API.Data
         public DbSet<Role> Role { get; set; }
         public DbSet<Permission> Permission { get; set; }
         public DbSet<UserPermission> UserPermission { get; set; }
+        public DbSet<UserToken> UserToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
             onCreateUserPermission(mb);
-
+            onCreateUserToken(mb);
         }
 
 
@@ -40,19 +41,35 @@ namespace API.Data
         private void onCreateUserPermission(ModelBuilder mb)
         {
             mb.Entity<UserPermission>()
-                .HasKey(x => new { x.userId, x.permissionId });
+                .HasKey(up => new { up.userId, up.permissionId });
 
             mb.Entity<UserPermission>()
-                .HasOne(x => x.User)
-                .WithMany(y => y.permissions)
-                .HasForeignKey(x => x.userId)
+                .HasOne(up => up.User)
+                .WithMany(u => u.permissions)
+                .HasForeignKey(up => up.userId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<UserPermission>()
-                .HasOne(x => x.Permission)
-                .WithMany(y => y.users)
-                .HasForeignKey(x => x.permissionId)
+                .HasOne(up => up.Permission)
+                .WithMany(p => p.users)
+                .HasForeignKey(up => up.permissionId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateUserToken(ModelBuilder mb)
+        {
+            mb.Entity<UserToken>()
+                .HasKey(ut => new { ut.userId, ut.loginProvider });
+
+            mb.Entity<UserToken>()
+                .HasOne(ut => ut.User)
+                .WithMany(u => u.tokens)
+                .HasForeignKey(ut => ut.userId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<UserToken>()
+                .HasIndex(ut => ut.refreshToken)
+                .IsUnique();
         }
     }
 }
