@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using API.Models;
 
 namespace API.Controllers
 {
@@ -43,7 +44,7 @@ namespace API.Controllers
 
         // POST: api/SignUp
         [HttpPost]
-        public IActionResult Post([FromBody] User user)
+        public IActionResult Post([FromBody] UserRequest user)
         {
             /*if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
@@ -55,10 +56,10 @@ namespace API.Controllers
             }
 
             try {
-                API.Models.User u = new Models.User {
+                User u = new User {
                     email = user.email,
                     nickname = user.username,
-                    password = user.password ?? user.getHashPassword(this.config),
+                    password = user.getHashPassword(this.config),
                     tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N")
                 };
                 this._context.User.Add(u);
@@ -75,7 +76,7 @@ namespace API.Controllers
             }
         }
 
-        public class User
+        public class UserRequest
         {
             [Required]
             [EmailAddress (ErrorMessage = "This is not a valid email")]
@@ -99,8 +100,8 @@ namespace API.Controllers
                     password: password,
                     salt: new byte [int.Parse(configuration["Crypt:saltSize"])],
                     prf: KeyDerivationPrf.HMACSHA512,
-                    iterationCount: int.Parse(configuration["hashCount"]),
-                    numBytesRequested: int.Parse(configuration["subkeyLength"])
+                    iterationCount: int.Parse(configuration["Crypt:hashCount"]),
+                    numBytesRequested: int.Parse(configuration["Crypt:subkeyLength"])
                 )); ;
             }
         }
