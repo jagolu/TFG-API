@@ -12,6 +12,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -27,6 +30,27 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters {
+                        ClockSkew = TimeSpan.FromMinutes(5),
+                        RequireSignedTokens = true,
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        //ValidIssuer = Configuration["Jwt:Issuer"],
+                        //ValidAudience = Configuration["Jwt:Issuer"],
+                        ValidIssuer = "https://localhost:4200/",
+                        ValidAudience = "https://localhost:4200/",
+
+                        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ejemplodekey"))
+                    };
+                });
+
+
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -55,6 +79,7 @@ namespace API
 
             app.UseCors("_myAllowSpecificOrigins");
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
 
