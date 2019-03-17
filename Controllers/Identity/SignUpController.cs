@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -15,10 +16,12 @@ namespace API.Controllers
     public class SignUpController : ControllerBase
     {
         private Data.ApplicationDBContext _context;
+        private IConfiguration config;
         
 
-        public SignUpController(Data.ApplicationDBContext context){
-            _context = context;
+        public SignUpController(Data.ApplicationDBContext context, IConfiguration config){
+            this._context = context;
+            this.config = config;
         }
 
         // GET: api/SignUp
@@ -26,23 +29,16 @@ namespace API.Controllers
         public string Get()
         {
             string returnValue = "Users: ";
-            foreach(Models.User u in _context.User)
+            foreach(Models.User u in this._context.User)
             {
                 returnValue += "\n\t" + u.email;
             }
             returnValue += "\n\nRoles";
-            foreach(Models.Role r in _context.Role)
+            foreach(Models.Role r in this._context.Role)
             {
                 returnValue += "\n\t" + r.name;
             }
             return returnValue;
-        }
-
-        // GET: api/SignUp/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST: api/SignUp
@@ -52,7 +48,7 @@ namespace API.Controllers
             /*if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }*/
-            var userExists = _context.User.Where(u => u.email == user.email).Count() != 0;
+            var userExists = this._context.User.Where(u => u.email == user.email).Count() != 0;
             
             if (userExists) {
                 return BadRequest(new { error = "EmailAlreadyExistsError"});
@@ -62,32 +58,21 @@ namespace API.Controllers
                 API.Models.User u = new Models.User {
                     email = user.email,
                     nickname = user.username,
-                    password = user.password ?? user.getHashPassword(),
+                    password = user.password ?? user.getHashPassword(this.config),
                     tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N")
                 };
-                _context.User.Add(u);
-                _context.SaveChanges();
+                this._context.User.Add(u);
 
-                Email email = new Email();
+                Email email = new Email(this.config);
                 email.sendVerificationToken(u.email, u.nickname, u.tokenValidation);
+
+                this._context.SaveChanges();
 
                 return Ok(new { Ok="Success" });
 
             }catch(Exception e) {
                 return StatusCode(500);
             }
-        }
-
-        // PUT: api/SignUp/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
 
         public class User
@@ -107,15 +92,15 @@ namespace API.Controllers
                 ErrorMessage="Password must have at least a lowercase, a uppercase and a number")]
             public string password { get; set; }
 
-            public string getHashPassword()
+            public string getHashPassword(IConfiguration configuration)
             {
                 if (password == null) return null;
                 return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: password,
-                    salt: new byte [int.Parse(Environment.GetEnvironmentVariable("saltSize"))],
+                    salt: new byte [int.Parse(configuration["Crypt:saltSize"])],
                     prf: KeyDerivationPrf.HMACSHA512,
-                    iterationCount: int.Parse(Environment.GetEnvironmentVariable("hashCount")),
-                    numBytesRequested: int.Parse(Environment.GetEnvironmentVariable("subkeyLength"))
+                    iterationCount: int.Parse(configuration["hashCount"]),
+                    numBytesRequested: int.Parse(configuration["subkeyLength"])
                 )); ;
             }
         }
