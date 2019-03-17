@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers.Identity
 {
@@ -21,12 +22,13 @@ namespace API.Controllers.Identity
 
         // POST: api/EmailVerification
         [HttpPost]
-        public IActionResult Post([FromBody] object token)
+        [AllowAnonymous]
+        public IActionResult Post([FromBody] object tokenRequest)
         {
             //Convierte el object que se pasa en tipo JSON a tipo string
-            String t = ((dynamic)JObject.Parse(token.ToString())).token;
+            String token = ((dynamic)JObject.Parse(tokenRequest.ToString())).token;
 
-            var user = _context.User.Where(u => u.tokenValidation == t);
+            var user = _context.User.Where(u => u.tokenValidation == token);
 
             if (user.Count() != 1) {
                 return BadRequest(new { error = "TokenNotExists" });
@@ -40,7 +42,7 @@ namespace API.Controllers.Identity
 
                 _context.SaveChanges();
 
-                return Ok(new { OK = "success" });
+                return Ok();
 
             }catch(Exception e) {
                 return StatusCode(500);
