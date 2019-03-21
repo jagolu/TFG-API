@@ -33,10 +33,11 @@ namespace API.Models
         public string profileImg { get; set; } = null;
 
         [MaxLength]
-        public string tokenValidation { get; set; } = Guid.NewGuid().ToString();
+        public string tokenValidation { get; set; } = Guid.NewGuid().ToString("N");
 
         [Required]
+        public ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
 
-        public virtual ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
+        public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
     }
 }
