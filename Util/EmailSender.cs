@@ -10,12 +10,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace API.Controllers
 {
-    public class Email
+    public class EmailSender
     {
         private SmtpClient client;
         private IConfiguration configuration;
 
-        public Email(IConfiguration config) {
+        public EmailSender(IConfiguration config) {
             this.configuration = config;
             initializeClient();
         }
@@ -46,7 +46,7 @@ namespace API.Controllers
         private String getBodySendToken(string name, string tokenVerfication)
         {
             string body = "<html><head></head><body>";
-            body += "<p>Hello "+name+"</p>";
+            body += "<h1>Hello "+name+"</h1><br>";
             body += "<p>Click on the link below to confirm your email: </p>";
             body += this.configuration["URL"]+"/emailVerification/" + tokenVerfication;
             body += "</body></html>";
