@@ -57,6 +57,8 @@ namespace API
                     });
             });
 
+            services.AddHttpClient();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
