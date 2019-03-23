@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using API.Controllers.Identity;
 
 namespace API
 {
@@ -82,6 +83,9 @@ namespace API
             app.UseMvc();
 
             DBInitializer.Initialize(context);
+
+            TokenGenerator.Initialize(Configuration);
+            PasswordHasher.Initialize(Configuration);
         }
     }
 }
