@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Controllers.Identity
+namespace API.Util
 {
     public static class PasswordHasher
     {

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Data;
 using API.Models;
+using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +15,10 @@ namespace API.Controllers.Identity
     public class SignUpController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IConfiguration _configuration;
 
         public SignUpController(ApplicationDBContext context, IConfiguration configuration)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         [HttpPost]
@@ -47,8 +46,7 @@ namespace API.Controllers.Identity
             
             try {
 
-                EmailSender email = new EmailSender(_configuration);
-                email.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
+                EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
 
                 _context.SaveChanges();
 

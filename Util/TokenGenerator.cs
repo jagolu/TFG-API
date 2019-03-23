@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-namespace API.Controllers.Identity
+namespace API.Util
 {
     public static class TokenGenerator
     {
