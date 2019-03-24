@@ -38,15 +38,10 @@ namespace API.Controllers.Identity
                 return BadRequest(new { error = "NotValidatedYet" });
             }
 
-            try {
-                string newRefreshToken = TokenGenerator.generateRefreshToken(_context, user.email, user.provider);
-                string newToken = TokenGenerator.generateToken(user.email, newRefreshToken);
+            string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, user.provider);
 
-                return Ok(new { token = newToken });
-
-            } catch (Exception) {
-                return BadRequest(new { error = "InvalidToken" });
-            }
+            if (nToken != null) return Ok(new { token = nToken });
+            else return StatusCode(500); 
         }
     }
 

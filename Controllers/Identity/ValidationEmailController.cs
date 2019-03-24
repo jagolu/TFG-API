@@ -45,13 +45,16 @@ namespace API.Controllers.Identity
             _context.Update(user);
 
             try {
-                string newRefreshToken = TokenGenerator.generateRefreshToken(_context, user.email, provider);
-                string newToken = TokenGenerator.generateToken(user.email, newRefreshToken);
+                string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, provider);
 
-                _context.SaveChanges();
+                if (nToken != null)
+                {
+                    _context.SaveChanges();
 
-                return Ok(new { token = newToken });
-
+                    return Ok(new { token = nToken });
+                }
+                else return StatusCode(500);
+                
             } catch (DbUpdateException) {
                 return StatusCode(500);
 

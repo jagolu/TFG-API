@@ -27,27 +27,21 @@ namespace API.Controllers.Identity
         [ActionName("Refresh")]
         public IActionResult refresh([FromBody] refreshRequest req)
         {
-            var principal = TokenGenerator.getPrincipalFromExpiredToken(req.token);
+            if (TokenGenerator.isValidClaim(req.token)) return BadRequest(new { error="InvalidToken" });
 
-            if (principal == null) return BadRequest(new { error="InvalidToken" });
+            string email = TokenGenerator.getEmailClaim(req.token);
+            string refreshToken = TokenGenerator.getRefreshTokenClaim(req.token);
 
-            string email = principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
-            string refreshToken = principal.FindFirst("refreshToken").Value;
             var savedRefreshToken = _context.UserToken.Where(ut => ut.refreshToken == refreshToken);
 
             if (savedRefreshToken.Count() != 1) {
                 return BadRequest(new { error = "InvalidToken" });
             }
 
-            try {
-                string newRefreshToken = TokenGenerator.generateRefreshToken(_context, email, req.provider);
-                string newToken = TokenGenerator.generateToken(email, newRefreshToken);
+            string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, email, req.provider);
 
-                return Ok(new { token = newToken });
-
-            } catch (Exception) {
-                return BadRequest(new { error = "InvalidToken" });
-            }
+            if (nToken != null) return Ok(new { token = nToken });
+            else return StatusCode(500);
         }
     }
 

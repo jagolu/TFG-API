@@ -19,7 +19,44 @@ namespace API.Util
             _configuration = configuration;
         }
 
-        public static String generateToken(string email, string refreshToken)
+        public static string generateTokenAndRefreshToken(ApplicationDBContext context, string email, Boolean provider)
+        {
+            try
+            {
+                string newRefreshToken = generateRefreshToken(context, email, provider);
+                string newToken = generateToken(email, newRefreshToken);
+
+                return newToken;
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static Boolean isValidClaim(string token)
+        {
+            return getPrincipalFromExpiredToken(token) == null ? false : true;
+        }
+
+        public static string getEmailClaim(string token)
+        {
+            var principal = getPrincipalFromExpiredToken(token);
+            
+            return principal == null ? null :
+                principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+        }
+
+        public static string getRefreshTokenClaim(string token)
+        {
+            var principal = getPrincipalFromExpiredToken(token);
+
+            return principal == null ? null : 
+                principal.FindFirst("refreshToken").Value;
+        }
+
+        private static String generateToken(string email, string refreshToken)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -38,7 +75,7 @@ namespace API.Util
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public static String generateRefreshToken(ApplicationDBContext context,string email, Boolean provider)
+        private static String generateRefreshToken(ApplicationDBContext context,string email, Boolean provider)
         {
             var user = (from u in context.User where u.email == email select u).First();
             var ut = from t in context.UserToken where t.userId == user.id && t.loginProvider == provider select t;
@@ -68,7 +105,7 @@ namespace API.Util
             return refreshToken;
         }
 
-        public static ClaimsPrincipal getPrincipalFromExpiredToken(string token)
+        private static ClaimsPrincipal getPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters {
                 ValidateAudience = false,
