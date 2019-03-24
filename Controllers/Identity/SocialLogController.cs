@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
@@ -7,11 +6,13 @@ using System.Threading.Tasks;
 using API.Data;
 using API.Models;
 using API.Util;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+
+
 
 namespace API.Controllers.Identity
 {
@@ -37,45 +38,50 @@ namespace API.Controllers.Identity
         [ActionName("SocialLog")]
         public async Task<IActionResult> socialLog([FromBody] UserMediaLog socialUser)
         {
-            if(socialUser.socialProvider == SocialProvider.FACEBOOK)
-            {
-                try
-                {
-                    if (!await verifyFacebookToken(socialUser.authToken))
-                    {
-                        return BadRequest(new { error = "InvalidSocialToken" });
-                    }
+            if (socialUser.socialProvider == "FACEBOOK") return await facebookLog(socialUser);
 
-                    addSocialUser(socialUser);
+            else if (socialUser.socialProvider == "GOOGLE") return await googleLog(socialUser);
+
+            return BadRequest(new { error = "InvalidSocialToken" });
+        }
+
+        private async Task<IActionResult> googleLog(UserMediaLog socialUser)
+        {
+            try {
+                if (!await verifyGoogleToken(socialUser.authToken, socialUser.id)) {
+                    return BadRequest(new { error = "InvalidSocialToken" });
                 }
-                catch (Exception)
-                {
-                    return StatusCode(500);
-                }
+
+                addSocialUser(socialUser);
+
+                return generateTokenAndRefreshToken(socialUser.email, socialUser.provider);
+
+            } catch (Exception) {
+                return StatusCode(500);
             }
-            return Ok();
+
         }
 
         private async Task<IActionResult> facebookLog(UserMediaLog socialUser)
         {
-            if (socialUser.socialProvider == SocialProvider.FACEBOOK)
+            try
             {
-                try
+                if (!await verifyFacebookToken(socialUser.authToken, socialUser.id))
                 {
-                    if (!await verifyFacebookToken(socialUser.authToken))
-                    {
-                        return BadRequest(new { error = "InvalidSocialToken" });
-                    }
+                    return BadRequest(new { error = "InvalidSocialToken" });
+                }
 
-                    addSocialUser(socialUser);
-                }
-                catch (Exception)
-                {
-                    return StatusCode(500);
-                }
+                addSocialUser(socialUser);
+
+                return generateTokenAndRefreshToken(socialUser.email, socialUser.provider);
+
             }
-        } 
-
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+        
         private void addSocialUser(UserMediaLog socialUser)
         {
             var userExist = _context.User.Where(u => u.email == socialUser.email);
@@ -93,7 +99,21 @@ namespace API.Controllers.Identity
             _context.SaveChanges();
         }
 
-        private async Task<Boolean> verifyFacebookToken(string token)
+        private async Task<Boolean> verifyGoogleToken(string token, string userId)
+        {
+            //Install-Package Google.Apis.Auth -Version 1.38.0
+            var validPayLoad = await GoogleJsonWebSignature.ValidateAsync(token);
+
+            if (validPayLoad == null) return false;
+
+            if (validPayLoad.Audience.ToString() != _configuration["Social:googleId"])  return false;
+
+            if (validPayLoad.Subject != userId) return false;
+
+            return true;
+        }
+
+        private async Task<Boolean> verifyFacebookToken(string token, string userId)
         {
             string facebookId = _configuration["Social:facebook"];
 
@@ -110,12 +130,25 @@ namespace API.Controllers.Identity
             string result = await response.Content.ReadAsStringAsync();
             FacebookResponse resultJSON = JsonConvert.DeserializeObject<FacebookResponse>(result);
 
-            return resultJSON.data.error == null ? resultJSON.data.is_valid : resultJSON.data.error.is_valid;
+            return isValidFacebookToken(resultJSON, userId);
         }
 
-        private Boolean isValidFacebookToken(FacebookResponse res)
+        private Boolean isValidFacebookToken(FacebookResponse res, string userId)
         {
+            if (res.data.app_id != _configuration["Social:facebookId"]) return false;
 
+            if (res.data.error != null) return res.data.error.is_valid;
+
+            if (userId != res.data.user_id) return false;
+
+            return res.data.is_valid;
+        }
+
+        private IActionResult generateTokenAndRefreshToken(string email, Boolean provider) {
+            string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, email, provider);
+
+            if (nToken != null) return Ok(new { token = nToken });
+            else return StatusCode(500);
         }
     }
 
@@ -134,16 +167,10 @@ namespace API.Controllers.Identity
         public string id { get; set; }
 
         [Required]
-        public SocialProvider socialProvider { get; set; }
+        public string socialProvider { get; set; }
 
         [Required]
         public Boolean provider { get; set; } = false;
-    }
-
-    public enum SocialProvider
-    {
-        FACEBOOK = 0,
-        GOOGLE = 1
     }
 
     public class FacebookResponse
