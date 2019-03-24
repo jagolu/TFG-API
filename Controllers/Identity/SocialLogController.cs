@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using API.Data;
+using API.Models;
+using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,13 +35,65 @@ namespace API.Controllers.Identity
         [HttpPost]
         [AllowAnonymous]
         [ActionName("SocialLog")]
-        public string socialLog([FromBody] UserMediaLog socialToken)
+        public async Task<IActionResult> socialLog([FromBody] UserMediaLog socialUser)
         {
-            this.verifyFacebookTokenAsync(socialToken.authToken);
-            return socialToken.authToken;
+            if(socialUser.socialProvider == SocialProvider.FACEBOOK)
+            {
+                try
+                {
+                    if (!await verifyFacebookToken(socialUser.authToken))
+                    {
+                        return BadRequest(new { error = "InvalidSocialToken" });
+                    }
+
+                    addSocialUser(socialUser);
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500);
+                }
+            }
+            return Ok();
         }
 
-        private async Task<bool> verifyFacebookTokenAsync(string token)
+        private async Task<IActionResult> facebookLog(UserMediaLog socialUser)
+        {
+            if (socialUser.socialProvider == SocialProvider.FACEBOOK)
+            {
+                try
+                {
+                    if (!await verifyFacebookToken(socialUser.authToken))
+                    {
+                        return BadRequest(new { error = "InvalidSocialToken" });
+                    }
+
+                    addSocialUser(socialUser);
+                }
+                catch (Exception)
+                {
+                    return StatusCode(500);
+                }
+            }
+        } 
+
+        private void addSocialUser(UserMediaLog socialUser)
+        {
+            var userExist = _context.User.Where(u => u.email == socialUser.email);
+
+            if (userExist.Count() == 1) return;
+
+            _context.User.Add(new User
+            {
+                email = socialUser.email,
+                nickname = socialUser.firstName,
+                password = null,
+                tokenValidation = null
+            });
+
+            _context.SaveChanges();
+        }
+
+        private async Task<Boolean> verifyFacebookToken(string token)
         {
             string facebookId = _configuration["Social:facebook"];
 
@@ -48,20 +102,20 @@ namespace API.Controllers.Identity
                 "input_token=" + token + "&access_token=" + facebookId);
 
             var client = _http.CreateClient();
+
             var response = await client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode) {
-                string result = await response.Content.ReadAsStringAsync();
-                FacebookResponse resultJSON = JsonConvert.DeserializeObject<FacebookResponse>(result);
-                string a = "asdfasd";
-                
-            }
-            else {
-                return false;
-            }
+            if (!response.IsSuccessStatusCode) return false;
 
-            //TODO get body of the response	
-            return false;
+            string result = await response.Content.ReadAsStringAsync();
+            FacebookResponse resultJSON = JsonConvert.DeserializeObject<FacebookResponse>(result);
+
+            return resultJSON.data.error == null ? resultJSON.data.is_valid : resultJSON.data.error.is_valid;
+        }
+
+        private Boolean isValidFacebookToken(FacebookResponse res)
+        {
+
         }
     }
 
