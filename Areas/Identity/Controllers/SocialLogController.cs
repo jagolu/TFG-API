@@ -1,8 +1,8 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using API.Areas.Identity.Models;
 using API.Data;
 using API.Models;
 using API.Util;
@@ -12,9 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-
-
-namespace API.Controllers.Identity
+namespace API.Areas.Identity.Controllers
 {
     [Route("Authorization/[action]")]
     [ApiController]
@@ -24,7 +22,7 @@ namespace API.Controllers.Identity
         private IConfiguration _configuration;
         private readonly IHttpClientFactory _http;
 
-        public SocialLogController(ApplicationDBContext context, 
+        public SocialLogController(ApplicationDBContext context,
                                 IConfiguration configuration,
                                 IHttpClientFactory clientFactory)
         {
@@ -64,10 +62,8 @@ namespace API.Controllers.Identity
 
         private async Task<IActionResult> facebookLog(UserMediaLog socialUser)
         {
-            try
-            {
-                if (!await verifyFacebookToken(socialUser.authToken, socialUser.id))
-                {
+            try {
+                if (!await verifyFacebookToken(socialUser.authToken, socialUser.id)) {
                     return BadRequest(new { error = "InvalidSocialToken" });
                 }
 
@@ -75,21 +71,18 @@ namespace API.Controllers.Identity
 
                 return generateTokenAndRefreshToken(socialUser.email, socialUser.provider);
 
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return StatusCode(500);
             }
         }
-        
+
         private void addSocialUser(UserMediaLog socialUser)
         {
             var userExist = _context.User.Where(u => u.email == socialUser.email);
 
             if (userExist.Count() == 1) return;
 
-            _context.User.Add(new User
-            {
+            _context.User.Add(new User {
                 email = socialUser.email,
                 nickname = socialUser.firstName,
                 password = null,
@@ -106,7 +99,7 @@ namespace API.Controllers.Identity
 
             if (validPayLoad == null) return false;
 
-            if (validPayLoad.Audience.ToString() != _configuration["Social:googleId"])  return false;
+            if (validPayLoad.Audience.ToString() != _configuration["Social:googleId"]) return false;
 
             if (validPayLoad.Subject != userId) return false;
 
@@ -144,55 +137,12 @@ namespace API.Controllers.Identity
             return res.data.is_valid;
         }
 
-        private IActionResult generateTokenAndRefreshToken(string email, Boolean provider) {
+        private IActionResult generateTokenAndRefreshToken(string email, Boolean provider)
+        {
             string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, email, provider);
 
             if (nToken != null) return Ok(new { token = nToken });
             else return StatusCode(500);
         }
-    }
-
-    public class UserMediaLog
-    {
-        [Required]
-        public string authToken { get; set; }
-
-        [Required]
-        public string email { get; set; }
-
-        [Required]
-        public string firstName { get; set; }
-
-        [Required]
-        public string id { get; set; }
-
-        [Required]
-        public string socialProvider { get; set; }
-
-        [Required]
-        public Boolean provider { get; set; } = false;
-    }
-
-    public class FacebookResponse
-    {
-        public dataType data { get; set; }
-
-        public class dataType
-        {
-            public string app_id { get; set; }
-            public string type { get; set; }
-            public string application { get; set; }
-            public string data_access_expires_at { get; set; }
-            public Boolean is_valid { get; set; }
-            public string user_id { get; set; }
-            public errorType error { get; set; }
-
-
-            public class errorType
-            {
-                public Boolean is_valid { get; set; }
-            }
-        }
-
     }
 }

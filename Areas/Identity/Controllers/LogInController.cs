@@ -1,13 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.Linq;
+using API.Areas.Identity.Models;
 using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace API.Controllers.Identity
+namespace API.Areas.Identity.Controllers
 {
     [Route("Authorization/[action]")]
     [ApiController]
@@ -41,23 +40,7 @@ namespace API.Controllers.Identity
             string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, user.provider);
 
             if (nToken != null) return Ok(new { token = nToken });
-            else return StatusCode(500); 
+            else return StatusCode(500);
         }
-    }
-
-
-   public class UserLogIn
-    {
-        [Required]
-        [EmailAddress(ErrorMessage = "This is not a valid email")]
-        public string email { get; set; }
-
-        [MinLength(8, ErrorMessage = "Password must have at least 8 characters")]
-        [MaxLength(20, ErrorMessage = "Password must have less than 20 characters")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$",
-            ErrorMessage = "Password must have at least a lowercase, a uppercase and a number")]
-        public string password { get; set; }
-
-        public Boolean provider { get; set; } = false;
     }
 }

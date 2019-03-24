@@ -76,7 +76,20 @@ namespace API
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(/*routes => {
+                routes.MapRoute(
+                  name: "areas",
+                  template: "{area:Identity}/{controller=Home}/{action=Index}/{id?}"
+                );
+            }*/);
+
+            /*app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                  name: "areas",
+                  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+            });*/
 
             DBInitializer.Initialize(context);
 

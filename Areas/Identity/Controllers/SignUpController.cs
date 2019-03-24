@@ -1,14 +1,15 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using API.Areas.Identity.Models;
 using API.Data;
 using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
-namespace API.Controllers.Identity
+namespace API.Areas.Identity.Controllers
 {
     [Route("Authorization/[action]")]
     [ApiController]
@@ -16,7 +17,7 @@ namespace API.Controllers.Identity
     {
         private ApplicationDBContext _context;
 
-        public SignUpController(ApplicationDBContext context, IConfiguration configuration)
+        public SignUpController(ApplicationDBContext context)
         {
             _context = context;
         }
@@ -34,7 +35,7 @@ namespace API.Controllers.Identity
             if (userExists) {
                 return BadRequest(new { error = "EmailAlreadyExistsError" });
             }
-            
+
             User newUser = new User {
                 email = user.email,
                 nickname = user.username,
@@ -43,7 +44,7 @@ namespace API.Controllers.Identity
             };
 
             _context.User.Add(newUser);
-            
+
             try {
 
                 EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
@@ -57,33 +58,5 @@ namespace API.Controllers.Identity
 
             return Ok();
         }
-
-        [HttpGet]
-        [AllowAnonymous]
-        [ActionName("aa")]
-        public string aa()
-        {
-            return "hola";
-        }
-    }
-
-    public class UserSignUp
-    {
-        [Required]
-        [EmailAddress(ErrorMessage = "This is not a valid email")]
-        public string email { get; set; }
-
-        [Required]
-        [MinLength(4, ErrorMessage = "Username must have at least 3 characters")]
-        [MaxLength(20, ErrorMessage = "Username must have less than 20 characters")]
-        public string username { get; set; }
-
-        [MinLength(8, ErrorMessage = "Password must have at least 8 characters")]
-        [MaxLength(20, ErrorMessage = "Password must have less than 20 characters")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$",
-            ErrorMessage = "Password must have at least a lowercase, a uppercase and a number")]
-        public string password { get; set; }
-
-        public Boolean provider { get; set; } = false;
     }
 }

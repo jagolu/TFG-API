@@ -12,7 +12,6 @@ namespace API.Data
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext>options) : base(options) { }
 
         
-
         public DbSet<User> User { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Permission> Permission { get; set; }
@@ -25,7 +24,6 @@ namespace API.Data
             onCreateUserPermission(mb);
             onCreateUserToken(mb);
         }
-
 
         private void onCreateUser(ModelBuilder mb)
         {
@@ -70,6 +68,8 @@ namespace API.Data
             mb.Entity<UserToken>()
                 .HasIndex(ut => ut.refreshToken)
                 .IsUnique();
+
+
         }
     }
 }

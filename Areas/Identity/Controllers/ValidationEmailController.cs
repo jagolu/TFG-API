@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
 using API.Data;
 using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace API.Controllers.Identity
+namespace API.Areas.Identity.Controllers
 {
     [Route("Authorization/[action]")]
     [ApiController]
@@ -39,7 +36,7 @@ namespace API.Controllers.Identity
             }
 
             User user = tokenExists.First();
-            
+
             user.tokenValidation = null;
 
             _context.Update(user);
@@ -47,14 +44,13 @@ namespace API.Controllers.Identity
             try {
                 string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, provider);
 
-                if (nToken != null)
-                {
+                if (nToken != null) {
                     _context.SaveChanges();
 
                     return Ok(new { token = nToken });
                 }
                 else return StatusCode(500);
-                
+
             } catch (DbUpdateException) {
                 return StatusCode(500);
 

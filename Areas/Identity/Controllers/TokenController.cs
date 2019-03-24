@@ -1,13 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.Linq;
+using API.Areas.Identity.Models;
 using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-namespace API.Controllers.Identity
+namespace API.Areas.Identity.Controllers
 {
     [Route("Authorization/[action]")]
     [ApiController]
@@ -25,9 +24,9 @@ namespace API.Controllers.Identity
         [HttpPost]
         [AllowAnonymous]
         [ActionName("Refresh")]
-        public IActionResult refresh([FromBody] refreshRequest req)
+        public IActionResult refresh([FromBody] RefreshRequest req)
         {
-            if (TokenGenerator.isValidClaim(req.token)) return BadRequest(new { error="InvalidToken" });
+            if (TokenGenerator.isValidClaim(req.token)) return BadRequest(new { error = "InvalidToken" });
 
             string email = TokenGenerator.getEmailClaim(req.token);
             string refreshToken = TokenGenerator.getRefreshTokenClaim(req.token);
@@ -43,14 +42,5 @@ namespace API.Controllers.Identity
             if (nToken != null) return Ok(new { token = nToken });
             else return StatusCode(500);
         }
-    }
-
-
-    public class refreshRequest
-    {
-        [Required]
-        public string token { get; set; }
-
-        public Boolean provider { get; set; } = false;
     }
 }
