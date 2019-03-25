@@ -13,12 +13,10 @@ namespace API.Areas.Identity.Controllers
     public class TokenController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IConfiguration _configuration;
 
-        public TokenController(ApplicationDBContext context, IConfiguration configuration)
+        public TokenController(ApplicationDBContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         [HttpPost]

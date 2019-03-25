@@ -16,12 +16,10 @@ namespace API.Areas.Identity.Controllers
     public class ValidationEmailController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IConfiguration _configuration;
 
-        public ValidationEmailController(ApplicationDBContext context, IConfiguration configuration)
+        public ValidationEmailController(ApplicationDBContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         [HttpGet]

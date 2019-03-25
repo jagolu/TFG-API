@@ -1,9 +1,5 @@
 ﻿using API.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Data
 {
@@ -11,7 +7,6 @@ namespace API.Data
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext>options) : base(options) { }
 
-        
         public DbSet<User> User { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Permission> Permission { get; set; }

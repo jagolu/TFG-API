@@ -13,13 +13,10 @@ namespace API.Areas.Identity.Controllers
     public class LogInController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IConfiguration _configuration;
 
-        public LogInController(ApplicationDBContext context, IConfiguration configuration)
+        public LogInController(ApplicationDBContext context)
         {
             _context = context;
-            _configuration = configuration;
-
         }
 
         [HttpPost]
