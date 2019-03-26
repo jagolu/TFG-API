@@ -7,7 +7,6 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Areas.Identity.Controllers
 {
@@ -30,7 +29,7 @@ namespace API.Areas.Identity.Controllers
             var tokenExists = _context.User.Where(u => u.tokenValidation == emailToken);
 
             if (tokenExists.Count() != 1) {
-                return BadRequest(new { error = "NonExistingToken" });
+                return BadRequest();
             }
 
             User user = tokenExists.First();
@@ -53,7 +52,7 @@ namespace API.Areas.Identity.Controllers
                 return StatusCode(500);
 
             } catch (Exception) {
-                return BadRequest(new { error = "InvalidToken" });
+                return BadRequest();
 
             }
         }
