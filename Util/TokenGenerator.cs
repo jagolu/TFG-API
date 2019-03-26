@@ -56,6 +56,13 @@ namespace API.Util
                 principal.FindFirst("refreshToken").Value;
         }
 
+        public static string getBearerToken(string token)
+        {
+            string bearer = "Bearer ";
+            int start = token.IndexOf(bearer)+bearer.Length;
+            return token.Substring(start);
+        }
+
         private static String generateToken(string email, string refreshToken)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
