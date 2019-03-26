@@ -27,9 +27,6 @@ namespace API.Areas.Identity.Controllers
         [ActionName("SignUp")]
         public IActionResult signUp([FromBody] UserSignUp user)
         {
-            //if (!ModelState.IsValid) {
-            //    return BadRequest(ModelState);
-            //}
             var userExists = _context.User.Where(u => u.email == user.email).Count() != 0;
 
             if (userExists) {

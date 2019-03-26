@@ -4,7 +4,6 @@ using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Areas.Identity.Controllers
 {
