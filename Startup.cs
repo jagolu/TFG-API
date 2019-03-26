@@ -43,7 +43,6 @@ namespace API
                     };
                 });
 
-
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -76,20 +75,8 @@ namespace API
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc(/*routes => {
-                routes.MapRoute(
-                  name: "areas",
-                  template: "{area:Identity}/{controller=Home}/{action=Index}/{id?}"
-                );
-            }*/);
-
-            /*app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                  name: "areas",
-                  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
-            });*/
+            app.UseMvc();
+            
 
             DBInitializer.Initialize(context);
 
