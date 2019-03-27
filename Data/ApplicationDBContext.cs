@@ -12,12 +12,14 @@ namespace API.Data
         public DbSet<Permission> Permission { get; set; }
         public DbSet<UserPermission> UserPermission { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
+        public DbSet<UserRoles> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
             onCreateUserPermission(mb);
             onCreateUserToken(mb);
+            onCreateUserRole(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -63,8 +65,24 @@ namespace API.Data
             mb.Entity<UserToken>()
                 .HasIndex(ut => ut.refreshToken)
                 .IsUnique();
+        }
 
+        private void onCreateUserRole(ModelBuilder mb)
+        {
+            mb.Entity<UserRoles>()
+                .HasKey(ur => new { ur.userId, ur.roleId });
 
+            mb.Entity<UserRoles>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.roles)
+                .HasForeignKey(ur => ur.userId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<UserRoles>()
+                .HasOne(ur => ur.Role)
+                .WithMany(p => p.users)
+                .HasForeignKey(up => up.roleId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

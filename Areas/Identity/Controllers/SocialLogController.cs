@@ -82,12 +82,20 @@ namespace API.Areas.Identity.Controllers
 
             if (userExist.Count() == 1) return;
 
-            _context.User.Add(new User {
+            User newUser = new User {
                 email = socialUser.email,
                 nickname = socialUser.firstName,
                 password = null,
                 tokenValidation = null
-            });
+            };
+
+            UserRoles newUserRoles = new UserRoles {
+                User = newUser,
+                Role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+
+            _context.User.Add(newUser);
+            _context.UserRoles.Add(newUserRoles);
 
             _context.SaveChanges();
         }

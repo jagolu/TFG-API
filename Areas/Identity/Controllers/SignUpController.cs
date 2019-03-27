@@ -40,7 +40,13 @@ namespace API.Areas.Identity.Controllers
                 tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N")
             };
 
+            UserRoles newUserRoles = new UserRoles {
+                User = newUser,
+                Role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+            
             _context.User.Add(newUser);
+            _context.UserRoles.Add(newUserRoles);
 
             try {
 

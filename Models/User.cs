@@ -29,11 +29,13 @@ namespace API.Models
         [Required]
         public Boolean open { get; set; } = true;
 
-        [System.ComponentModel.DefaultValue("imagenPorDefecto")]
         public string profileImg { get; set; } = null;
 
         [MaxLength]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString("N");
+
+        [Required]
+        public ICollection<UserRoles> roles { get; set; } = new HashSet<UserRoles>();
 
         [Required]
         public ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
