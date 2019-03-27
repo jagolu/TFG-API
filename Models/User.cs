@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Models
 {
@@ -33,6 +30,9 @@ namespace API.Models
 
         [MaxLength]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString("N");
+
+        [Required]
+        public DateTime dateSignUp { get; set; } = DateTime.Today;
 
         [Required]
         public ICollection<UserRoles> roles { get; set; } = new HashSet<UserRoles>();

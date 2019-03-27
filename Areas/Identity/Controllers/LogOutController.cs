@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace API.Areas.Identity.Controllers
 {
