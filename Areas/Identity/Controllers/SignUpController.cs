@@ -37,16 +37,17 @@ namespace API.Areas.Identity.Controllers
                 email = user.email,
                 nickname = user.username,
                 password = PasswordHasher.hashPassword(user.password),
-                tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N")
+                tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N"),
+                role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
             };
 
-            UserRoles newUserRoles = new UserRoles {
+            /*UserRoles newUserRoles = new UserRoles {
                 User = newUser,
                 Role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
+            };*/
             
             _context.User.Add(newUser);
-            _context.UserRoles.Add(newUserRoles);
+            //_context.UserRoles.Add(newUserRoles);
 
             try {
 

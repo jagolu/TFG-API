@@ -86,16 +86,17 @@ namespace API.Areas.Identity.Controllers
                 email = socialUser.email,
                 nickname = socialUser.firstName,
                 password = null,
-                tokenValidation = null
+                tokenValidation = null,
+                role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
             };
 
-            UserRoles newUserRoles = new UserRoles {
+            /*UserRoles newUserRoles = new UserRoles {
                 User = newUser,
                 Role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
+            };*/
 
             _context.User.Add(newUser);
-            _context.UserRoles.Add(newUserRoles);
+            //_context.UserRoles.Add(newUserRoles);
 
             _context.SaveChanges();
         }
