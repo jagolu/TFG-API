@@ -9,17 +9,15 @@ namespace API.Data
 
         public DbSet<User> User { get; set; }
         public DbSet<Role> Role { get; set; }
-        public DbSet<Permission> Permission { get; set; }
-        public DbSet<UserPermission> UserPermission { get; set; }
+        public DbSet<Group> Group { get; set; }
+        public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
-        public DbSet<UserRoles> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
-            onCreateUserPermission(mb);
             onCreateUserToken(mb);
-            onCreateUserRole(mb);
+            onCreateUserGroup(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -31,24 +29,6 @@ namespace API.Data
             mb.Entity<User>()
                 .HasIndex(u => u.email)
                 .IsUnique();
-        }
-
-        private void onCreateUserPermission(ModelBuilder mb)
-        {
-            mb.Entity<UserPermission>()
-                .HasKey(up => new { up.userId, up.permissionId });
-
-            mb.Entity<UserPermission>()
-                .HasOne(up => up.User)
-                .WithMany(u => u.permissions)
-                .HasForeignKey(up => up.userId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            mb.Entity<UserPermission>()
-                .HasOne(up => up.Permission)
-                .WithMany(p => p.users)
-                .HasForeignKey(up => up.permissionId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void onCreateUserToken(ModelBuilder mb)
@@ -67,21 +47,21 @@ namespace API.Data
                 .IsUnique();
         }
 
-        private void onCreateUserRole(ModelBuilder mb)
+        private void onCreateUserGroup(ModelBuilder mb)
         {
-            mb.Entity<UserRoles>()
-                .HasKey(ur => new { ur.userId, ur.roleId });
+            mb.Entity<UserGroup>()
+                .HasKey(ug => new { ug.userId, ug.groupId });
 
-            mb.Entity<UserRoles>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.roles)
-                .HasForeignKey(ur => ur.userId)
+            mb.Entity<UserGroup>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.groups)
+                .HasForeignKey(ug => ug.userId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            mb.Entity<UserRoles>()
-                .HasOne(ur => ur.Role)
-                .WithMany(p => p.users)
-                .HasForeignKey(up => up.roleId)
+            mb.Entity<UserGroup>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.users)
+                .HasForeignKey(ug => ug.groupId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
