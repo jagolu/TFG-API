@@ -7,7 +7,6 @@ namespace API.Models
 {
     public class User
     {
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid id { get; set; }
 
@@ -35,11 +34,12 @@ namespace API.Models
         public DateTime dateSignUp { get; set; } = DateTime.Today;
 
         [Required]
-        public ICollection<UserRoles> roles { get; set; } = new HashSet<UserRoles>();
+        public virtual Role role { get; set; }
 
         [Required]
-        public ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
-
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
+
+
+        public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
     }
 }
