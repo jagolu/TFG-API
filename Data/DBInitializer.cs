@@ -25,7 +25,9 @@ namespace API.Data
             var roles = new Role[] {
                 new Role{name="ADMIN"},
                 new Role{name="NORMAL_USER"},
-                new Role{name="GROUP_ADMIN"}
+                new Role{name="GROUP_ADMIN"},
+                new Role{name="GROUP_SUBADMIN"},
+                new Role{name="GROUP_NORMAL"}
             };
 
             var rolesToAdd = from r in roles where 
