@@ -33,6 +33,8 @@ namespace API.Areas.UserInfo.Controllers
 
                 User user = _context.User.Where(u => u.email == email).First();
 
+                _context.Entry(user).Reference("role").Load();
+
                 UserData userShow = new UserData {
                     email = user.email,
                     nickname = user.nickname,
