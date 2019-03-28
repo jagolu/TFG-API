@@ -12,7 +12,7 @@ namespace API.Models
         public Group Group { get; set; }
 
         [Required]
-        public virtual Role role { get; set; }
+        public Role role { get; set; }
 
         [Required]
         public Boolean open { get; set; } = true;

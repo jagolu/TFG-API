@@ -34,7 +34,7 @@ namespace API.Models
         public DateTime dateSignUp { get; set; } = DateTime.Today;
 
         [Required]
-        public virtual Role role { get; set; }
+        public Role role { get; set; }
 
         [Required]
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
