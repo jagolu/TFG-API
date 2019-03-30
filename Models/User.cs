@@ -25,7 +25,7 @@ namespace API.Models
         [Required]
         public Boolean open { get; set; } = true;
 
-        public string profileImg { get; set; } = null;
+        public Byte[] profileImg { get; set; } = null;
 
         [MaxLength]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString("N");
@@ -38,7 +38,6 @@ namespace API.Models
 
         [Required]
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
-
 
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
     }
