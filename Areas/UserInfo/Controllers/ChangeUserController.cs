@@ -34,9 +34,9 @@ namespace API.Areas.UserInfo.Controllers
 
             User user = _context.User.Where(u => u.email == email).First();
 
-            user.nickname = info.nickname;
+            user.nickname = info.nickname ?? user.nickname;
             user.password = info.password ?? user.password ?? PasswordHasher.hashPassword(info.password);
-            user.profileImg = info.image;
+            user.profileImg = info.image ?? user.profileImg;
 
             try {
                 _context.Update(user);
