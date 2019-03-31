@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using API.Areas.Identity.Models;
 using API.Data;
+using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,10 +35,17 @@ namespace API.Areas.Identity.Controllers
                 return BadRequest(new { error = "InvalidToken" });
             }
 
-            string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, email, req.provider);
+            User user = _context.User.Where(u => u.email == email).First();
 
-            if (nToken != null) return Ok(new { token = nToken });
-            else return StatusCode(500);
+            UserSession session = UserSessionGenerator.getUserJson(_context, user, req.provider);
+
+            if (session != null) {
+                _context.SaveChanges();
+
+                return Ok(session);
+            }
+
+            return StatusCode(500);
         }
     }
 }
