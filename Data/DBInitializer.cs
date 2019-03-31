@@ -46,6 +46,9 @@ namespace API.Data
             context.Database.EnsureCreated();
 
             InitializeRoles(context);
+
+            context.SaveChanges();
+
             InitializeUser(context);
 
             context.SaveChanges();

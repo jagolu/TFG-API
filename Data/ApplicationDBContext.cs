@@ -40,7 +40,7 @@ namespace API.Data
                 .HasOne(ut => ut.User)
                 .WithMany(u => u.tokens)
                 .HasForeignKey(ut => ut.userId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             mb.Entity<UserToken>()
                 .HasIndex(ut => ut.refreshToken)
