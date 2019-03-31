@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Net.Mime;
+using System.Text.RegularExpressions;
 using API.Areas.UserInfo.Models;
 using API.Data;
 using API.Models;
@@ -9,6 +8,7 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Areas.UserInfo.Controllers
 {
@@ -34,19 +34,64 @@ namespace API.Areas.UserInfo.Controllers
 
             User user = _context.User.Where(u => u.email == email).First();
 
-            user.nickname = info.nickname ?? user.nickname;
-            user.password = info.password ?? user.password ?? PasswordHasher.hashPassword(info.password);
-            user.profileImg = info.image ?? user.profileImg;
-
             try {
+                user.nickname = changeNickname(info.nickname, user.nickname);
+                user.password = changePassword(info.oldpassword, info.newPassword, info.repeatNewPassword, user.password);
+                user.profileImg = info.image ?? user.profileImg;
+
                 _context.Update(user);
                 _context.SaveChanges();
 
-            } catch (Exception) {
+            } catch (DbUpdateException) {
                 return StatusCode(500);
+            } catch (Exception e) {
+                return BadRequest(new { error=e.Message });
             }
 
             return Ok();
+        }
+
+        private string changePassword(string oldPassword, string newPassword, string repeatNewPassword, string userActualPassword)
+        {
+            if (newPassword == null || repeatNewPassword == null) {
+                return userActualPassword;
+            }
+
+            if (oldPassword == null && userActualPassword!=null) {
+                return userActualPassword;
+            }
+
+            String hashOldPassword = (userActualPassword == null && oldPassword == "") ?
+                                      null : PasswordHasher.hashPassword(oldPassword);
+            
+            if (hashOldPassword != userActualPassword) {
+                return userActualPassword;
+            }
+
+            //Lanzar exception devolviendo un BadRequest de que las contraseñas no son iguales
+            if (newPassword != repeatNewPassword) {
+                throw new Exception("INVALIDCHANGEPASSWORD");
+            }
+
+            if(newPassword.Length<8 || newPassword.Length > 20 || !Regex.IsMatch(newPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$")) {
+                throw new Exception("INVALIDCHANGEPASSWORD");
+            }
+
+            return PasswordHasher.hashPassword(newPassword);
+        }
+
+        private string changeNickname(string nickname, string userActualNickname)
+        {
+            if(nickname == null) {
+                return userActualNickname;
+            }
+
+            //Throw exception
+            if(nickname.Length<3 || nickname.Length > 20) {
+                throw new Exception("INVALIDCHANGENICKNAME");
+            }
+
+            return userActualNickname;
         }
     }
 }
