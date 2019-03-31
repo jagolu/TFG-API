@@ -48,7 +48,7 @@ namespace API.Areas.UserInfo.Controllers
             try {
                 _context.SaveChanges();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 return StatusCode(500);
             }
 

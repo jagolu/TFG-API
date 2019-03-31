@@ -46,8 +46,8 @@ namespace API.Areas.UserInfo.Controllers
 
                 return Ok(userShow);    
 
-            } catch (Exception r) {
-                return Ok(r);
+            } catch (Exception) {
+                return StatusCode(500);
             }
         }
 
