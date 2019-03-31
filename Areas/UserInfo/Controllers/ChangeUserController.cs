@@ -70,11 +70,11 @@ namespace API.Areas.UserInfo.Controllers
 
             //Lanzar exception devolviendo un BadRequest de que las contraseñas no son iguales
             if (newPassword != repeatNewPassword) {
-                throw new Exception("INVALIDCHANGEPASSWORD");
+                throw new Exception("InvalidChangePassword");
             }
 
             if(newPassword.Length<8 || newPassword.Length > 20 || !Regex.IsMatch(newPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$")) {
-                throw new Exception("INVALIDCHANGEPASSWORD");
+                throw new Exception("InvalidChangePassword");
             }
 
             return PasswordHasher.hashPassword(newPassword);
@@ -86,9 +86,8 @@ namespace API.Areas.UserInfo.Controllers
                 return userActualNickname;
             }
 
-            //Throw exception
             if(newNickname.Length<3 || newNickname.Length > 20) {
-                throw new Exception("INVALIDCHANGENICKNAME");
+                throw new Exception("InvalidChangeNickname");
             }
 
             return newNickname;
