@@ -80,18 +80,18 @@ namespace API.Areas.UserInfo.Controllers
             return PasswordHasher.hashPassword(newPassword);
         }
 
-        private string changeNickname(string nickname, string userActualNickname)
+        private string changeNickname(string newNickname, string userActualNickname)
         {
-            if(nickname == null) {
+            if(newNickname == null) {
                 return userActualNickname;
             }
 
             //Throw exception
-            if(nickname.Length<3 || nickname.Length > 20) {
+            if(newNickname.Length<3 || newNickname.Length > 20) {
                 throw new Exception("INVALIDCHANGENICKNAME");
             }
 
-            return userActualNickname;
+            return newNickname;
         }
     }
 }
