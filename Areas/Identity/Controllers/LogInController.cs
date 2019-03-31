@@ -4,7 +4,6 @@ using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Areas.Identity.Controllers
 {
@@ -34,10 +33,15 @@ namespace API.Areas.Identity.Controllers
                 return BadRequest(new { error = "NotValidatedYet" });
             }
 
-            string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, user.provider);
+            UserSession session = UserSessionGenerator.getUserJson(_context, userExist.First(), user.provider);
 
-            if (nToken != null) return Ok(new { token = nToken });
-            else return StatusCode(500);
+            if (session != null) {
+                _context.SaveChanges();
+
+                return Ok( session );
+            }
+
+            return StatusCode(500);
         }
     }
 }

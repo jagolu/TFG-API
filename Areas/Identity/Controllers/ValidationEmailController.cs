@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using API.Areas.Identity.Models;
 using API.Data;
 using API.Models;
 using API.Util;
@@ -39,14 +40,15 @@ namespace API.Areas.Identity.Controllers
             _context.Update(user);
 
             try {
-                string nToken = TokenGenerator.generateTokenAndRefreshToken(_context, user.email, provider);
+                UserSession session = UserSessionGenerator.getUserJson(_context, user, provider);
 
-                if (nToken != null) {
+                if(session != null) {
                     _context.SaveChanges();
 
-                    return Ok(new { token = nToken });
+                    return Ok( session );
                 }
-                else return StatusCode(500);
+
+                return StatusCode(500);
 
             } catch (DbUpdateException) {
                 return StatusCode(500);

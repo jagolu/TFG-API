@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using API.Areas.UserInfo.Models;
 using API.Data;
 using API.Models;
