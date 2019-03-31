@@ -10,7 +10,7 @@ namespace API.Areas.Identity.Models
         public string email { get; set; }
 
         [Required]
-        [MinLength(4, ErrorMessage = "Username must have at least 3 characters")]
+        [MinLength(3, ErrorMessage = "Username must have at least 3 characters")]
         [MaxLength(20, ErrorMessage = "Username must have less than 20 characters")]
         public string username { get; set; }
 
