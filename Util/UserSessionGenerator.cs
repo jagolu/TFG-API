@@ -15,10 +15,7 @@ namespace API.Util
 
             UserSession session = new UserSession {
                 api_token = nToken,
-                email = user.email,
-                nickname = user.nickname,
-                role = user.role.name,
-                image_url = user.profileImg
+                role = user.role.name
             };
 
             return session;
