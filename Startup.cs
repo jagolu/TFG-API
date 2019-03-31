@@ -78,11 +78,11 @@ namespace API
             app.UseMvc();
             
 
-            DBInitializer.Initialize(context);
-
             EmailSender.Initialize(Configuration);
             TokenGenerator.Initialize(Configuration);
             PasswordHasher.Initialize(Configuration);
+            
+            DBInitializer.Initialize(context);
         }
     }
 }

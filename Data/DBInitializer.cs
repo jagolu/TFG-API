@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using API.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,18 @@ namespace API.Data
 {
     public class DBInitializer
     {
-
         private static void InitializeUser(ApplicationDBContext context)
         {
-            /*var users = new User[] {
-                new User{userID = Guid.NewGuid(), email="asdfasd11", nickname="nick1", password="pass1", img="asdfasdf",role="asdfasd"},
+
+            User admin = new User {
+                email = "a@gmail.com",
+                nickname = "a_ADMIN",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "ADMIN").First()
             };
 
-            foreach (User c in users) {
-                if(!context.User.Contains(c)) context.User.Add(c);
-            }*/
+            if(context.User.Where(u=> u.email == "a@gmail.com").Count() == 0)context.Add(admin);
         }
 
         private static void InitializeRoles(ApplicationDBContext context)
@@ -42,8 +45,8 @@ namespace API.Data
         {
             context.Database.EnsureCreated();
 
-            InitializeUser(context);
             InitializeRoles(context);
+            InitializeUser(context);
 
             context.SaveChanges();
         }
