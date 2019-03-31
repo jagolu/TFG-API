@@ -22,5 +22,8 @@ namespace API.Areas.Identity.Models
 
         [Required]
         public Boolean provider { get; set; } = false;
+
+        [Required]
+        public string urlImage { get; set; }
     }
 }

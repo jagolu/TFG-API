@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using API.Areas.Identity.Models;
@@ -87,16 +89,11 @@ namespace API.Areas.Identity.Controllers
                 nickname = socialUser.firstName,
                 password = null,
                 tokenValidation = null,
-                role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
+                role = _context.Role.Where(r => r.name == "NORMAL_USER").First(),
+                profileImg = getImage(socialUser.urlImage)
             };
 
-            /*UserRoles newUserRoles = new UserRoles {
-                User = newUser,
-                Role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };*/
-
             _context.User.Add(newUser);
-            //_context.UserRoles.Add(newUserRoles);
 
             _context.SaveChanges();
         }
@@ -152,6 +149,14 @@ namespace API.Areas.Identity.Controllers
 
             if (nToken != null) return Ok(new { token = nToken });
             else return StatusCode(500);
+        }
+
+        private Byte[] getImage(string url)
+        {
+            WebClient client = new WebClient();
+            Byte[] bytes = client.DownloadData(new Uri(url));
+
+            return bytes;
         }
     }
 }
