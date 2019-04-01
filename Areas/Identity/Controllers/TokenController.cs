@@ -24,7 +24,7 @@ namespace API.Areas.Identity.Controllers
         [ActionName("Refresh")]
         public IActionResult refresh([FromBody] RefreshRequest req)
         {
-            if (TokenGenerator.isValidClaim(req.token)) return BadRequest(new { error = "InvalidToken" });
+            if (TokenGenerator.isValidClaim(req.token)) return StatusCode(401);
 
             string email = TokenGenerator.getEmailClaim(req.token);
             string refreshToken = TokenGenerator.getRefreshTokenClaim(req.token);
@@ -32,7 +32,7 @@ namespace API.Areas.Identity.Controllers
             var savedRefreshToken = _context.UserToken.Where(ut => ut.refreshToken == refreshToken);
 
             if (savedRefreshToken.Count() != 1) {
-                return BadRequest(new { error = "InvalidToken" });
+                return StatusCode(401);
             }
 
             User user = _context.User.Where(u => u.email == email).First();
@@ -45,7 +45,7 @@ namespace API.Areas.Identity.Controllers
                 return Ok(session);
             }
 
-            return StatusCode(500);
+            return StatusCode(401);
         }
     }
 }

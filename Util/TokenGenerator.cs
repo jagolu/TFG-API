@@ -37,7 +37,7 @@ namespace API.Util
 
         public static Boolean isValidClaim(string token)
         {
-            return getPrincipalFromExpiredToken(token) == null ? false : true;
+            return getPrincipalFromExpiredToken(token) == null;
         }
 
         public static string getEmailClaim(string token)
@@ -123,16 +123,22 @@ namespace API.Util
 
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken securityToken;
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
 
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            try {
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
 
-            if (jwtSecurityToken == null ||
-                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase)) {
+                var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+                if (jwtSecurityToken == null ||
+                    !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase)) {
+                    return null;
+                }
+
+                return principal;
+
+            } catch (Exception) {
                 return null;
             }
-
-            return principal;
         }
     }
 }
