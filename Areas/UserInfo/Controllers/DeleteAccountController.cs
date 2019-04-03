@@ -34,7 +34,7 @@ namespace API.Areas.UserInfo.Controllers
 
             _context.Entry(user).Reference("role").Load();
 
-            if(user.password != PasswordHasher.hashPassword(user.password)) {
+            if(user.password != PasswordHasher.hashPassword(userDelete.password)) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
