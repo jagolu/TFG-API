@@ -41,7 +41,8 @@ namespace API.Areas.UserInfo.Controllers
                     img = user.profileImg,
                     user_role = user.role.name,
                     rolesGroup = getRoleGroups(user),
-                    timeSignUp = user.dateSignUp
+                    timeSignUp = user.dateSignUp,
+                    password = user.password != null
                 };
 
                 return Ok(userShow);    
