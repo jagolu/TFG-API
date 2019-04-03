@@ -1,16 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Models
 {
     public class User
     {
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid id { get; set; }
 
@@ -29,14 +25,20 @@ namespace API.Models
         [Required]
         public Boolean open { get; set; } = true;
 
-        [System.ComponentModel.DefaultValue("imagenPorDefecto")]
-        public string profileImg { get; set; } = null;
+        public Byte[] profileImg { get; set; } = null;
 
         [MaxLength]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
+        public DateTime dateSignUp { get; set; } = DateTime.Today;
 
-        public virtual ICollection<UserPermission> permissions { get; set; } = new HashSet<UserPermission>();
+        [Required]
+        public Role role { get; set; }
+
+        [Required]
+        public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
+
+        public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
     }
 }

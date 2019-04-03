@@ -1,9 +1,5 @@
 ﻿using API.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Data
 {
@@ -11,20 +7,18 @@ namespace API.Data
     {
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext>options) : base(options) { }
 
-        
-
         public DbSet<User> User { get; set; }
         public DbSet<Role> Role { get; set; }
-        public DbSet<Permission> Permission { get; set; }
-        public DbSet<UserPermission> UserPermission { get; set; }
+        public DbSet<Group> Group { get; set; }
+        public DbSet<UserGroup> UserGroup { get; set; }
+        public DbSet<UserToken> UserToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
-            onCreateUserPermission(mb);
-
+            onCreateUserToken(mb);
+            onCreateUserGroup(mb);
         }
-
 
         private void onCreateUser(ModelBuilder mb)
         {
@@ -33,21 +27,37 @@ namespace API.Data
                 .IsUnique();
         }
 
-        private void onCreateUserPermission(ModelBuilder mb)
+        private void onCreateUserToken(ModelBuilder mb)
         {
-            mb.Entity<UserPermission>()
-                .HasKey(x => new { x.userId, x.permissionId });
+            mb.Entity<UserToken>()
+                .HasKey(ut => new { ut.userId, ut.loginProvider });
 
-            mb.Entity<UserPermission>()
-                .HasOne(x => x.User)
-                .WithMany(y => y.permissions)
-                .HasForeignKey(x => x.userId)
+            mb.Entity<UserToken>()
+                .HasOne(ut => ut.User)
+                .WithMany(u => u.tokens)
+                .HasForeignKey(ut => ut.userId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            mb.Entity<UserToken>()
+                .HasIndex(ut => ut.refreshToken)
+                .IsUnique();
+        }
+
+        private void onCreateUserGroup(ModelBuilder mb)
+        {
+            mb.Entity<UserGroup>()
+                .HasKey(ug => new { ug.userId, ug.groupId });
+
+            mb.Entity<UserGroup>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.groups)
+                .HasForeignKey(ug => ug.userId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            mb.Entity<UserPermission>()
-                .HasOne(x => x.Permission)
-                .WithMany(y => y.users)
-                .HasForeignKey(x => x.permissionId)
+            mb.Entity<UserGroup>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.users)
+                .HasForeignKey(ug => ug.groupId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
