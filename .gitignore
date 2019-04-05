@@ -266,3 +266,5 @@ Migrations/
 appsettings.json
 Properties/launchSettings.json
 Properties/PublishProfiles/VirtualBet - Web Deploy.pubxml
+
+wwwroot/

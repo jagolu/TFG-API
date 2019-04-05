@@ -110,7 +110,7 @@ namespace API.Areas.Identity.Controllers
 
         private async Task<Boolean> verifyFacebookToken(string token, string userId)
         {
-            string facebookId = _configuration["Social:facebook"];
+            string facebookId = _configuration["Social:facebookSecret"];
 
             var request = new HttpRequestMessage(HttpMethod.Get,
                 "https://graph.facebook.com/debug_token?" +

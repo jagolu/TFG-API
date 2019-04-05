@@ -74,6 +74,7 @@ namespace API
             app.UseCors("_myAllowSpecificOrigins");
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
             
 
