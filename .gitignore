@@ -268,3 +268,5 @@ Properties/launchSettings.json
 Properties/PublishProfiles/VirtualBet - Web Deploy.pubxml
 
 wwwroot/
+ClientApp/
+Properties/PublishProfiles/VirtualBet - Web Deploy1.pubxml
