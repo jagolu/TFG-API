@@ -269,4 +269,5 @@ Properties/PublishProfiles/VirtualBet - Web Deploy.pubxml
 
 wwwroot/
 ClientApp/
+webInterface/
 Properties/PublishProfiles/VirtualBet - Web Deploy1.pubxml
