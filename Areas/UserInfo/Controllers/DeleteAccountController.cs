@@ -25,16 +25,18 @@ namespace API.Areas.UserInfo.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("DeleteAccount")]
-        public IActionResult getUser([FromBody] DeleteUser userDelete)
+        public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
             var authToken = HttpContext.Request?.Headers["Authorization"];
             string email = TokenGenerator.getEmailClaim(TokenGenerator.getBearerToken(authToken.Value));
+            string userDeletePass = (userDelete.password == null || userDelete.password.Length==0)
+                ? null : PasswordHasher.hashPassword(userDelete.password);
 
             User user = _context.User.Where(u => u.email == email).First();
 
             _context.Entry(user).Reference("role").Load();
 
-            if(user.password != PasswordHasher.hashPassword(userDelete.password)) {
+            if(user.password != userDeletePass) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
