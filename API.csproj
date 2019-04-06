@@ -3,7 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.3</LangVersion>
+    <UserSecretsId>3c7a482e-8acd-4626-b8da-46b8deea51b5</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ClientApp\**" />
+    <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\**" />
+    <None Remove="ClientApp\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Auth" Version="1.38.0" />
@@ -12,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\dist\" />
+    <Folder Include="webInterface\dist\" />
   </ItemGroup>
 
 </Project>

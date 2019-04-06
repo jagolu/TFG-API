@@ -15,14 +15,15 @@ namespace API
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -34,18 +35,20 @@ namespace API
                         ValidateLifetime = true,
                         ValidateIssuer = true,
                         ValidateAudience = false,
-                        //TODO Check validate Audience info
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        
+                        //ValidAudience = Configuration["Jwt:Issuer"],
+
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
 
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                        Configuration.GetConnectionString("DefaultConnection") 
+                )
+            );
+
 
             services.AddCors(options => {
                 options.AddPolicy("_myAllowSpecificOrigins",
@@ -54,6 +57,10 @@ namespace API
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });
+            });
+
+            services.AddSpaStaticFiles(configuration => {
+                configuration.RootPath = "webInterface/dist";
             });
 
             services.AddHttpClient();
@@ -66,16 +73,23 @@ namespace API
         {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
+                app.UseCors("_myAllowSpecificOrigins");
             }
             else {
                 app.UseHsts();
             }
 
-            app.UseCors("_myAllowSpecificOrigins");
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}");
+            });
             
 
             EmailSender.Initialize(Configuration);
@@ -83,6 +97,10 @@ namespace API
             PasswordHasher.Initialize(Configuration);
             
             DBInitializer.Initialize(context);
+
+            app.UseSpa(spa => {
+                spa.Options.SourcePath = "webInterface";
+            });
         }
     }
 }
