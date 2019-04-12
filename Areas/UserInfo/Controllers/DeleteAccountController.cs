@@ -27,12 +27,10 @@ namespace API.Areas.UserInfo.Controllers
         [ActionName("DeleteAccount")]
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
-            var authToken = HttpContext.Request?.Headers["Authorization"];
-            string email = TokenGenerator.getEmailClaim(TokenGenerator.getBearerToken(authToken.Value));
             string userDeletePass = (userDelete.password == null || userDelete.password.Length==0)
                 ? null : PasswordHasher.hashPassword(userDelete.password);
-
-            User user = _context.User.Where(u => u.email == email).First();
+            
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
 
             _context.Entry(user).Reference("role").Load();
 

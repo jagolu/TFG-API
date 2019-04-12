@@ -29,10 +29,7 @@ namespace API.Areas.UserInfo.Controllers
         [ActionName("ChangeUserInfo")]
         public IActionResult changeUser([FromBody] ChangeUserInfo info)
         {
-            var authToken = HttpContext.Request?.Headers["Authorization"];
-            string email = TokenGenerator.getEmailClaim(TokenGenerator.getBearerToken(authToken.Value));
-
-            User user = _context.User.Where(u => u.email == email).First();
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
 
             try {
                 user.nickname = changeNickname(info.nickname, user.nickname);
