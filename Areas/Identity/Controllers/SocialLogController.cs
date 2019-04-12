@@ -88,6 +88,9 @@ namespace API.Areas.Identity.Controllers
             };
 
             _context.User.Add(newUser);
+
+            _context.SaveChanges();
+
             _context.Limitations.Add(new Limitations { User = newUser });
 
             _context.SaveChanges();

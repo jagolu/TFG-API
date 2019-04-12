@@ -41,14 +41,17 @@ namespace API.Areas.Identity.Controllers
                 role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
             };
             
-            _context.User.Add(newUser);
-            _context.Limitations.Add(new Limitations { User = newUser });
 
-            try {
-
-                EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
+            try { 
+                _context.User.Add(newUser);
 
                 _context.SaveChanges();
+
+                _context.Limitations.Add(new Limitations { User = newUser });
+
+                _context.SaveChanges();
+
+                EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
 
             } catch (Exception) {
 
