@@ -17,6 +17,7 @@ namespace API.Data
         {
             onCreateUser(mb);
             onCreateUserToken(mb);
+            onCreateGroup(mb);
             onCreateUserGroup(mb);
         }
 
@@ -40,6 +41,13 @@ namespace API.Data
 
             mb.Entity<UserToken>()
                 .HasIndex(ut => ut.refreshToken)
+                .IsUnique();
+        }
+
+        private void onCreateGroup(ModelBuilder mb)
+        {
+            mb.Entity<Group>()
+                .HasIndex(g => g.name)
                 .IsUnique();
         }
 
