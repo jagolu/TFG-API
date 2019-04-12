@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using API.Areas.UserInfo.Models;
@@ -46,9 +47,10 @@ namespace API.Areas.UserInfo.Controllers
             }
 
             try {
+
                 _context.SaveChanges();
 
-            } catch (Exception) {
+            } catch (Exception e){
                 return StatusCode(500);
             }
 
@@ -81,11 +83,13 @@ namespace API.Areas.UserInfo.Controllers
                 return false;
             }
 
-            _context.User.Remove(
-                _context.User.Where(
-                    uu => uu.email == email
-                ).First()
-            );
+            User uToDelete = _context.User.Where(uu => uu.email == email).First();
+
+            if (!canRemoveGroups(uToDelete)){
+                return false;
+            }
+
+            _context.User.Remove(uToDelete);
 
             return true;
         }
@@ -102,6 +106,41 @@ namespace API.Areas.UserInfo.Controllers
             } catch (Exception) {
                 return false;
             }
+        }
+
+        private bool canRemoveGroups(User u)
+        {
+            List<UserGroup> groups =_context.UserGroup.Where(ug => ug.userId == u.id).ToList();
+            bool canRemove = true;
+
+            groups.ForEach(
+                g=>
+                {
+                    int n_members = _context.UserGroup.Where(ug => ug.groupId == g.groupId).Count();
+
+                    if (n_members == 1) // The user in the group is the only member in
+                    {
+                        try
+                        {
+                            _context.Remove(g);
+
+                            _context.SaveChanges();
+
+                            _context.Remove(_context.Group.Where(group => group.id == g.groupId).First());
+
+                            _context.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            canRemove = false;
+                        }
+
+                    }
+                    else canRemove = false;
+
+                }
+            );
+            return canRemove;
         }
     }
 }
