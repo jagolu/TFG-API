@@ -39,7 +39,7 @@ namespace API.Areas.UserInfo.Controllers
             }
 
             bool beingAdmin = deleteAccountBeingAdmin(userDelete.email, user);
-            bool beingNormal = deleteAccountBeingNormal(email, user);
+            bool beingNormal = deleteAccountBeingNormal(user.email, user);
 
             if(!beingAdmin && !beingNormal) {
                 return BadRequest(new { error = "CantDeleteAccount" });
