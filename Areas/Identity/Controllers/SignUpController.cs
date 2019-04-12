@@ -42,6 +42,7 @@ namespace API.Areas.Identity.Controllers
             };
             
             _context.User.Add(newUser);
+            _context.Limitations.Add(new Limitations { User = newUser });
 
             try {
 

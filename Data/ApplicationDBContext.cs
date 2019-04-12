@@ -12,6 +12,7 @@ namespace API.Data
         public DbSet<Group> Group { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
+        public DbSet<Limitations> Limitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
