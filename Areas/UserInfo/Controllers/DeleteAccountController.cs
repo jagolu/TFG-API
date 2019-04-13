@@ -50,7 +50,7 @@ namespace API.Areas.UserInfo.Controllers
 
                 _context.SaveChanges();
 
-            } catch (Exception e){
+            } catch (Exception){
                 return StatusCode(500);
             }
 
@@ -130,7 +130,7 @@ namespace API.Areas.UserInfo.Controllers
 
                             _context.SaveChanges();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             canRemove = false;
                         }
