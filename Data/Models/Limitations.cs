@@ -10,9 +10,9 @@ namespace API.Models
         public User User { get; set; }
 
         [Required]
-        public int officialGroup { get; set; } = 1;
+        public int createOfficialGroup { get; set; } = 1;
 
         [Required]
-        public int virtualGroup { get; set; } = 1;
+        public int createVirtualGroup { get; set; } = 1;
     }
 }
