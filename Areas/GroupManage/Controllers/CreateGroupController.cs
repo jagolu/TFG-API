@@ -31,7 +31,7 @@ namespace API.Areas.GroupManage.Controllers
 
             if (dbGroup.Count() > 0) //If already exists a group with the same name
             {
-                return BadRequest(new { error = "AlreadyExistingGroup" });
+                return StatusCode(500);
             }
 
             if(!canCreateANewGroup(group, user)) //The user cant create more groups
@@ -68,16 +68,24 @@ namespace API.Areas.GroupManage.Controllers
             int userGroups = 0;
             int limitationGroups = 0;
             _context.Entry(user).Reference("limitations").Load();
+            _context.Entry(user).Reference("role").Load();
 
             if (group.type) //Official group
             {
-                userGroups = user.groups.Where(g => g.Group.type).Count();
-                limitationGroups = user.limitations.officialGroup;
+                userGroups = _context.UserGroup.Where(ug =>
+                    ug.userId == user.id &&
+                    ug.Group.type == true &&
+                    ug.role.name == "GROUP_MAKER").Count();
+                //userGroups = user.groups.Where(g => g.Group.type && g.role.name == "GROUP_MAKER").Count();
+                limitationGroups = user.limitations.createOfficialGroup;
             }
             else //Virtual group
             {
-                userGroups = user.groups.Where(g => !g.Group.type).Count();
-                limitationGroups = user.limitations.virtualGroup;
+                userGroups = _context.UserGroup.Where(ug =>
+                    ug.userId == user.id &&
+                    ug.Group.type == false &&
+                    ug.role.name == "GROUP_MAKER").Count();
+                limitationGroups = user.limitations.createVirtualGroup;
             }
 
             if (limitationGroups <= userGroups) //The user cant create a new group of the specificated type
