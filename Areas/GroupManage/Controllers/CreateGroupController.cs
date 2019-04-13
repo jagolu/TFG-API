@@ -20,14 +20,23 @@ namespace API.Areas.GroupManage.Controllers
             _context = context;
         }
 
+
+        /**
+         * Create a new group
+         * @param group The new group to create
+         * @return 500 The group already exists
+         * @return 401 LimitationCreateGroup The user can't create more groups of the specificated type
+         * @return 200 The group has been created sucesfully
+         */ 
         [HttpPost]
         [Authorize]
         [ActionName("CreateGroup")]
         public IActionResult createGroup([FromBody] CreateGroup group )
         {
-            var dbGroup = _context.Group.Where(g => g.name == group.name);
-
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+
+            //Group with the same name
+            var dbGroup = _context.Group.Where(g => g.name == group.name);
 
             if (dbGroup.Count() > 0) //If already exists a group with the same name
             {
@@ -63,6 +72,12 @@ namespace API.Areas.GroupManage.Controllers
             return Ok();
         }
 
+        /**
+         * Check if an user can create a new specific group
+         * @param group New group to create
+         * @user The user trying to create the new group
+         * @return true if the user can create the new group, false otherwise
+         */
         private bool canCreateANewGroup(CreateGroup group, User user)
         {
             int userGroups = 0;
@@ -72,19 +87,24 @@ namespace API.Areas.GroupManage.Controllers
 
             if (group.type) //Official group
             {
+                //Official groups created by the user
                 userGroups = _context.UserGroup.Where(ug =>
                     ug.userId == user.id &&
                     ug.Group.type == true &&
                     ug.role.name == "GROUP_MAKER").Count();
-                //userGroups = user.groups.Where(g => g.Group.type && g.role.name == "GROUP_MAKER").Count();
+
+                //Max groups that the user can create
                 limitationGroups = user.limitations.createOfficialGroup;
             }
             else //Virtual group
             {
+                //Virtual groups created by the user
                 userGroups = _context.UserGroup.Where(ug =>
                     ug.userId == user.id &&
                     ug.Group.type == false &&
                     ug.role.name == "GROUP_MAKER").Count();
+
+                //Max groups that the user can create
                 limitationGroups = user.limitations.createVirtualGroup;
             }
 
