@@ -39,20 +39,19 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest(new { error = "LimitationCreateGroup" });
             }
 
-            Group newGroup = new Group { name = group.name, type = group.type };
-
-            UserGroup userGroup = new UserGroup
-            {
-                User = user,
-                Group = newGroup,
-                role = _context.Role.Where(r => r.name == "GROUP_ADMIN").First(),
-                dateRole = DateTime.Today
-            };
-
             try
             {
+                Group newGroup = new Group { name = group.name, type = group.type };
+                
+                UserGroup userG = new UserGroup{
+                    User = user,
+                    Group = newGroup,
+                    role = _context.Role.Where(r => r.name == "GROUP_MAKER").First(),
+                    dateRole = DateTime.Today
+                };
+
                 _context.Add(newGroup);
-                _context.Add(userGroup);
+                _context.Add(userG);
 
                 _context.SaveChanges();
             }
