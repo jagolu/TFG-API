@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using API.Data;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Areas.GroupManage
+namespace API.Areas.GroupManage.Controllers
 {
     [Route("Group/[action]")]
     [ApiController]
@@ -17,23 +15,29 @@ namespace API.Areas.GroupManage
             _context = context;
         }
 
+        /**
+         * Check if a group name is available
+         * @param name The new group name
+         * @return True if the new group name is available, false otherwise
+         */
         [HttpGet]
-        [EnableCors]
         [ActionName("CheckGroupName")]
         public bool checkName(string name)
         {
-            if (name == null)
+            //The request name is empty
+            if (name == null || name.Length == 0)
             {
                 return false;
             }
-            
+
             int groupWithTheSameName = _context.Group.Where(g => g.name == name).Count();
 
+            // Already exists a group with the requested name
             if (groupWithTheSameName != 0)
             {
                 return false;
             }
-
+                
             return true;
         }
     }
