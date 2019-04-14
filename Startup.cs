@@ -22,14 +22,14 @@ namespace API
             Configuration = configuration;
         }
 
-
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ClockSkew = TimeSpan.FromMinutes(5),
+                        //ClockSkew = TimeSpan.FromSeconds(5),  Debug
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
