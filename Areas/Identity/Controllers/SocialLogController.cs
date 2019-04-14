@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -59,7 +60,12 @@ namespace API.Areas.Identity.Controllers
 
                 UserSession session = UserSessionGenerator.getUserJson(_context, user, socialUser.provider);
 
-                if (session != null) {
+                if (session != null)
+                {
+                    List<UserGroups> groups = GroupsFromUser.getUserGroups(user, _context);
+
+                    session.groups = groups;
+
                     _context.SaveChanges();
 
                     return Ok(session);
@@ -67,7 +73,7 @@ namespace API.Areas.Identity.Controllers
 
                 return StatusCode(500);
 
-            } catch (Exception) {
+            } catch (Exception e) {
                 return StatusCode(500);
             }
         }

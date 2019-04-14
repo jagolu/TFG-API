@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Areas.Identity.Models;
@@ -42,7 +43,12 @@ namespace API.Areas.Identity.Controllers
             try {
                 UserSession session = UserSessionGenerator.getUserJson(_context, user, provider);
 
-                if(session != null) {
+                if(session != null)
+                {
+                    List<UserGroups> groups = GroupsFromUser.getUserGroups(user, _context);
+
+                    session.groups = groups;
+
                     _context.SaveChanges();
 
                     return Ok( session );

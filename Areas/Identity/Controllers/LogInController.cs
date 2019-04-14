@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using API.Areas.Identity.Models;
 using API.Data;
+using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +39,11 @@ namespace API.Areas.Identity.Controllers
             UserSession session = UserSessionGenerator.getUserJson(_context, userExist.First(), user.provider);
 
             if (session != null) {
+
+                List<UserGroups> groups = GroupsFromUser.getUserGroups(userExist.First(), _context);
+
+                session.groups = groups;
+
                 _context.SaveChanges();
 
                 return Ok( session );

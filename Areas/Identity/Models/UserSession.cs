@@ -1,6 +1,4 @@
-﻿using API.Util;
-using Newtonsoft.Json;
-using System;
+﻿using System.Collections.Generic;
 
 namespace API.Areas.Identity.Models
 {
@@ -9,5 +7,7 @@ namespace API.Areas.Identity.Models
         public string api_token { get; set; }
 
         public string role { get; set; }
+
+        public ICollection<UserGroups> groups { get; set; }
     }
 }
