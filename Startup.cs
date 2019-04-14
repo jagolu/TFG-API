@@ -29,7 +29,7 @@ namespace API
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ClockSkew = TimeSpan.FromMinutes(5),
-                        //ClockSkew = TimeSpan.FromSeconds(5),  Debug
+                        //ClockSkew = TimeSpan.FromSeconds(5),  //Debug
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
@@ -45,7 +45,7 @@ namespace API
 
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(
-                        Configuration.GetConnectionString("DefaultConnection") 
+                        Configuration.GetConnectionString("DefaultConnection")
                 )
             );
 
