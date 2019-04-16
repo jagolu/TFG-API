@@ -5,8 +5,8 @@ namespace API.Areas.GroupManage.Models
     public class CreateGroup
     {
         [Required]
-        [MaxLength(10)]
-        [MinLength(3)]
+        [MaxLength(20)]
+        [MinLength(4)]
         public string name { get; set; }
 
         [Required]
