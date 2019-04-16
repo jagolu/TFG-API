@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using API.Areas.UserInfo.Models;
 using API.Data;
 using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +16,12 @@ namespace API.Areas.UserInfo.Controllers
     public class ChangeUserController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
+        private Boolean _changePass;
 
         public ChangeUserController(ApplicationDBContext context)
         {
             _context = context;
+            _changePass = false;
         }
 
         [HttpPost]
@@ -45,6 +45,8 @@ namespace API.Areas.UserInfo.Controllers
                 return BadRequest(new { error=e.Message });
             }
 
+            if (_changePass) return Ok(new { success = "PassChanged"});
+
             return Ok();
         }
 
@@ -61,18 +63,22 @@ namespace API.Areas.UserInfo.Controllers
             String hashOldPassword = (userActualPassword == null && oldPassword == "") ?
                                       null : PasswordHasher.hashPassword(oldPassword);
             
+            //The old password is not correct
             if (hashOldPassword != userActualPassword) {
-                return userActualPassword;
+                throw new Exception("IncorrectOldPassword");
             }
 
-            //Lanzar exception devolviendo un BadRequest de que las contraseñas no son iguales
+            //The both new password are not equal
             if (newPassword != repeatNewPassword) {
-                throw new Exception("InvalidChangePassword");
+                throw new Exception("");
             }
+
 
             if(newPassword.Length<8 || newPassword.Length > 20 || !Regex.IsMatch(newPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$")) {
-                throw new Exception("InvalidChangePassword");
+                throw new Exception("");
             }
+
+            _changePass = true;
 
             return PasswordHasher.hashPassword(newPassword);
         }
@@ -84,7 +90,7 @@ namespace API.Areas.UserInfo.Controllers
             }
 
             if(newNickname.Length<3 || newNickname.Length > 20) {
-                throw new Exception("InvalidChangeNickname");
+                throw new Exception("");
             }
 
             return newNickname;
