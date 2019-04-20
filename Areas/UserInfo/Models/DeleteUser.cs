@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace API.Areas.UserInfo.Models
+﻿namespace API.Areas.UserInfo.Models
 {
     public class DeleteUser
     {
