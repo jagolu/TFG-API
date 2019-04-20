@@ -46,6 +46,11 @@ namespace API.Areas.GroupManage.Controllers
             page.groupName = group.name;
             page.groupType = group.type;
 
+            UserGroup ownUserGroup =  group.users.Where(u => u.userId == user.id).First();
+            _context.Entry(ownUserGroup).Reference("role").Load();
+            page.role = ownUserGroup.role.name;
+
+
             //Change ---- this is for try
             page.bets = new List<GroupBet>{
                 new GroupBet { betName = "bet1", betBody = "betBody1"},
