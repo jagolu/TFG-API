@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Models;
 using API.Util;
@@ -50,20 +50,11 @@ namespace API.Areas.Identity.Controllers
 
             User user = _context.User.Where(u => u.email == email).First();
 
-            UserSession session = UserSessionGenerator.getUserJson(_context, user, req.provider);
+            UserSession session = MakeUserSession.getUserSession(_context, user, req.provider);
 
-            if (session != null) {
+            if (session == null) return StatusCode(500);
 
-                List<UserGroups> groups = GroupsFromUser.getUserGroups(user, _context);
-
-                session.groups = groups;
-
-                _context.SaveChanges();
-
-                return Ok(session);
-            }
-
-            return StatusCode(401);
+            return Ok(session);
         }
     }
 }

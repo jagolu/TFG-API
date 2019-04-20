@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
-using API.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,20 +34,11 @@ namespace API.Areas.Identity.Controllers
                 return BadRequest(new { error = "NotValidatedYet" });
             }
 
-            UserSession session = UserSessionGenerator.getUserJson(_context, userExist.First(), user.provider);
+            UserSession session = MakeUserSession.getUserSession(_context, userExist.First(), user.provider);
 
-            if (session != null) {
+            if (session == null) return StatusCode(500);
 
-                List<UserGroups> groups = GroupsFromUser.getUserGroups(userExist.First(), _context);
-
-                session.groups = groups;
-
-                _context.SaveChanges();
-
-                return Ok( session );
-            }
-
-            return StatusCode(500);
+            return Ok(session);
         }
     }
 }

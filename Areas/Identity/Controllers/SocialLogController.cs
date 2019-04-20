@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Models;
-using API.Util;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,22 +57,13 @@ namespace API.Areas.Identity.Controllers
                 
                 User user = addSocialUser(socialUser);
 
-                UserSession session = UserSessionGenerator.getUserJson(_context, user, socialUser.provider);
+                UserSession session = MakeUserSession.getUserSession(_context, user, socialUser.provider);
 
-                if (session != null)
-                {
-                    List<UserGroups> groups = GroupsFromUser.getUserGroups(user, _context);
+                if (session == null) return StatusCode(500);
 
-                    session.groups = groups;
+                return Ok(session);
 
-                    _context.SaveChanges();
-
-                    return Ok(session);
-                }
-
-                return StatusCode(500);
-
-            } catch (Exception e) {
+            } catch (Exception) {
                 return StatusCode(500);
             }
         }

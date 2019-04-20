@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Models;
-using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Areas.Identity.Controllers
 {
@@ -40,29 +38,11 @@ namespace API.Areas.Identity.Controllers
 
             _context.Update(user);
 
-            try {
-                UserSession session = UserSessionGenerator.getUserJson(_context, user, provider);
+            UserSession session = MakeUserSession.getUserSession(_context, user, provider);
 
-                if(session != null)
-                {
-                    List<UserGroups> groups = GroupsFromUser.getUserGroups(user, _context);
+            if (session == null) return StatusCode(500);
 
-                    session.groups = groups;
-
-                    _context.SaveChanges();
-
-                    return Ok( session );
-                }
-
-                return StatusCode(500);
-
-            } catch (DbUpdateException) {
-                return StatusCode(500);
-
-            } catch (Exception) {
-                return BadRequest();
-
-            }
+            return Ok(session);
         }
     }
 }
