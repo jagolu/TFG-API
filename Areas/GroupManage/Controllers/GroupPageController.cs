@@ -29,6 +29,7 @@ namespace API.Areas.GroupManage.Controllers
 
             var groups = _context.Group.Where(g => g.name == groupName);
 
+            // If the group doesn't exist
             if (groups.Count() != 1)
             {
                 return BadRequest(new { error = "" });
@@ -37,15 +38,18 @@ namespace API.Areas.GroupManage.Controllers
             Group group = groups.First();
             _context.Entry(group).Collection("users").Load();
 
+            // If the user doesn't belong to the group
             if (group.users.Where(u=>u.userId == user.id).Count() != 1)
             {
                 return BadRequest(new { error = "" });
             }
 
+            //Set the group name and group type
             GroupPage page = new GroupPage();
             page.groupName = group.name;
             page.groupType = group.type;
 
+            //Get the role of the user in the group
             UserGroup ownUserGroup =  group.users.Where(u => u.userId == user.id).First();
             _context.Entry(ownUserGroup).Reference("role").Load();
             page.role = ownUserGroup.role.name;
@@ -60,6 +64,7 @@ namespace API.Areas.GroupManage.Controllers
                 new GroupBet { betName = "bet5", betBody = "betBody5"}
             };
 
+            // Set the users who belongs to the group
             List<GroupMember> members = new List<GroupMember>();
 
             foreach(UserGroup ug in group.users)
