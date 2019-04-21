@@ -1,9 +1,7 @@
 ﻿using API.Models;
 using API.Util;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Data
 {
@@ -28,6 +26,7 @@ namespace API.Data
             var roles = new Role[] {
                 new Role{name="ADMIN"},
                 new Role{name="NORMAL_USER"},
+                new Role{name="GROUP_MAKER" },
                 new Role{name="GROUP_ADMIN"},
                 new Role{name="GROUP_SUBADMIN"},
                 new Role{name="GROUP_NORMAL"}

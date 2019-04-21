@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace API.Util
+namespace API.Areas.UserInfo.Util
 {
     public class ConvertBase64ToBlob : JsonConverter
     {

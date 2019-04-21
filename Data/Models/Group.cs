@@ -12,11 +12,14 @@ namespace API.Models
 
         [Required]
         [MinLength(4)]
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string name { get; set; }
 
         [Required] //1-->Apuestas oficiales 0-->Apuestas virtuales
         public Boolean type { get; set; }
+
+        [MaxLength]
+        public string password { get; set; } = null;
 
         [Required]
         public Boolean open { get; set; } = true;

@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Models;
-using API.Util;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,15 +57,11 @@ namespace API.Areas.Identity.Controllers
                 
                 User user = addSocialUser(socialUser);
 
-                UserSession session = UserSessionGenerator.getUserJson(_context, user, socialUser.provider);
+                UserSession session = MakeUserSession.getUserSession(_context, user, socialUser.provider);
 
-                if (session != null) {
-                    _context.SaveChanges();
+                if (session == null) return StatusCode(500);
 
-                    return Ok(session);
-                }
-
-                return StatusCode(500);
+                return Ok(session);
 
             } catch (Exception) {
                 return StatusCode(500);
@@ -88,6 +84,10 @@ namespace API.Areas.Identity.Controllers
             };
 
             _context.User.Add(newUser);
+
+            _context.SaveChanges();
+
+            _context.Limitations.Add(new Limitations { User = newUser });
 
             _context.SaveChanges();
 

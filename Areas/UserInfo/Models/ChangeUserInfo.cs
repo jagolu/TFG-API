@@ -1,7 +1,6 @@
-﻿using API.Util;
+﻿using API.Areas.UserInfo.Util;
 using Newtonsoft.Json;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace API.Areas.UserInfo.Models
 {

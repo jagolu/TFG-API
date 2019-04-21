@@ -40,5 +40,8 @@ namespace API.Models
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
 
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
+
+        [Required]
+        public Limitations limitations { get; set; }
     }
 }

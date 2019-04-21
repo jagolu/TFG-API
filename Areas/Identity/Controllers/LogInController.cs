@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
@@ -33,15 +34,11 @@ namespace API.Areas.Identity.Controllers
                 return BadRequest(new { error = "NotValidatedYet" });
             }
 
-            UserSession session = UserSessionGenerator.getUserJson(_context, userExist.First(), user.provider);
+            UserSession session = MakeUserSession.getUserSession(_context, userExist.First(), user.provider);
 
-            if (session != null) {
-                _context.SaveChanges();
+            if (session == null) return StatusCode(500);
 
-                return Ok( session );
-            }
-
-            return StatusCode(500);
+            return Ok(session);
         }
     }
 }

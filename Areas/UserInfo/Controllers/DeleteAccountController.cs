@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using API.Areas.UserInfo.Models;
@@ -27,12 +28,10 @@ namespace API.Areas.UserInfo.Controllers
         [ActionName("DeleteAccount")]
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
-            var authToken = HttpContext.Request?.Headers["Authorization"];
-            string email = TokenGenerator.getEmailClaim(TokenGenerator.getBearerToken(authToken.Value));
             string userDeletePass = (userDelete.password == null || userDelete.password.Length==0)
                 ? null : PasswordHasher.hashPassword(userDelete.password);
-
-            User user = _context.User.Where(u => u.email == email).First();
+            
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
 
             _context.Entry(user).Reference("role").Load();
 
@@ -41,16 +40,17 @@ namespace API.Areas.UserInfo.Controllers
             }
 
             bool beingAdmin = deleteAccountBeingAdmin(userDelete.email, user);
-            bool beingNormal = deleteAccountBeingNormal(email, user);
+            bool beingNormal = deleteAccountBeingNormal(user.email, user);
 
             if(!beingAdmin && !beingNormal) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
             try {
+
                 _context.SaveChanges();
 
-            } catch (Exception) {
+            } catch (Exception){
                 return StatusCode(500);
             }
 
@@ -83,11 +83,13 @@ namespace API.Areas.UserInfo.Controllers
                 return false;
             }
 
-            _context.User.Remove(
-                _context.User.Where(
-                    uu => uu.email == email
-                ).First()
-            );
+            User uToDelete = _context.User.Where(uu => uu.email == email).First();
+
+            if (!canRemoveGroups(uToDelete)){
+                return false;
+            }
+
+            _context.User.Remove(uToDelete);
 
             return true;
         }
@@ -104,6 +106,41 @@ namespace API.Areas.UserInfo.Controllers
             } catch (Exception) {
                 return false;
             }
+        }
+
+        private bool canRemoveGroups(User u)
+        {
+            List<UserGroup> groups =_context.UserGroup.Where(ug => ug.userId == u.id).ToList();
+            bool canRemove = true;
+
+            groups.ForEach(
+                g=>
+                {
+                    int n_members = _context.UserGroup.Where(ug => ug.groupId == g.groupId).Count();
+
+                    if (n_members == 1) // The user in the group is the only member in
+                    {
+                        try
+                        {
+                            _context.Remove(g);
+
+                            _context.SaveChanges();
+
+                            _context.Remove(_context.Group.Where(group => group.id == g.groupId).First());
+
+                            _context.SaveChanges();
+                        }
+                        catch (Exception)
+                        {
+                            canRemove = false;
+                        }
+
+                    }
+                    else canRemove = false;
+
+                }
+            );
+            return canRemove;
         }
     }
 }

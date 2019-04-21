@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using API.Areas.Identity.Models;
+using API.Areas.Identity.Util;
 using API.Data;
 using API.Models;
 using API.Util;
@@ -35,17 +37,24 @@ namespace API.Areas.Identity.Controllers
                 return StatusCode(401);
             }
 
-            User user = _context.User.Where(u => u.email == email).First();
-
-            UserSession session = UserSessionGenerator.getUserJson(_context, user, req.provider);
-
-            if (session != null) {
-                _context.SaveChanges();
-
-                return Ok(session);
+            if(savedRefreshToken.First().expirationTime < DateTime.Now)
+            {
+                try
+                {
+                    _context.Remove(savedRefreshToken);
+                    _context.SaveChanges();
+                }
+                catch (Exception) {}
+                return StatusCode(401);
             }
 
-            return StatusCode(401);
+            User user = _context.User.Where(u => u.email == email).First();
+
+            UserSession session = MakeUserSession.getUserSession(_context, user, req.provider);
+
+            if (session == null) return StatusCode(500);
+
+            return Ok(session);
         }
     }
 }

@@ -12,11 +12,13 @@ namespace API.Data
         public DbSet<Group> Group { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
+        public DbSet<Limitations> Limitations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
             onCreateUserToken(mb);
+            onCreateGroup(mb);
             onCreateUserGroup(mb);
         }
 
@@ -40,6 +42,13 @@ namespace API.Data
 
             mb.Entity<UserToken>()
                 .HasIndex(ut => ut.refreshToken)
+                .IsUnique();
+        }
+
+        private void onCreateGroup(ModelBuilder mb)
+        {
+            mb.Entity<Group>()
+                .HasIndex(g => g.name)
                 .IsUnique();
         }
 
