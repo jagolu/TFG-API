@@ -13,6 +13,10 @@ namespace API.Data
         public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
         public DbSet<Limitations> Limitations { get; set; }
+        public DbSet<Team> Teams { get; set; }
+        public DbSet<Competition> Competitions { get; set; }
+        public DbSet<MatchDay> MatchDays { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -20,6 +24,7 @@ namespace API.Data
             onCreateUserToken(mb);
             onCreateGroup(mb);
             onCreateUserGroup(mb);
+            onCreateMathDay(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -67,6 +72,30 @@ namespace API.Data
                 .HasOne(ug => ug.Group)
                 .WithMany(g => g.users)
                 .HasForeignKey(ug => ug.groupId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateMathDay(ModelBuilder mb)
+        {
+            mb.Entity<MatchDay>()
+                .HasKey(md => new { md.CompetitionId, md.number, md.HomeTeamId, md.AwayTeamId });
+
+            mb.Entity<MatchDay>()
+                .HasOne(md => md.Competition)
+                .WithMany(c => c.matchDays)
+                .HasForeignKey(md => md.CompetitionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<MatchDay>()
+                .HasOne(md => md.HomeTeam)
+                .WithMany(t => t.homeMatchDays)
+                .HasForeignKey(md => md.HomeTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<MatchDay>()
+                .HasOne(md => md.AwayTeam)
+                .WithMany(t => t.awayMatchDays)
+                .HasForeignKey(md => md.AwayTeamId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
