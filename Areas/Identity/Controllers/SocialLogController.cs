@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using API.Areas.Identity.Models;
 using API.Areas.Identity.Util;
 using API.Data;
-using API.Models;
+using API.Data.Models;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using API.Areas.UserInfo.Models;
 using API.Data;
-using API.Models;
+using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
