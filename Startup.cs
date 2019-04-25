@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Util;
+using API.ScheduledTasks.InitializeVirtualDBHostedService;
 
 namespace API
 {
@@ -66,6 +67,8 @@ namespace API
             services.AddHttpClient();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddHostedService<InitializeVirtualDBHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
