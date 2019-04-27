@@ -11,16 +11,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Util;
 using API.ScheduledTasks.InitializeVirtualDBHostedService;
+using Microsoft.Extensions.Logging;
 
 namespace API
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        private readonly ILogger _logger;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         
@@ -69,6 +72,8 @@ namespace API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddHostedService<InitializeVirtualDBHostedService>();
+
+            _logger.LogInformation("Added services");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
