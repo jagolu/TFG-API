@@ -1,4 +1,4 @@
-﻿namespace API.ScheduledTasks.InitializeVirtualDB.Models
+﻿namespace API.ScheduledTasks.VirtualBets.Models
 {
     public class Match
     {

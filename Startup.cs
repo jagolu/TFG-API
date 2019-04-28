@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Util;
-using API.ScheduledTasks.InitializeVirtualDBHostedService;
+using API.ScheduledTasks.VirtualBets;
 using Microsoft.Extensions.Logging;
 
 namespace API

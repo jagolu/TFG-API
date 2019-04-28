@@ -1,6 +1,6 @@
 ﻿using API.Data;
 using API.Data.Models;
-using API.ScheduledTasks.InitializeVirtualDB.Models;
+using API.ScheduledTasks.VirtualBets.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -9,14 +9,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace API.ScheduledTasks.InitializeVirtualDB.Util
+namespace API.ScheduledTasks.VirtualBets.Util
 {
     public class InitializerVirtualDB
     {
         private ApplicationDBContext _context;
         private IConfiguration _configuration;
         private readonly IHttpClientFactory _http;
-        private readonly string  _baseUrl = "https://api.football-data.org/v2/";
         private ILogger _logger;
 
         public InitializerVirtualDB(ApplicationDBContext context, IConfiguration config, IHttpClientFactory http, ILogger logg)
@@ -34,7 +33,7 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
             int matchd = 0;
             bool correct = true;
 
-            CompetitionMatches comptMatchs = await getMatches(token, leagueId);
+            CompetitionMatches comptMatchs = await APIRequest.getMatchesFromCompetition(token, leagueId, _http);
             Competition league = initializeLeague(comptMatchs.competition.name);
 
 
@@ -173,26 +172,26 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
          * @return array<CompetitionMatches>.
          *      Array with the competition and the matches with their results.
          */
-        private async Task<CompetitionMatches> getMatches(string token, string leagueId)
-        {
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                _baseUrl + "competitions/"+leagueId+"/matches"
-            );
+        //private async Task<CompetitionMatches> getMatches(string token, string leagueId)
+        //{
+        //    var request = new HttpRequestMessage(
+        //        HttpMethod.Get,
+        //        _baseUrl + "competitions/"+leagueId+"/matches"
+        //    );
 
-            var client = _http.CreateClient();
+        //    var client = _http.CreateClient();
 
-            client.DefaultRequestHeaders.Add("X-Auth-Token", token);
+        //    client.DefaultRequestHeaders.Add("X-Auth-Token", token);
 
-            var response = await client.SendAsync(request);
+        //    var response = await client.SendAsync(request);
 
-            if (!response.IsSuccessStatusCode) return null;
+        //    if (!response.IsSuccessStatusCode) return null;
 
-            string result = await response.Content.ReadAsStringAsync();
+        //    string result = await response.Content.ReadAsStringAsync();
 
-            CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
+        //    CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
 
-            return comptMatchs;
-        }
+        //    return comptMatchs;
+        //}
     }
 }

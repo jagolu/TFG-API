@@ -1,18 +1,16 @@
 ﻿using API.Data;
-using API.Data.Models;
-using API.ScheduledTasks.InitializeVirtualDB.Util;
+using API.ScheduledTasks.VirtualBets.Util;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace API.ScheduledTasks.InitializeVirtualDBHostedService
+namespace API.ScheduledTasks.VirtualBets
 {
     internal class InitializeVirtualDBHostedService : IHostedService, IDisposable
     {
