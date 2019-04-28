@@ -12,6 +12,7 @@ namespace API.Data.Models
 
         [Required]
         public string name { get; set; }
+        public int actualMatchDay { get; set; } = 0;
         public ICollection<MatchDay> matchDays { get; set; } = new HashSet<MatchDay>();
     }
 }

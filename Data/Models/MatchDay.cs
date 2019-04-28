@@ -11,8 +11,7 @@ namespace API.Data.Models
         [Required]
         public int number { get; set; }
 
-        [Required]
-        public string group { get; set; }
+        public String group { get; set; }
 
         public Team HomeTeam { get; set; }
         public Guid HomeTeamId { get; set; }

@@ -28,13 +28,13 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
             _logger.LogInformation("inicializada clase inicializer");
         }
 
-        public async Task<bool> InitializeAsync()
+        public async Task<bool> InitializeAsync(string leagueId)
         {
             string token = _configuration["footballApi:token"];
             int matchd = 0;
             bool correct = true;
 
-            CompetitionMatches comptMatchs = await getMatches(token);
+            CompetitionMatches comptMatchs = await getMatches(token, leagueId);
             Competition league = initializeLeague(comptMatchs.competition.name);
 
 
@@ -52,8 +52,11 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
                 }
 
                 //Only inserts the matchdays which are finished
-                if (match.status == "FINISHED" && match.matchday > matchd) matchd = match.matchday;
+                if (match.status == "FINISHED" && match.matchday > matchd) matchd = match.matchday.Value;
             });
+
+            league.actualMatchDay = matchd;
+            _context.Competitions.Update(league); //Set the actual matchday
 
             if(correct) _context.SaveChanges();
 
@@ -81,7 +84,7 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
                 _context.Add(new MatchDay
                 {
                     Competition = league,
-                    number = match.matchday,
+                    number = match.matchday.Value,
                     group = match.group,
                     HomeTeam = homeTeam,
                     AwayTeam = awayTeam,
@@ -170,11 +173,11 @@ namespace API.ScheduledTasks.InitializeVirtualDB.Util
          * @return array<CompetitionMatches>.
          *      Array with the competition and the matches with their results.
          */
-        private async Task<CompetitionMatches> getMatches(string token)
+        private async Task<CompetitionMatches> getMatches(string token, string leagueId)
         {
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                _baseUrl + "competitions/PD/matches"
+                _baseUrl + "competitions/"+leagueId+"/matches"
             );
 
             var client = _http.CreateClient();

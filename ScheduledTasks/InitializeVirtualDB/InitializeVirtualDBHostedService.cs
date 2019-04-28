@@ -72,30 +72,43 @@ namespace API.ScheduledTasks.InitializeVirtualDBHostedService
             using (var scope = scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-                bool correct = true;
+                bool correctPL = true, correctCL = true, correctPD = true;
+
+                int actualMonth = DateTime.Now.Month;
+                int actualDay = DateTime.Now.Day;
+
+                InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http, _logger);
 
                 //VirtualDB is initialized
-                if (dbContext.Competitions.Count() == 0)
+
+                if (actualMonth == 8 && actualDay == 1)
                 {
-                    InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http, _logger);
-                    correct = await initializer.InitializeAsync();
+                    //Clean the DB and reinitialize
+                    CleanVirtualDB(dbContext);
+                    correctPL = await initializer.InitializeAsync("PL");
+                    correctCL = await initializer.InitializeAsync("CL");
+                    correctPD = await initializer.InitializeAsync("PD");
                 }
                 else
                 {
-                    int actualMonth = DateTime.Now.Month;
-                    int actualDay = DateTime.Now.Day;
-
-                    if (actualMonth == 8 && actualDay == 1)
+                    if (dbContext.Competitions.Where(c => c.name == "Premier League").Count() == 0)
                     {
-                        //Clean the DB and reinitialize
-                        CleanVirtualDB(dbContext);
-                        InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http, _logger);
-                        correct = await initializer.InitializeAsync();
+                        correctPL = await initializer.InitializeAsync("PL");
+                    }
+
+                    if (dbContext.Competitions.Where(c => c.name == "UEFA Champions League").Count() == 0)
+                    {
+                        correctCL = await initializer.InitializeAsync("CL");
+                    }
+
+                    if (dbContext.Competitions.Where(c => c.name == "Primera Division").Count() == 0)
+                    {
+                        correctPD = await initializer.InitializeAsync("PD");
                     }
                 }
 
                 //If the DB wasn't initialized correctly try again next day
-                if (!correct) _timer?.Change(new TimeSpan(1, 0, 0, 0), new TimeSpan(1, 0, 0, 0));
+                if (!correctPL || !correctCL || !correctPD) _timer?.Change(new TimeSpan(1, 0, 0, 0), new TimeSpan(1, 0, 0, 0));
                 else _timer?.Change(CalculateInitalNextTime(), CalculateInitalNextTime()); //Reinitialize the first August next year
             }
         } 
