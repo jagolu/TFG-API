@@ -35,6 +35,28 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
 
         /**
+         * Function to get the info of an speficic competition
+         * @param string token.
+         *      The secret token key of the api.
+         * @param string leagueid.
+         *      The id of the competition in the api.
+         * @param IHttpClientFactory _http.
+         * @return CompetitionInfo.
+         *      The competition info
+         */
+        public async static Task<CompetitionInfo> getCompetitionInfo(string token, string leagueid, IHttpClientFactory _http)
+        {
+            string path = "competitions/" + leagueid;
+
+            string result = await getRequest(path, _http, token);
+
+            CompetitionInfo comptInfo = JsonConvert.DeserializeObject<CompetitionInfo>(result);
+
+            return comptInfo;
+        }
+
+
+        /**
          * Funtion to do a GET Request to the football api
          * @param string path.
          *      The path of the GET Request

@@ -75,7 +75,7 @@ namespace API.ScheduledTasks.VirtualBets
                 int actualMonth = DateTime.Now.Month;
                 int actualDay = DateTime.Now.Day;
 
-                InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http, _logger);
+                InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http);
 
                 //VirtualDB is initialized
 

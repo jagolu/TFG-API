@@ -2,8 +2,6 @@
 using API.Data.Models;
 using API.ScheduledTasks.VirtualBets.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -16,30 +14,36 @@ namespace API.ScheduledTasks.VirtualBets.Util
         private ApplicationDBContext _context;
         private IConfiguration _configuration;
         private readonly IHttpClientFactory _http;
-        private ILogger _logger;
 
-        public InitializerVirtualDB(ApplicationDBContext context, IConfiguration config, IHttpClientFactory http, ILogger logg)
+        public InitializerVirtualDB(ApplicationDBContext context, IConfiguration config, IHttpClientFactory http)
         {
             _context = context;
             _configuration = config;
             _http = http;
-            _logger = logg;
-            _logger.LogInformation("inicializada clase inicializer");
         }
 
+        /**
+         * Function to initialze a league and its teams and matchdays in the DB
+         * @param string leagueid.
+         *      The id of the competition in the api.
+         * @return bool.
+         *      True if the initialization was well, false otherwise.
+         */
         public async Task<bool> InitializeAsync(string leagueId)
         {
             string token = _configuration["footballApi:token"];
-            int matchd = 0;
             bool correct = true;
 
             CompetitionMatches comptMatchs = await APIRequest.getMatchesFromCompetition(token, leagueId, _http);
+            CompetitionInfo comptInfo = await APIRequest.getCompetitionInfo(token, leagueId, _http);
+            int actualMatchD = comptInfo.currentSeason.currentMatchday;
+
             Competition league = initializeLeague(comptMatchs.competition.name);
 
 
             comptMatchs.matches.ForEach(match =>
             {
-                if(match.status == "FINISHED" && match.matchday == matchd)
+                if(match.status == "FINISHED" && match.matchday < actualMatchD)
                 {
                     Team homeTeam = initializeTeam(match.homeTeam.name);
                     Team awayTeam = initializeTeam(match.awayTeam.name);
@@ -49,12 +53,9 @@ namespace API.ScheduledTasks.VirtualBets.Util
                         correct = false;
                     }
                 }
-
-                //Only inserts the matchdays which are finished
-                if (match.status == "FINISHED" && match.matchday > matchd) matchd = match.matchday.Value;
             });
 
-            league.actualMatchDay = matchd;
+            league.actualMatchDay = actualMatchD;
             _context.Competitions.Update(league); //Set the actual matchday
 
             if(correct) _context.SaveChanges();
@@ -99,7 +100,6 @@ namespace API.ScheduledTasks.VirtualBets.Util
             {
                 return false;
             }
-
         }
 
 
