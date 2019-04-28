@@ -1,9 +1,8 @@
 ﻿using API.ScheduledTasks.VirtualBets.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace API.ScheduledTasks.VirtualBets.Util
@@ -28,9 +27,72 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             string result = await getRequest(path, _http, token);
 
-            CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
+            try
+            {
+                CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
 
-            return comptMatchs;
+                return comptMatchs;
+            }
+            catch (Exception) //Some kind of error
+            {
+                try //If ok the error is that we only can do 10 requests per min
+                {
+                    ErrorFootballApiMessage err = JsonConvert.DeserializeObject<ErrorFootballApiMessage>(result);
+
+                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
+
+                    if (err.errorCode == 429) return await getMatchesFromCompetition(token, leagueId, _http);
+
+                    return null;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        /**
+         * Function to get the matches from a specific competition in a specific matchday
+         * @param string token.
+         *      The secret token key of the api.
+         * @param string leagueid.
+         *      The id of the competition in the api.
+         * @param int matchday.
+         *      The matchday in te competition
+         * @param IHttpClientFactory _http.
+         * @return CompetitionMatches.
+         *      The matches in the competition
+         */
+        public async static Task<CompetitionMatches> getMatchesFromMatchDay(string token, string leagueid, int matchday, IHttpClientFactory _http)
+        {
+            string path = "competitions/" + leagueid + "/matches?matchday="+matchday;
+
+            string result = await getRequest(path, _http, token);
+
+            try
+            {
+                CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
+                return comptMatchs;
+            }
+            catch (Exception) //Some kind of error
+            {
+                try //If ok the error is that we only can do 10 requests per min
+                {
+                    ErrorFootballApiMessage err = JsonConvert.DeserializeObject<ErrorFootballApiMessage>(result);
+
+                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
+
+                    if(err.errorCode == 429) return await getMatchesFromMatchDay(token, leagueid, matchday, _http);
+
+                    return null;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
         }
 
 
@@ -50,9 +112,29 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             string result = await getRequest(path, _http, token);
 
-            CompetitionInfo comptInfo = JsonConvert.DeserializeObject<CompetitionInfo>(result);
+            try
+            {
+                CompetitionInfo comptInfo = JsonConvert.DeserializeObject<CompetitionInfo>(result);
 
-            return comptInfo;
+                return comptInfo;
+            }
+            catch (Exception) //Some kind of error
+            {
+                try //If ok the error is that we only can do 10 requests per min
+                {
+                    ErrorFootballApiMessage err = JsonConvert.DeserializeObject<ErrorFootballApiMessage>(result);
+
+                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
+
+                    if (err.errorCode == 429) return await getCompetitionInfo(token, leagueid, _http);
+
+                    return null;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
         }
 
 
