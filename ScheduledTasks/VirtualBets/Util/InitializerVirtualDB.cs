@@ -41,7 +41,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             comptMatchs.matches.ForEach(match =>
             {
-                if(match.status == "FINISHED" && match.matchday < actualMatchD)
+                if(match.matchday <= actualMatchD)
                 {
                     Team homeTeam = FootballInitializers.initializeTeam(match.homeTeam.name, _context);
                     Team awayTeam = FootballInitializers.initializeTeam(match.awayTeam.name, _context);
