@@ -77,14 +77,11 @@ namespace API.ScheduledTasks.VirtualBets
 
                 InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http);
 
-                //VirtualDB is initialized
-
                 if (actualMonth == 8 && actualDay == 1)
                 {
                     //Clean the DB and reinitialize
                     CleanVirtualDB(dbContext);
                     correctPL = await initializer.InitializeAsync("PL");
-                    correctCL = await initializer.InitializeAsync("CL");
                     correctPD = await initializer.InitializeAsync("PD");
                 }
                 else
@@ -92,11 +89,6 @@ namespace API.ScheduledTasks.VirtualBets
                     if (dbContext.Competitions.Where(c => c.name == "Premier League").Count() == 0)
                     {
                         correctPL = await initializer.InitializeAsync("PL");
-                    }
-
-                    if (dbContext.Competitions.Where(c => c.name == "UEFA Champions League").Count() == 0)
-                    {
-                        correctCL = await initializer.InitializeAsync("CL");
                     }
 
                     if (dbContext.Competitions.Where(c => c.name == "Primera Division").Count() == 0)
