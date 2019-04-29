@@ -27,6 +27,11 @@ namespace API.ScheduledTasks.VirtualBets.Util
         {
             try
             {
+                int exist = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
+                                               md.HomeTeamId == homeTeam.id &&
+                                               md.AwayTeamId == awayTeam.id).Count();
+                if (exist != 0) return false;
+
                 _context.Add(new MatchDay
                 {
                     Competition = league,
@@ -34,10 +39,10 @@ namespace API.ScheduledTasks.VirtualBets.Util
                     group = match.group,
                     HomeTeam = homeTeam,
                     AwayTeam = awayTeam,
-                    homeGoals = match.score.fullTime.homeTeam,
-                    awayGoals = match.score.fullTime.awayTeam,
-                    homeEndPenalties = match.score.penalties.homeTeam,
-                    awayEndPenalties = match.score.penalties.awayTeam
+                    homeGoals = match.status == "FINISHED" ? match.score.fullTime.homeTeam : null,
+                    awayGoals = match.status == "FINISHED" ? match.score.fullTime.awayTeam : null,
+                    homeEndPenalties = match.status == "FINISHED" ? match.score.penalties.homeTeam : null,
+                    awayEndPenalties = match.status == "FINISHED" ? match.score.penalties.awayTeam : null
                 });
 
                 return true;
@@ -110,5 +115,4 @@ namespace API.ScheduledTasks.VirtualBets.Util
             }
         }
     }
-}
 }
