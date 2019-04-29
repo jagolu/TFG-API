@@ -40,7 +40,7 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
                 DoWork,
                 null,
                 //TimeSpan.Zero, //30 seconds from now, to wait the football database is initialized
-                TimeSpan.FromSeconds(120), //30 seconds from now, to wait the football database is initialized
+                TimeSpan.FromMinutes(30), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
                 CalculateInitalNextTime() //tomorrow
             );
 
