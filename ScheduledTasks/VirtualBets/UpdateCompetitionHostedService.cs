@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace API.ScheduledTasks.InitializeNextMatchDay
 {
-    public class InitializeNextMatchDayHostedService : IHostedService, IDisposable
+    public class UpdateCompetitionHostedService : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private readonly IServiceScopeFactory scopeFactory;
@@ -20,7 +20,7 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
         private IConfiguration _configuration;
         private readonly IHttpClientFactory _http;
 
-        public InitializeNextMatchDayHostedService(ILogger<InitializeNextMatchDayHostedService> logger, IServiceScopeFactory sf, IConfiguration config, IHttpClientFactory http)
+        public UpdateCompetitionHostedService(ILogger<UpdateCompetitionHostedService> logger, IServiceScopeFactory sf, IConfiguration config, IHttpClientFactory http)
         {
             _logger = logger;
             scopeFactory = sf;
@@ -34,7 +34,7 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
          */
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.BeginScope("Initialize next day match");
+            _logger.BeginScope("Update day match");
 
             _timer = new Timer(
                 DoWork,
@@ -53,7 +53,7 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
          */
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("InitializeNextMatchDay Service is stopping.");
+            _logger.LogInformation("UpdateCompetition Service is stopping.");
 
             //Stop the timer
             _timer.Change(Timeout.Infinite, 0);
@@ -67,21 +67,21 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
          */
         private async void DoWork(object state)
         {
-            _logger.LogInformation("InitializeNextMatchDay Service is working.");
+            _logger.LogInformation("UpdateCompetition Service is working.");
             //TODO initialize the database
             using (var scope = scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
 
-                InitializerNextMatchDay initializer = new InitializerNextMatchDay(dbContext, _configuration, _http);
+                UpdateCompetition updater = new UpdateCompetition(dbContext, _configuration, _http);
 
                 if (dbContext.Competitions.Count()!=0) //The competitions are intialized
                 {
                     int currentMatchDayPL = dbContext.Competitions.Where(c => c.name == "Premier League").First().actualMatchDay;
                     int currentMatchDayPD = dbContext.Competitions.Where(c => c.name == "Primera Division").First().actualMatchDay;
 
-                    if (currentMatchDayPD+1 < 39) await initializer.InitializeAsync("PD", currentMatchDayPD+1);
-                    if (currentMatchDayPL+1 < 39) await initializer.InitializeAsync("PL", currentMatchDayPL+1);
+                    if (currentMatchDayPD+1 < 39) await updater.updateAsync("PD", currentMatchDayPD);
+                    if (currentMatchDayPL+1 < 39) await updater.updateAsync("PL", currentMatchDayPL);
                 }
 
                 //Set cron next day
@@ -123,7 +123,6 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
 
             int mins = (int)(time / 60); //total min
             int hours = mins / 60; //total hours
-            //int days = hours / 24; //exactly days in one year
 
             hours = hours % 24; //Exactly hours in one day
             mins = (mins % 60) + 1; //Exactly min in one hour

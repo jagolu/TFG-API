@@ -55,6 +55,38 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
 
         /**
+         * Function to update a matchday if it's ended
+         * @param Match match. 
+         *      The match of the matchday
+         * @param Competition league. 
+         *      The league to which the matchday belongs
+         * @param Team homeTeam. 
+         *      The home team which plays the match
+         * @param Team awayTeam. 
+         *      The away team which plays the match
+         */
+        public static void updateMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, ApplicationDBContext _context)
+        {
+            if (match.status != "FINISHED") return; //If the match isnt ended dont update
+
+            var matchD = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
+                                                        md.HomeTeamId == homeTeam.id &&
+                                                        md.AwayTeamId == awayTeam.id);
+
+            if (matchD.Count() != 1) return; //Check if the matchday exists to avoid exceptions
+
+            MatchDay matchday = matchD.First();
+
+            matchday.homeGoals = match.score.fullTime.homeTeam;
+            matchday.awayGoals = match.score.fullTime.awayTeam;
+            matchday.homeEndPenalties = match.score.penalties.homeTeam;
+            matchday.awayEndPenalties = match.score.penalties.awayTeam;
+
+            _context.MatchDays.Update(matchday);
+        }
+
+
+        /**
          * Function that insert a new team  in the DB
          * @param string teamName.
          *      The name of the team

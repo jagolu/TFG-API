@@ -73,7 +73,7 @@ namespace API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddHostedService<InitializeVirtualDBHostedService>();
-            services.AddHostedService<InitializeNextMatchDayHostedService>();
+            services.AddHostedService<UpdateCompetitionHostedService>();
 
             _logger.LogInformation("Added services");
         }
