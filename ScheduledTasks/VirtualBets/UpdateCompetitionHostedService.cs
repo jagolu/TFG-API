@@ -114,7 +114,7 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;
 
-            double then = nowDay.AddDays(1)
+            double then = nowDay.AddDays(1).AddHours(3)
                 .ToUniversalTime()
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;

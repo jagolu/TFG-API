@@ -50,7 +50,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 FootballInitializers.updateMatchDay(actualMatchDayMatches.matches[i], league, homeTeam, awayTeam, _context); //There is any error inserting the new matchday
 
             }
-            
+
+            //Update actual matchday
+            CompetitionInfo comptInfo = await APIRequest.getCompetitionInfo(token, leagueid, _http);
+            league.actualMatchDay = comptInfo.currentSeason.currentMatchday;
+            _context.Competitions.Update(league);
+
             _context.SaveChanges();
         }
 
