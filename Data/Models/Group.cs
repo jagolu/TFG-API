@@ -25,6 +25,9 @@ namespace API.Data.Models
         public Boolean open { get; set; } = true;
 
         [Required]
+        public int capacity { get; set; } = 7;
+
+        [Required]
         public DateTime dateCreated { get; set; } = DateTime.Today;
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();

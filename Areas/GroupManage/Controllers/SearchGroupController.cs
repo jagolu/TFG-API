@@ -23,23 +23,29 @@ namespace API.Areas.GroupManage.Controllers
 
         [HttpGet]
         [ActionName("SearchGroup")]
-        public List<GroupNameAndType> checkName(string name)
+        public List<GroupInfo> checkName(string name)
         {
             //The request name is empty
             if (name == null || name.Length == 0)
             {
-                return new List<GroupNameAndType>();
+                return new List<GroupInfo>();
             }
 
             List<Group> groupsWithTheSameName = _context.Group.Where(g => g.name.ToLower().Contains(name.ToLower().Trim()) && g.open).ToList();
-            List<GroupNameAndType> groupRet = new List<GroupNameAndType>();
+            List<GroupInfo> groupRet = new List<GroupInfo>();
 
             groupsWithTheSameName.ForEach(group =>
             {
-                groupRet.Add(new GroupNameAndType
+                _context.Entry(group).Collection("users").Load();
+                //_context.Entry(user).Reference("role").Load();
+
+                groupRet.Add(new GroupInfo
                 {
                     name = group.name,
-                    type = group.type
+                    type = group.type,
+                    password = group.password != null,
+                    placesOcupped = group.users.Count(),
+                    totalPlaces = group.capacity
                 });
             });
 
