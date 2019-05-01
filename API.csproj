@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Shop\Models\" />
     <Folder Include="webInterface\dist\" />
   </ItemGroup>
 
