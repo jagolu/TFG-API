@@ -6,6 +6,7 @@ using API.Areas.GroupManage.Models;
 using API.Data;
 using API.Data.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Areas.GroupManage.Controllers
@@ -22,6 +23,7 @@ namespace API.Areas.GroupManage.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ActionName("SearchGroup")]
         public List<GroupInfo> checkName(string name)
         {
