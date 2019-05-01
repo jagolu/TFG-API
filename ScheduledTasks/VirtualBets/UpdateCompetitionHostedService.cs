@@ -39,8 +39,8 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
             _timer = new Timer(
                 DoWork,
                 null,
-                //TimeSpan.Zero, //30 seconds from now, to wait the football database is initialized
-                TimeSpan.FromMinutes(30), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
+                //TimeSpan.FromMinutes(2), //30 seconds from now, to wait the football database is initialized
+                TimeSpan.FromHours(1), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
                 CalculateInitalNextTime() //tomorrow
             );
 
