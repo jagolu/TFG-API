@@ -58,17 +58,5 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             _context.SaveChanges();
         }
-
-        private void updateMatchs(List<Match> matches, Competition league)
-        {
-            for(int i = 0; i < matches.Capacity; i++)
-            {
-                Team homeTeam = FootballInitializers.initializeTeam(matches[i].homeTeam.name, _context);
-                Team awayTeam = FootballInitializers.initializeTeam(matches[i].awayTeam.name, _context);
-
-                FootballInitializers.initializeMatchDay(matches[i], league, homeTeam, awayTeam, _context); //There is any error inserting the new matchday
-
-            }
-        }
     }
 }
