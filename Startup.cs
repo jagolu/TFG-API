@@ -107,6 +107,7 @@ namespace API
             PasswordHasher.Initialize(Configuration);
             
             DBInitializer.Initialize(context);
+            ShopInitializer.Initialize(context);
 
             app.UseSpa(spa => {
                 spa.Options.SourcePath = "webInterface";
