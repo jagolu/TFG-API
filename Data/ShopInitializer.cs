@@ -1,4 +1,5 @@
-﻿using API.Data.Models;
+﻿using API.Areas.Shop.Models;
+using API.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace API.Data
             {
                 new ShopOffer
                 {
+                    offerCode = "GROUPCAPACITY_PLUS_5",
                     title = "GROUP CAPACITY + 5 MEMBERS",
                     price = 1,
                     description = "Add 5 members of capacity to your actual group capacity!",
@@ -31,6 +33,7 @@ namespace API.Data
                 },
                 new ShopOffer
                 {
+                    offerCode = "GROUPCAPACITY_PLUS_25",
                     title = "GROUP CAPACITY + 25 MEMBERS",
                     price = 5,
                     description = "Add 25 members of capacity to your actual group capacity!",
@@ -38,6 +41,7 @@ namespace API.Data
                 },
                 new ShopOffer
                 {
+                    offerCode = "GROUPCAPACITY_PLUS_50",
                     title = "GROUP CAPACITY + 50 MEMBERS",
                     price = 10,
                     description = "Add 50 members of capacity to your actual group capacity!",
@@ -45,6 +49,7 @@ namespace API.Data
                 },
                 new ShopOffer
                 {
+                    offerCode = "USER_PRUEBA",
                     title = "Prueba User offer",
                     price = 10,
                     description = "This is a test",

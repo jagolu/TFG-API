@@ -33,7 +33,7 @@ namespace API.Areas.Shop.Controllers
                     _context.Entry(offer).Reference("type").Load();
                     offersToShow.Add(new OfferShop
                     {
-                        productId = offer.id.ToString(),
+                        productId = offer.offerCode,
                         title = offer.title,
                         price = offer.price,
                         description = offer.description,

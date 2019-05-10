@@ -10,6 +10,9 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
+        public string offerCode { get; set; }
+
+        [Required]
         public string title { get; set; }
 
         [Required]
