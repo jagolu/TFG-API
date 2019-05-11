@@ -87,11 +87,31 @@ namespace API.Data
             };
 
 
-            if (context.User.Where(u => u.email == "u1@gmail.com").Count() == 0) context.Add(u1);
-            if (context.User.Where(u => u.email == "u2@gmail.com").Count() == 0) context.Add(u2);
-            if (context.User.Where(u => u.email == "u3@gmail.com").Count() == 0) context.Add(u3);
-            if (context.User.Where(u => u.email == "u4@gmail.com").Count() == 0) context.Add(u4);
-            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
+            if (context.User.Where(u => u.email == "u1@gmail.com").Count() == 0)
+            {
+                context.Add(u1);
+                context.Limitations.Add(new Limitations { User = u1 });
+            }
+            if (context.User.Where(u => u.email == "u2@gmail.com").Count() == 0)
+            {
+                context.Add(u2);
+                context.Limitations.Add(new Limitations { User = u2 });
+            }
+            if (context.User.Where(u => u.email == "u3@gmail.com").Count() == 0)
+            {
+                context.Add(u3);
+                context.Limitations.Add(new Limitations { User = u3 });
+            }
+            if (context.User.Where(u => u.email == "u4@gmail.com").Count() == 0)
+            {
+                context.Add(u4);
+                context.Limitations.Add(new Limitations { User = u4 });
+            }
+            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0)
+            {
+                context.Add(admin);
+                context.Limitations.Add(new Limitations { User = admin });
+            }
         }
     }
 }
