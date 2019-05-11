@@ -2,7 +2,6 @@
 using System.Linq;
 using API.Areas.GroupManage.Models;
 using API.Data;
-using API.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,30 +9,23 @@ namespace API.Areas.GroupManage.Controllers
 {
     [Route("Group/[action]")]
     [ApiController]
-    public class SearchGroupController : ControllerBase
+    public class GetAllGroupsControlller : ControllerBase
     {
         private ApplicationDBContext _context;
 
-        public SearchGroupController(ApplicationDBContext context)
+        public GetAllGroupsControlller(ApplicationDBContext context)
         {
             _context = context;
         }
 
         [HttpGet]
         [Authorize]
-        [ActionName("SearchGroup")]
-        public List<GroupInfo> checkName(string name)
+        [ActionName("GetAllGroups")]
+        public List<GroupInfo> getAllGroups()
         {
-            //The request name is empty
-            if (name == null || name.Length == 0)
-            {
-                return new List<GroupInfo>();
-            }
-
-            List<Group> groupsWithTheSameName = _context.Group.Where(g => g.name.ToLower().Contains(name.ToLower().Trim()) && g.open).ToList();
             List<GroupInfo> groupRet = new List<GroupInfo>();
 
-            groupsWithTheSameName.ForEach(group =>
+            _context.Group.ToList().ForEach(group =>
             {
                 _context.Entry(group).Collection("users").Load();
 
