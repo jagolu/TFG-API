@@ -29,7 +29,7 @@ namespace API.Data
                     title = "GROUP CAPACITY + 5 MEMBERS",
                     price = 1,
                     description = "Add 5 members of capacity to your actual group capacity!",
-                    type = types.Where(t => t.name == "Group").First(),
+                    type = types.Where(t => t.name == "Group").First()
                 },
                 new ShopOffer
                 {
@@ -37,7 +37,7 @@ namespace API.Data
                     title = "GROUP CAPACITY + 25 MEMBERS",
                     price = 5,
                     description = "Add 25 members of capacity to your actual group capacity!",
-                    type = types.Where(t => t.name == "Group").First(),
+                    type = types.Where(t => t.name == "Group").First()
                 },
                 new ShopOffer
                 {
@@ -45,7 +45,15 @@ namespace API.Data
                     title = "GROUP CAPACITY + 50 MEMBERS",
                     price = 10,
                     description = "Add 50 members of capacity to your actual group capacity!",
-                    type = types.Where(t => t.name == "Group").First(),
+                    type = types.Where(t => t.name == "Group").First()
+                },
+                new ShopOffer
+                {
+                    offerCode = "GROUP_ADD_PASSWORD",
+                    title = "MAKE YOUR GROUP PRIVATE",
+                    price = 3,
+                    description = "Make your group private adding a password to join it!",
+                    type = types.Where(t => t.name == "Group").First()
                 },
                 new ShopOffer
                 {
@@ -53,7 +61,7 @@ namespace API.Data
                     title = "Prueba User offer",
                     price = 10,
                     description = "This is a test",
-                    type = types.Where(t => t.name == "User").First(),
+                    type = types.Where(t => t.name == "User").First()
                 }
             };
 
