@@ -7,20 +7,6 @@ namespace API.Data
 {
     public class DBInitializer
     {
-        private static void InitializeUser(ApplicationDBContext context)
-        {
-
-            User admin = new User {
-                email = "a@gmail.com",
-                nickname = "a_ADMIN",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "ADMIN").First()
-            };
-
-            if(context.User.Where(u=> u.email == "a@gmail.com").Count() == 0)context.Add(admin);
-        }
-
         private static void InitializeRoles(ApplicationDBContext context)
         {
             var roles = new Role[] {
@@ -52,9 +38,60 @@ namespace API.Data
 
             context.SaveChanges();
 
-            InitializeUser(context);
+            createDevelopmentUser(context); //Test users
 
             context.SaveChanges();
+        }
+
+        private static void createDevelopmentUser(ApplicationDBContext context)
+        {
+            User u1 = new User
+            {
+                email = "u1@gmail.com",
+                nickname = "u1_test",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+            User u2 = new User
+            {
+                email = "u2@gmail.com",
+                nickname = "u2_test",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+            User u3 = new User
+            {
+                email = "u3@gmail.com",
+                nickname = "u3_test",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+            User u4 = new User
+            {
+                email = "u4@gmail.com",
+                nickname = "u4_test",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
+            };
+            User admin = new User
+            {
+                email = "a@gmail.com",
+                nickname = "a_ADMIN",
+                password = PasswordHasher.hashPassword("asdfasdf1A"),
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "ADMIN").First()
+            };
+
+
+            if (context.User.Where(u => u.email == "u1@gmail.com").Count() == 0) context.Add(u1);
+            if (context.User.Where(u => u.email == "u2@gmail.com").Count() == 0) context.Add(u2);
+            if (context.User.Where(u => u.email == "u3@gmail.com").Count() == 0) context.Add(u3);
+            if (context.User.Where(u => u.email == "u4@gmail.com").Count() == 0) context.Add(u4);
+            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
         }
     }
 }
