@@ -30,6 +30,13 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult JoinGroup([FromBody] JoinGroup joinGroupInfo)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            _context.Entry(user).Collection("groups").Load();
+            _context.Entry(user).Reference("limitations").Load();
+
+            if(user.groups.Count() >= user.limitations.maxGroupJoins)
+            {
+                return BadRequest(new { error = "MaxGroupJoinsReached" });
+            }
 
             //Group with the same name
             var dbGroup = _context.Group.Where(g => g.name == joinGroupInfo.groupName);

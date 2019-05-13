@@ -14,5 +14,8 @@ namespace API.Data.Models
 
         [Required]
         public int createVirtualGroup { get; set; } = 1;
+
+        [Required]
+        public int maxGroupJoins { get; set; } = 2;
     }
 }
