@@ -71,21 +71,29 @@ namespace API.ScheduledTasks.InitializeNextMatchDay
             //TODO initialize the database
             using (var scope = scopeFactory.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-
-                UpdateCompetition updater = new UpdateCompetition(dbContext, _configuration, _http);
-
-                if (dbContext.Competitions.Count()!=0) //The competitions are intialized
+                try
                 {
-                    int currentMatchDayPL = dbContext.Competitions.Where(c => c.name == "Premier League").First().actualMatchDay;
-                    int currentMatchDayPD = dbContext.Competitions.Where(c => c.name == "Primera Division").First().actualMatchDay;
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
 
-                    if (currentMatchDayPD+1 < 39) await updater.updateAsync("PD", currentMatchDayPD);
-                    if (currentMatchDayPL+1 < 39) await updater.updateAsync("PL", currentMatchDayPL);
+                    UpdateCompetition updater = new UpdateCompetition(dbContext, _configuration, _http);
+
+                    if (dbContext.Competitions.Count()!=0) //The competitions are intialized
+                    {
+                        int currentMatchDayPL = dbContext.Competitions.Where(c => c.name == "Premier League").First().actualMatchDay;
+                        int currentMatchDayPD = dbContext.Competitions.Where(c => c.name == "Primera Division").First().actualMatchDay;
+
+                        if (currentMatchDayPD+1 < 39) await updater.updateAsync("PD", currentMatchDayPD);
+                        if (currentMatchDayPL+1 < 39) await updater.updateAsync("PL", currentMatchDayPL);
+                    }
+
+                    //Set cron next day
+                    _timer?.Change(CalculateInitalNextTime(), CalculateInitalNextTime());
+                }
+                catch (Exception)
+                {
+                    _timer?.Change(TimeSpan.FromHours(1), TimeSpan.FromHours(2));
                 }
 
-                //Set cron next day
-                _timer?.Change(CalculateInitalNextTime(), CalculateInitalNextTime());
             }
         }
 
