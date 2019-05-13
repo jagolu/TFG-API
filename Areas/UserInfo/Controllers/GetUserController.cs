@@ -44,7 +44,7 @@ namespace API.Areas.UserInfo.Controllers
 
                 return Ok(userShow);    
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 return StatusCode(500);
             }
         }
@@ -61,8 +61,8 @@ namespace API.Areas.UserInfo.Controllers
 
                     roleGroups.Add(new RoleGroup
                     {
-                        group = group.Group.name,
-                        groupType = group.Group.type ? "OFICIAL" : "VIRTUAL",
+                        name = group.Group.name,
+                        type = group.Group.type,
                         role = group.role.name
                     });
                 }
