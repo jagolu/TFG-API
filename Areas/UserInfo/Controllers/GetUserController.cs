@@ -44,21 +44,28 @@ namespace API.Areas.UserInfo.Controllers
 
                 return Ok(userShow);    
 
-            } catch (Exception) {
+            } catch (Exception e) {
                 return StatusCode(500);
             }
         }
 
-        private List<RoleGroup> getRoleGroups(User u)
+        private List<RoleGroup> getRoleGroups(User user)
         {
             List<RoleGroup> roleGroups = new List<RoleGroup>();
+            _context.Entry(user).Collection("groups").Load();
 
-            u.groups.ToList().ForEach(
-                i => roleGroups.Add(new RoleGroup {
-                    group = i.Group.name,
-                    groupType = i.Group.type ? "OFICIAL" : "VIRTUAL",
-                    role = i.role.name
-                })
+            user.groups.ToList().ForEach(
+                group => {
+                    _context.Entry(group).Reference("Group").Load();
+                    _context.Entry(group).Reference("role").Load();
+
+                    roleGroups.Add(new RoleGroup
+                    {
+                        group = group.Group.name,
+                        groupType = group.Group.type ? "OFICIAL" : "VIRTUAL",
+                        role = group.role.name
+                    });
+                }
             );
 
             return roleGroups;
