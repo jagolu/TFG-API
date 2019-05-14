@@ -43,9 +43,14 @@ namespace API.Areas.GroupManage.Controllers
                 return StatusCode(500);
             }
 
-            if(!canCreateANewGroup(group, user)) //The user cant create more groups
+            if (!canCreateANewGroup(user))
             {
                 return BadRequest(new { error = "LimitationCreateGroup" });
+            }
+
+            if(!canCreateAnewSpecificGroup(group.type, user)) //The user cant create more groups
+            {
+                return BadRequest(new { error = "LimitationSpecificCreateGroup" });
             }
 
             try
@@ -74,46 +79,46 @@ namespace API.Areas.GroupManage.Controllers
 
         /**
          * Check if an user can create a new specific group
-         * @param group New group to create
+         * @param {bool} type The type of the new group to create
          * @user The user trying to create the new group
          * @return true if the user can create the new group, false otherwise
          */
-        private bool canCreateANewGroup(CreateGroup group, User user)
+        private bool canCreateAnewSpecificGroup(bool type, User user)
         {
             int userGroups = 0;
             int limitationGroups = 0;
             _context.Entry(user).Reference("limitations").Load();
-            _context.Entry(user).Reference("role").Load();
 
-            if (group.type) //Official group
+            userGroups = _context.UserGroup.Where(ug =>
+                ug.userId == user.id &&
+                ug.Group.type == type &&
+                ug.role.name == "GROUP_MAKER").Count();
+
+            if (type) //Official group //Max groups that the user can create
             {
-                //Official groups created by the user
-                userGroups = _context.UserGroup.Where(ug =>
-                    ug.userId == user.id &&
-                    ug.Group.type == true &&
-                    ug.role.name == "GROUP_MAKER").Count();
-
-                //Max groups that the user can create
                 limitationGroups = user.limitations.createOfficialGroup;
             }
-            else //Virtual group
+            else //Virtual group //Max groups that the user can create
             {
-                //Virtual groups created by the user
-                userGroups = _context.UserGroup.Where(ug =>
-                    ug.userId == user.id &&
-                    ug.Group.type == false &&
-                    ug.role.name == "GROUP_MAKER").Count();
-
-                //Max groups that the user can create
                 limitationGroups = user.limitations.createVirtualGroup;
             }
 
-            if (limitationGroups <= userGroups) //The user cant create a new group of the specificated type
-            {
-                return false;
-            }
+            return userGroups < limitationGroups; //The user cant create a new group of the specificated type
+        }
 
-            return true;
+        /**
+         * Function to know if the user can create a new group ignoring its type
+         * 
+         * @access private
+         * @param {User} The user who tries to create the new group
+         * @return {bool} True if the user can create another group, false otherwhise
+         */
+        private bool canCreateANewGroup(User user)
+        {
+            _context.Entry(user).Reference("limitations").Load();
+            int totalUserGroupJoined = _context.UserGroup.Where(ug => ug.userId == user.id ).Count();
+
+            return totalUserGroupJoined < user.limitations.maxGroupJoins;
         }
     }
 }
