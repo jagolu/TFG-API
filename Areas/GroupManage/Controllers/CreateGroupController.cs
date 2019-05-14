@@ -68,13 +68,13 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Add(userG);
 
                 _context.SaveChanges();
+
+                return Ok(new { success = "SuccesfullCreatedGroup" });
             }
             catch (Exception)
             {
                 return StatusCode(500);
             }
-
-            return Ok();
         }
 
         /**
