@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using API.Areas.GroupManage.Models;
+using API.Areas.Identity.Models;
 using API.Data;
+using API.Data.Models;
+using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +28,35 @@ namespace API.Areas.GroupManage.Controllers
         {
             List<GroupInfo> groupRet = new List<GroupInfo>();
 
-            _context.Group.ToList().ForEach(group =>
+            return addGroupsToList(_context.Group.ToList());
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        [ActionName("SearchGroup")]
+        public List<GroupInfo> searchGroupByName(string name)
+        {
+            //The request name is empty
+            if (name == null || name.Length == 0)
+            {
+                return new List<GroupInfo>();
+            }
+
+            List<Group> groupsWithTheSameName = _context.Group.Where(g => 
+                g.name.ToLower().Contains(
+                    name.ToLower().Trim()
+                ) && g.open
+            ).ToList();
+
+            return addGroupsToList(groupsWithTheSameName);
+        }
+
+        private List<GroupInfo> addGroupsToList(List<Group> groups)
+        {
+            List<GroupInfo> groupRet = new List<GroupInfo>();
+
+            groups.ForEach(group =>
             {
                 _context.Entry(group).Collection("users").Load();
 
