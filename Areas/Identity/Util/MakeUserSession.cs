@@ -61,8 +61,7 @@ namespace API.Areas.Identity.Util
                 userGroups.Add(new UserGroups
                 {
                     name = g.Group.name,
-                    type = g.Group.type,
-                    role = g.role.name
+                    type = g.Group.type
                 });
             });
 
