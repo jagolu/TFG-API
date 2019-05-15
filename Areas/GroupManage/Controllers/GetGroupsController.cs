@@ -52,6 +52,28 @@ namespace API.Areas.GroupManage.Controllers
             return addGroupsToList(groupsWithTheSameName);
         }
 
+        [HttpGet]
+        [Authorize]
+        [ActionName("ReloadUserGroups")]
+        public List<UserGroups> reloadUserGroups()
+        {
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            List<UserGroups> groupsInfo = new List<UserGroups>();
+            _context.Entry(user).Collection("groups").Load();
+            
+            user.groups.ToList().ForEach(group =>
+            {
+                _context.Entry(group).Reference("Group").Load();
+                groupsInfo.Add(new UserGroups
+                {
+                    name = group.Group.name,
+                    type = group.Group.type
+                });
+            });
+
+            return groupsInfo;
+        }
+
         private List<GroupInfo> addGroupsToList(List<Group> groups)
         {
             List<GroupInfo> groupRet = new List<GroupInfo>();
