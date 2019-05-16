@@ -64,10 +64,13 @@ namespace API.Areas.GroupManage.Controllers
             user.groups.ToList().ForEach(group =>
             {
                 _context.Entry(group).Reference("Group").Load();
+                _context.Entry(group).Reference("role").Load();
+
                 groupsInfo.Add(new UserGroups
                 {
                     name = group.Group.name,
-                    type = group.Group.type
+                    type = group.Group.type,
+                    role = group.role.name
                 });
             });
 
