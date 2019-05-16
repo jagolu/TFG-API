@@ -71,7 +71,10 @@ namespace API.Areas.GroupManage.Controllers
             {
                 _context.Entry(ug).Reference("role").Load();
                 _context.Entry(ug).Reference("User").Load();
-                members.Add(new GroupMember { userName = ug.User.nickname ,role = ug.role.name});
+                if (ug.User.email != user.email)
+                {
+                    members.Add(new GroupMember { userName = ug.User.nickname, role = ug.role.name });
+                }
             }
 
             page.members = members;
