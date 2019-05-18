@@ -12,6 +12,10 @@ namespace API.Data.Models
 
         [Required]
         [MaxLength]
+        public string publicId { get; set; } = Guid.NewGuid().ToString();
+
+        [Required]
+        [MaxLength]
         [MinLength(4)]
         public string email { get; set; }
 

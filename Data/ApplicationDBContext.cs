@@ -38,6 +38,10 @@ namespace API.Data
             mb.Entity<User>()
                 .HasIndex(u => u.email)
                 .IsUnique();
+
+            mb.Entity<User>()
+                .HasIndex(u => u.publicId)
+                .IsUnique();
         }
 
         private void onCreateUserToken(ModelBuilder mb)
