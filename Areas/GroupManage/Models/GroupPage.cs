@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace API.Areas.GroupManage.Models
 {
@@ -6,7 +7,11 @@ namespace API.Areas.GroupManage.Models
     {
         public string groupName { get; set; }
         public bool groupType { get; set; }
-        public string role { get; set; }
+        public bool canPutPassword { get; set; }
+        public bool hasPassword { get; set; }
+        public int maxCapacity { get; set; }
+        public int actualCapacity { get; set; }
+        public DateTime createDate { get; set; }
         public List<GroupBet> bets { get; set; }
         public List<GroupMember> members { get; set; }
     }

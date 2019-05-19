@@ -52,7 +52,6 @@ namespace API.Areas.GroupManage.Controllers
             //Get the role of the user in the group
             UserGroup ownUserGroup =  group.users.Where(u => u.userId == user.id).First();
             _context.Entry(ownUserGroup).Reference("role").Load();
-            page.role = ownUserGroup.role.name;
 
 
             //Change ---- this is for try
@@ -67,16 +66,21 @@ namespace API.Areas.GroupManage.Controllers
             // Set the users who belongs to the group
             List<GroupMember> members = new List<GroupMember>();
 
-            foreach(UserGroup ug in group.users)
+            foreach(UserGroup ug in group.users.OrderBy(ug => ug.dateJoin)) //Order by join date from sooner to later
             {
                 _context.Entry(ug).Reference("role").Load();
                 _context.Entry(ug).Reference("User").Load();
                 if (ug.User.email != user.email)
                 {
-                    members.Add(new GroupMember { userName = ug.User.nickname, role = ug.role.name });
+                    members.Add(new GroupMember {
+                        userName = ug.User.nickname,
+                        publicUserId = ug.User.publicId,
+                        role = ug.role.name,
+                        dateJoin = ug.dateJoin,
+                        dateRole = ug.dateRole
+                    });
                 }
             }
-
             page.members = members;
 
             return Ok(page);
