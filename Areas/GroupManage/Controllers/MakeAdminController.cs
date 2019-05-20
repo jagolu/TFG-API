@@ -48,7 +48,7 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest(new { error = "" });
             }
 
-            if(!hasPermissions(members, user.id))
+            if(!hasPermissions(members, user.id, order.makeAdmin))
             {
                 return BadRequest(new { error = "" });
             }
@@ -56,7 +56,7 @@ namespace API.Areas.GroupManage.Controllers
             try
             {
                 UserGroup nextAdmin = members.Where(m => m.userId != user.id).First();
-                nextAdmin.role = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+                nextAdmin.role = _context.Role.Where(r => r.name == (order.makeAdmin ? "GROUP_ADMIN" : "GROUP_NORMAL")).First();
                 _context.Update(nextAdmin);
                 _context.SaveChanges();
 
@@ -68,14 +68,14 @@ namespace API.Areas.GroupManage.Controllers
             }
         }
 
-        private bool hasPermissions(List<UserGroup> members, Guid callerId)
+        private bool hasPermissions(List<UserGroup> members, Guid callerId, bool makeAdmin)
         {
             _context.Entry(members.First()).Reference("role").Load();
             _context.Entry(members.Last()).Reference("role").Load();
             string roleCaller = members.Where(m => m.userId == callerId).First().role.name;
             string rolenextAdmin = members.Where(m => m.userId != callerId).First().role.name;
             string role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
-            string role_normal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
+            string role_normal = _context.Role.Where(r => r.name == (makeAdmin ? "GROUP_NORMAL" : "GROUP_ADMIN")).First().name;
 
             if(rolenextAdmin != role_normal || roleCaller != role_groupMaker)
             {
