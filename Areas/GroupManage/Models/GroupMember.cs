@@ -1,4 +1,6 @@
-﻿using System;
+﻿using API.Areas.UserInfo.Util;
+using Newtonsoft.Json;
+using System;
 
 namespace API.Areas.GroupManage.Models
 {
@@ -9,5 +11,8 @@ namespace API.Areas.GroupManage.Models
         public string role { get; set; }
         public DateTime dateJoin { get; set; }
         public DateTime dateRole { get; set; }
+
+        [JsonConverter(typeof(ConvertBase64ToBlob))]
+        public Byte[] img { get; set; }
     }
 }

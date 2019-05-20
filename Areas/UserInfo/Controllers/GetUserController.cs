@@ -6,7 +6,6 @@ using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Areas.UserInfo.Controllers

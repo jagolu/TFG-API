@@ -77,7 +77,8 @@ namespace API.Areas.GroupManage.Controllers
                         publicUserId = ug.User.publicId,
                         role = ug.role.name,
                         dateJoin = ug.dateJoin,
-                        dateRole = ug.dateRole
+                        dateRole = ug.dateRole,
+                        img = ug.User.profileImg
                     });
                 }
             }
