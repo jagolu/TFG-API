@@ -14,7 +14,6 @@ namespace API.Data
                 new Role{name="NORMAL_USER"},
                 new Role{name="GROUP_MAKER" },
                 new Role{name="GROUP_ADMIN"},
-                new Role{name="GROUP_SUBADMIN"},
                 new Role{name="GROUP_NORMAL"}
             };
 
