@@ -7,6 +7,7 @@ namespace API.Areas.GroupManage.Models
     {
         public string groupName { get; set; }
         public bool groupType { get; set; }
+        public string role { get; set; }
         public bool canPutPassword { get; set; }
         public bool hasPassword { get; set; }
         public int maxCapacity { get; set; }

@@ -37,17 +37,20 @@ namespace API.Areas.GroupManage.Controllers
 
             Group group = groups.First();
             _context.Entry(group).Collection("users").Load();
+            var userInTheGroup = group.users.Where(u => u.userId == user.id);
 
             // If the user doesn't belong to the group
-            if (group.users.Where(u=>u.userId == user.id).Count() != 1)
+            if (userInTheGroup.Count() != 1)
             {
                 return BadRequest(new { error = "" });
             }
 
             //Set the group name and group type
+            _context.Entry(userInTheGroup.First()).Reference("role").Load();
             GroupPage page = new GroupPage();
             page.groupName = group.name;
             page.groupType = group.type;
+            page.role = userInTheGroup.First().role.name;
 
             //Get the role of the user in the group
             UserGroup ownUserGroup =  group.users.Where(u => u.userId == user.id).First();
