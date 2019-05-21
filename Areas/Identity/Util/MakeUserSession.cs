@@ -57,13 +57,11 @@ namespace API.Areas.Identity.Util
             groups.ForEach(g =>
             {
                 _context.Entry(g).Reference("Group").Load();
-                _context.Entry(g).Reference("role").Load();
 
                 userGroups.Add(new UserGroups
                 {
                     name = g.Group.name,
-                    type = g.Group.type,
-                    role = g.role.name
+                    type = g.Group.type
                 });
             });
 
