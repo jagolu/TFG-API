@@ -13,7 +13,8 @@ namespace API.Areas.GroupManage.Util
         {
             try
             {
-                UserGroup callerInGroup = _context.UserGroup.Where(ug => ug.userId == caller.id).First();
+                _context.Entry(group).Collection("users").Load();
+                UserGroup callerInGroup = group.users.Where(u => u.userId == caller.id).First();
                 _context.Entry(callerInGroup).Reference("role").Load();
 
                 string callerInGroup_role = callerInGroup.role.name;
@@ -22,17 +23,33 @@ namespace API.Areas.GroupManage.Util
                 string role_group_admin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First().name;
 
                 GroupPage page = new GroupPage();
-                page.groupName = group.name;
-                page.groupType = group.type;
+                page.name = group.name;
+                page.type = group.type;
                 page.role = callerInGroup_role;
+                page.actualCapacity = group.users.ToList().Count();
+                page.canPutPassword = group.canPutPassword;
+                page.createDate = group.dateCreated;
+                page.hasPassword = group.password != null;
+                page.maxCapacity = group.capacity;
                 page.bets = getBets(_context);
-                page.members = getMembers(callerInGroup_role, group, _context, role_group_normal);
+                page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new GroupPage();
+                return new GroupPage{
+                    name = "",
+                    type = false,
+                    role = "",
+                    bets = new List<GroupBet>(),
+                    members = new List<GroupMember>(),
+                    actualCapacity = 0,
+                    canPutPassword = false,
+                    createDate = new DateTime(),
+                    hasPassword = false,
+                    maxCapacity = 0
+                };
             }
 
         }
@@ -48,14 +65,14 @@ namespace API.Areas.GroupManage.Util
             };
         }
 
-        private static List<GroupMember> getMembers(string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
+        private static List<GroupMember> getMembers(Guid callerId, string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
         {
             List<GroupMember> members = new List<GroupMember>();
             _context.Entry(group).Collection("users").Load();
 
             group.users.ToList().ForEach(user =>
             {
-                if(!user.blocked || (user.blocked && callerRoleInGroup != roleGroup_normal))
+                if( callerId != user.userId && (!user.blocked || (user.blocked && callerRoleInGroup != roleGroup_normal)))
                 {
                     _context.Entry(user).Reference("blockedBy").Load();
                     _context.Entry(user).Reference("User").Load();

@@ -5,8 +5,8 @@ namespace API.Areas.GroupManage.Models
 {
     public class GroupPage
     {
-        public string groupName { get; set; }
-        public bool groupType { get; set; }
+        public string name { get; set; }
+        public bool type { get; set; }
         public string role { get; set; }
         public bool canPutPassword { get; set; }
         public bool hasPassword { get; set; }

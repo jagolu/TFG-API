@@ -36,8 +36,13 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
-                _context.UserGroup.Remove(targetUser);
+                _context.Remove(targetUser);
                 _context.SaveChanges();
+                group.users.Remove(targetUser);
+
+                //TODO el contexto no se actualiza, y el usuario que se ha eliminado sigue
+                //apareciendo en el array de UserGroup de este grupo WTF
+                //group = _context.Group.Where(g => g.name == order.groupName).First();
 
                 return Ok(GroupPageManager.GetPage(user, group, _context));
             }
