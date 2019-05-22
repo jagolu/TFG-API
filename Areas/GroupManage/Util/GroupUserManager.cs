@@ -8,7 +8,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class GroupUserManager
     {
-        public static bool CheckUserGroup(User caller, /*ref Group group,*/ string groupName, ref UserGroup targetUserGroup, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unamke)
+        public static bool CheckUserGroup(User caller, /*ref Group group,*/ string groupName, ref UserGroup targetUserGroup, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
         {
             try
             {
@@ -46,10 +46,13 @@ namespace API.Areas.GroupManage.Util
                 switch (type)
                 {
                     case TypeCheckGroupUser.MAKE_ADMIN:
-                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unamke, context);
+                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, context);
                         break;
                     case TypeCheckGroupUser.REMOVE_USER:
                         can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, context);
+                        break;
+                    case TypeCheckGroupUser.BLOCK_USER:
+                        can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, targetUserGroup, make_unmake, context);
                         break;
                     default:
                         can = false;
@@ -90,11 +93,39 @@ namespace API.Areas.GroupManage.Util
 
             return false;
         }
+
+        private static bool hasPermissionsBlockUser(string callerRole, string targetRole, UserGroup targetUser, bool make_unmake,ApplicationDBContext context)
+        {
+            context.Entry(targetUser).Reference("blockedBy").Load();
+            bool alreadyBlocked = targetUser.blocked;
+            string blockByRole = targetUser.blockedBy.name;
+            string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
+            string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
+
+            if(callerRole == role_normal) return false;
+
+            if (!make_unmake)
+            {
+                if (!alreadyBlocked || callerRole != role_groupMaker) return false;
+
+                return true;
+            }
+            else
+            {
+                if (alreadyBlocked || targetRole == role_groupMaker || callerRole == targetRole)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 
     public enum TypeCheckGroupUser
     {
         MAKE_ADMIN = 1,
-        REMOVE_USER = 2
+        REMOVE_USER = 2,
+        BLOCK_USER = 3
     }
 }

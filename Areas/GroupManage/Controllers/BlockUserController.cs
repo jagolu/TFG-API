@@ -12,30 +12,36 @@ namespace API.Areas.GroupManage.Controllers
 {
     [Route("Group/[action]")]
     [ApiController]
-    public class MakeAdminController : ControllerBase
+    public class BlockUserController : ControllerBase
     {
         private ApplicationDBContext _context;
 
-        public MakeAdminController(ApplicationDBContext context)
+        public BlockUserController(ApplicationDBContext context)
         {
             _context = context;
         }
 
         [HttpPost]
         [Authorize]
-        [ActionName("MakeAdmin")]
-        public IActionResult makeAdmin([FromBody] MakeAdmin_blockUser order)
+        [ActionName("BlockUser")]
+        public IActionResult blockUser([FromBody] MakeAdmin_blockUser order)
         {
-            User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
             UserGroup targetUser = new UserGroup();
-            if(!GroupUserManager.CheckUserGroup(user, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.MAKE_ADMIN, order.make_unmake))
+
+            if (!GroupUserManager.CheckUserGroup(user, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.BLOCK_USER, order.make_unmake))
             {
                 return BadRequest(new { error = "" });
             }
 
             try
             {
-                targetUser.role = _context.Role.Where(r => r.name == (order.make_unmake ? "GROUP_ADMIN" : "GROUP_NORMAL")).First();
+                _context.Entry(user).Collection("groups").Load();
+                Group group = _context.Group.Where(g => g.name == order.groupName).First();
+                UserGroup callerUG = user.groups.Where(g => g.groupId == group.id).First();
+
+                targetUser.blocked = !targetUser.blocked;
+                targetUser.blockedBy = callerUG.role;
                 _context.Update(targetUser);
                 _context.SaveChanges();
 
