@@ -98,7 +98,7 @@ namespace API.Areas.GroupManage.Util
         {
             context.Entry(targetUser).Reference("blockedBy").Load();
             bool alreadyBlocked = targetUser.blocked;
-            string blockByRole = targetUser.blockedBy.name;
+            string blockByRole = alreadyBlocked ? targetUser.blockedBy.name : null;
             string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
             string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
 
@@ -106,7 +106,7 @@ namespace API.Areas.GroupManage.Util
 
             if (!make_unmake)
             {
-                if (!alreadyBlocked || callerRole != role_groupMaker) return false;
+                if (!alreadyBlocked || (blockByRole==role_groupMaker && callerRole != role_groupMaker)) return false;
 
                 return true;
             }
