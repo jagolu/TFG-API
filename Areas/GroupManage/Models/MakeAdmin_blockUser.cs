@@ -2,7 +2,7 @@
 
 namespace API.Areas.GroupManage.Models
 {
-    public class MakeAdmin
+    public class MakeAdmin_blockUser
     {
         [Required]
         public string publicId { get; set; }
@@ -11,6 +11,6 @@ namespace API.Areas.GroupManage.Models
         public string groupName { get; set; }
 
         [Required]
-        public bool makeAdmin { get; set; }
+        public bool make_unmake { get; set; }
     }
 }
