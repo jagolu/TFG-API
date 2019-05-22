@@ -26,7 +26,6 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult getGroupPage(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-
             var groups = _context.Group.Where(g => g.name == groupName);
 
             // If the group doesn't exist
@@ -55,6 +54,8 @@ namespace API.Areas.GroupManage.Controllers
             //Get the role of the user in the group
             UserGroup ownUserGroup =  group.users.Where(u => u.userId == user.id).First();
             _context.Entry(ownUserGroup).Reference("role").Load();
+            string callerUser_role = ownUserGroup.role.name;
+            string role_group_normal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
 
 
             //Change ---- this is for try
@@ -67,7 +68,7 @@ namespace API.Areas.GroupManage.Controllers
             };
 
             // Set the users who belongs to the group
-            List<GroupMember> members = new List<GroupMember>();
+            page.members = new List<GroupMember>();
 
             foreach(UserGroup ug in group.users.OrderBy(ug => ug.dateJoin)) //Order by join date from sooner to later
             {
@@ -75,17 +76,24 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Entry(ug).Reference("User").Load();
                 if (ug.User.email != user.email)
                 {
-                    members.Add(new GroupMember {
-                        userName = ug.User.nickname,
-                        publicUserId = ug.User.publicId,
-                        role = ug.role.name,
-                        dateJoin = ug.dateJoin,
-                        dateRole = ug.dateRole,
-                        img = ug.User.profileImg
-                    });
+                    if(!ug.blocked || (ug.blocked && callerUser_role != role_group_normal))
+                    {
+                        _context.Entry(ug).Reference("blockedBy").Load();
+
+                        page.members.Add(new GroupMember {
+                            userName = ug.User.nickname,
+                            publicUserId = ug.User.publicId,
+                            role = ug.role.name,
+                            dateJoin = ug.dateJoin,
+                            dateRole = ug.dateRole,
+                            img = ug.User.profileImg,
+                            blocked = ug.blocked,
+                            blockedBy = ug.blockedBy != null ? ug.blockedBy.name : ""
+                        });
+                    }
+
                 }
             }
-            page.members = members;
 
             return Ok(page);
         }

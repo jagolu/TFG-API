@@ -11,6 +11,8 @@ namespace API.Areas.GroupManage.Models
         public string role { get; set; }
         public DateTime dateJoin { get; set; }
         public DateTime dateRole { get; set; }
+        public bool blocked { get; set; }
+        public String blockedBy { get; set; }
 
         [JsonConverter(typeof(ConvertBase64ToBlob))]
         public Byte[] img { get; set; }
