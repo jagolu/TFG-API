@@ -28,7 +28,9 @@ namespace API.Areas.GroupManage.Controllers
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
             UserGroup targetUser = new UserGroup();
-            if(!GroupUserManager.CheckUserGroup(user, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.MAKE_ADMIN, order.make_unmake))
+            Group group = new Group();
+
+            if(!GroupUserManager.CheckUserGroup(user, ref group, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.MAKE_ADMIN, order.make_unmake))
             {
                 return BadRequest(new { error = "" });
             }
@@ -39,7 +41,7 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Update(targetUser);
                 _context.SaveChanges();
 
-                return Ok();
+                return Ok(GroupPageManager.GetPage(user, group,  _context));
             }
             catch (Exception)
             {

@@ -8,7 +8,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class GroupUserManager
     {
-        public static bool CheckUserGroup(User caller, /*ref Group group,*/ string groupName, ref UserGroup targetUserGroup, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
+        public static bool CheckUserGroup(User caller, ref Group group, string groupName, ref UserGroup targetUserGroup, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
         {
             try
             {
@@ -21,7 +21,7 @@ namespace API.Areas.GroupManage.Util
                     return false;
                 }
 
-                Group group = groups.First();
+                group = groups.First();
                 User targetUser = targetUsers.First();
 
                 context.Entry(group).Collection("users").Load();
