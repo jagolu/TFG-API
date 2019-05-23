@@ -36,7 +36,7 @@ namespace API.Areas.GroupManage.Util
 
                 return page;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new GroupPage{
                     name = "",

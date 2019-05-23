@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using API.Areas.GroupManage.Models;
 using API.Areas.GroupManage.Util;
 using API.Data;
@@ -6,6 +7,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.GroupManage.Controllers
 {
@@ -14,10 +16,12 @@ namespace API.Areas.GroupManage.Controllers
     public class RemoveUserFromGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public RemoveUserFromGroupController(ApplicationDBContext context)
+        public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
+            scopeFactory = sf;
         }
 
         [HttpPost]
@@ -36,15 +40,16 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
-                _context.Remove(targetUser);
+                _context.UserGroup.Remove(targetUser);
                 _context.SaveChanges();
-                group.users.Remove(targetUser);
 
-                //TODO el contexto no se actualiza, y el usuario que se ha eliminado sigue
-                //apareciendo en el array de UserGroup de este grupo WTF
-                //group = _context.Group.Where(g => g.name == order.groupName).First();
+                using (var scope = scopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                    group = dbContext.Group.Where(g => g.name == order.groupName).First();
 
-                return Ok(GroupPageManager.GetPage(user, group, _context));
+                    return Ok(GroupPageManager.GetPage(user, group, dbContext));
+                }
             }
             catch (Exception)
             {
