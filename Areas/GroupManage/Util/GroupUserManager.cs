@@ -43,6 +43,7 @@ namespace API.Areas.GroupManage.Util
 
                 context.Entry(ugCaller).Reference("role").Load();
                 context.Entry(targetUserGroup).Reference("role").Load();
+                context.Entry(targetUserGroup).Reference("blockedBy").Load();
                 string ugCallerRole = ugCaller.role.name;
                 string targetUserGroupRole = targetUserGroup.role.name;
 
@@ -50,10 +51,10 @@ namespace API.Areas.GroupManage.Util
                 switch (type)
                 {
                     case TypeCheckGroupUser.MAKE_ADMIN:
-                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, context);
+                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, targetUserGroup.blocked, context);
                         break;
                     case TypeCheckGroupUser.REMOVE_USER:
-                        can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, context);
+                        can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, targetUserGroup.blocked, targetUserGroup.blocked ? targetUserGroup.blockedBy.name : "", context);
                         break;
                     case TypeCheckGroupUser.BLOCK_USER:
                         can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, targetUserGroup, make_unmake, context);
@@ -71,12 +72,12 @@ namespace API.Areas.GroupManage.Util
             }
         }
 
-        private static bool hasPermissionsMakeAdmin(string callerRole, string targetRole, bool makeAdmin, ApplicationDBContext context)
+        private static bool hasPermissionsMakeAdmin(string callerRole, string targetRole, bool makeAdmin, bool blocked, ApplicationDBContext context)
         {
             string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
             string nextRole = context.Role.Where(r => r.name == (makeAdmin ? "GROUP_NORMAL" : "GROUP_ADMIN")).First().name;
 
-            if (targetRole != nextRole || callerRole != role_groupMaker)
+            if (targetRole != nextRole || callerRole != role_groupMaker || blocked)
             {
                 return false;
             }
@@ -84,18 +85,23 @@ namespace API.Areas.GroupManage.Util
             return true;
         }
 
-        private static bool hasPermissionsKickUser(string callerRole, string targetRole, ApplicationDBContext context)
+        private static bool hasPermissionsKickUser(string callerRole, string targetRole, bool blocked, string blockedBy, ApplicationDBContext context)
         {
             string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
             string role_groupAdmin = context.Role.Where(r => r.name == "GROUP_ADMIN").First().name;
             string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
 
-            if ((callerRole == role_groupMaker) || (callerRole == role_groupAdmin && targetRole == role_normal))
+            if(blocked && blockedBy == role_groupMaker && callerRole != role_groupMaker)
             {
-                return true;
+                return false;
             }
 
-            return false;
+            if (callerRole != role_groupMaker && (callerRole != role_groupAdmin || targetRole != role_normal))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool hasPermissionsBlockUser(string callerRole, string targetRole, UserGroup targetUser, bool make_unmake,ApplicationDBContext context)
