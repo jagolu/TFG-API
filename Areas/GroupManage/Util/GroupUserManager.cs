@@ -35,6 +35,10 @@ namespace API.Areas.GroupManage.Util
                 }
 
                 UserGroup ugCaller = members.Where(m => m.userId == caller.id).First();
+                if(ugCaller.blocked) //The user is blocked
+                {
+                    return false;
+                }
                 targetUserGroup = members.Where(m => m.userId != caller.id).First();
 
                 context.Entry(ugCaller).Reference("role").Load();

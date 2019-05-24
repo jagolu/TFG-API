@@ -37,7 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             _context.Entry(group).Collection("users").Load();
 
             // If the user doesn't belong to the group
-            if (group.users.Where(u => u.userId == user.id).Count() != 1)
+            if (group.users.Where(u => u.userId == user.id && !u.blocked).Count() != 1)
             {
                 return BadRequest(new { error = "" });
             }

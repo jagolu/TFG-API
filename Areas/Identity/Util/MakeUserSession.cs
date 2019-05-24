@@ -52,7 +52,7 @@ namespace API.Areas.Identity.Util
         private static List<UserGroups> getUserGroups(User u, ApplicationDBContext _context)
         {
             List<UserGroups> userGroups = new List<UserGroups>();
-            List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userId == u.id).ToList();
+            List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userId == u.id && !ug.blocked).ToList();
 
             groups.ForEach(g =>
             {

@@ -70,28 +70,36 @@ namespace API.Areas.GroupManage.Util
             List<GroupMember> members = new List<GroupMember>();
             _context.Entry(group).Collection("users").Load();
 
-            group.users.ToList().ForEach(user =>
-            {
-                if( callerId != user.userId && (!user.blocked || (user.blocked && callerRoleInGroup != roleGroup_normal)))
-                {
-                    _context.Entry(user).Reference("blockedBy").Load();
-                    _context.Entry(user).Reference("User").Load();
+            members = addFromList(members, group.users.Where(g => !g.blocked && g.userId != callerId).OrderBy(u => u.dateJoin).ToList(), _context);
 
-                    members.Add(new GroupMember
-                    {
-                        userName = user.User.nickname,
-                        publicUserId = user.User.publicId,
-                        role = user.role.name,
-                        dateJoin = user.dateJoin,
-                        dateRole = user.dateRole,
-                        img = user.User.profileImg,
-                        blocked = user.blocked,
-                        blockedBy = user.blockedBy != null ? user.blockedBy.name : ""
-                    });
-                }
-            });
+            if (callerRoleInGroup != roleGroup_normal)
+            {
+                members = addFromList(members, group.users.Where(g => g.blocked && g.userId != callerId).ToList(), _context);
+            }
 
             return members;
+        }
+
+        private static List<GroupMember> addFromList(List<GroupMember> mainList, List<UserGroup> outList, ApplicationDBContext _context)
+        {
+            outList.ForEach(user =>
+            {
+                _context.Entry(user).Reference("User").Load();
+
+                mainList.Add(new GroupMember
+                {
+                    userName = user.User.nickname,
+                    publicUserId = user.User.publicId,
+                    role = user.role.name,
+                    dateJoin = user.dateJoin,
+                    dateRole = user.dateRole,
+                    img = user.User.profileImg,
+                    blocked = user.blocked,
+                    blockedBy = user.blockedBy != null ? user.blockedBy.name : ""
+                });
+            });
+
+            return mainList;
         }
     }
 }

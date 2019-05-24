@@ -61,7 +61,7 @@ namespace API.Areas.GroupManage.Controllers
             List<UserGroups> groupsInfo = new List<UserGroups>();
             _context.Entry(user).Collection("groups").Load();
             
-            user.groups.ToList().ForEach(group =>
+            user.groups.Where(g => !g.blocked).ToList().ForEach(group =>
             {
                 _context.Entry(group).Reference("Group").Load();
 
