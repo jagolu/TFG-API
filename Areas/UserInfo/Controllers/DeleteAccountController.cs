@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using API.Areas.UserInfo.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Areas.UserInfo.Controllers
@@ -28,26 +26,21 @@ namespace API.Areas.UserInfo.Controllers
         [ActionName("DeleteAccount")]
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             string userDeletePass = (userDelete.password == null || userDelete.password.Length==0)
                 ? null : PasswordHasher.hashPassword(userDelete.password);
             
-            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-
-            _context.Entry(user).Reference("role").Load();
-
+            
             if(user.password != userDeletePass) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
-            bool beingAdmin = deleteAccountBeingAdmin(userDelete.email, user);
-            bool beingNormal = deleteAccountBeingNormal(user.email, user);
-
-            if(!beingAdmin && !beingNormal) {
+            if(!deleteAccountBeingNormal(user)) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
             try {
-
+                _context.User.Remove(user);
                 _context.SaveChanges();
 
             } catch (Exception){
@@ -57,89 +50,78 @@ namespace API.Areas.UserInfo.Controllers
             return Ok();
         }
 
-        private Boolean deleteAccountBeingAdmin(string email, User u)
+        private bool deleteAccountBeingNormal(User u)
         {
-            if(u.role.name != "ADMIN") {
+            _context.Entry(u).Reference("role").Load();
+            if(u.role != _context.Role.Where(r => r.name == "NORMAL_USER").First()) {
                 return false;
             }
 
-            if(!isValidEmail(email)){
+            if (!removeGroups(u)){
                 return false;
             }
-
-            _context.User.Remove(
-                _context.User.Where(
-                    uu => uu.email == email
-                ).First()
-            );
-
 
             return true;
         }
 
-        private Boolean deleteAccountBeingNormal(string email, User u)
+        private bool removeGroups(User user)
         {
-            if(u.role.name != "NORMAL_USER") {
-                return false;
-            }
-
-            User uToDelete = _context.User.Where(uu => uu.email == email).First();
-
-            if (!canRemoveGroups(uToDelete)){
-                return false;
-            }
-
-            _context.User.Remove(uToDelete);
-
-            return true;
-        }
-
-        private bool isValidEmail(string email)
-        {
-            try {
-                MailAddress m = new MailAddress(email);
-
-                string e = _context.User.Where(u => u.email == email).First().email;
-
-                return true;
-
-            } catch (Exception) {
-                return false;
-            }
-        }
-
-        private bool canRemoveGroups(User u)
-        {
-            List<UserGroup> groups =_context.UserGroup.Where(ug => ug.userId == u.id).ToList();
+            _context.Entry(user).Collection("groups").Load();
             bool canRemove = true;
 
-            groups.ForEach(
-                g=>
+            user.groups.ToList().ForEach(userGroup=>
+            {
+                List<UserGroup> members = _context.UserGroup.Where(ug => ug.groupId == userGroup.groupId && !ug.blocked).ToList();
+
+                try
                 {
-                    int n_members = _context.UserGroup.Where(ug => ug.groupId == g.groupId).Count();
-
-                    if (n_members == 1) // The user in the group is the only member in
+                    if (members.Count() == 1) // The user in the group is the only member in
                     {
-                        try
-                        {
-                            _context.Remove(g);
-
-                            _context.SaveChanges();
-
-                            _context.Remove(_context.Group.Where(group => group.id == g.groupId).First());
-
-                            _context.SaveChanges();
-                        }
-                        catch (Exception)
-                        {
-                            canRemove = false;
-                        }
-
+                        _context.Remove(userGroup);
+                        _context.Remove(_context.Group.Where(g => g.id == userGroup.groupId).First());
+                        _context.SaveChanges();
                     }
-                    else canRemove = false;
+                    else
+                    {
+                        Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+                        Role role_groupAdmin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+                        Role role_groupNormal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
+                       
+                        //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
+                        if(userGroup.role != role_groupMaker)
+                        {
+                            _context.Remove(userGroup);
+                            _context.SaveChanges();
+                        } //The user is the group maker
+                        else
+                        {
+                            List<UserGroup> adminMembers = members.Where(m => m.role == role_groupAdmin).OrderBy(d => d.dateRole).ToList();
+                            List<UserGroup> normalMembers = members.Where(m => m.role == role_groupNormal).OrderBy(d => d.dateJoin).ToList();
+                            UserGroup newMaster;
 
+                            if(adminMembers.Count() != 0) //The older admin in the group will become in the group maker
+                            {
+                                newMaster = adminMembers.First();
+                            }
+                            else //If there isn't any admin, the older member in the group will become in the group make
+                            {
+                                newMaster = normalMembers.First();
+                            }
+
+                            newMaster.role = role_groupMaker;
+                            newMaster.dateRole = DateTime.Today;
+
+                            _context.Remove(userGroup);
+                            _context.SaveChanges();
+                        }
+                    }
                 }
-            );
+                catch (Exception)
+                {
+                    canRemove = false;
+                }
+            });
+
             return canRemove;
         }
     }
