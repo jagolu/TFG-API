@@ -271,3 +271,4 @@ wwwroot/
 ClientApp/
 webInterface/
 Properties/PublishProfiles/VirtualBet - Web Deploy1.pubxml
+script.sql
