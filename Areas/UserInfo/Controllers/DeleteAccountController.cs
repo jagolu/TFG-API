@@ -88,12 +88,7 @@ namespace API.Areas.UserInfo.Controllers
                         Role role_groupNormal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
                        
                         //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
-                        if(userGroup.role != role_groupMaker)
-                        {
-                            _context.Remove(userGroup);
-                            _context.SaveChanges();
-                        } //The user is the group maker
-                        else
+                        if(userGroup.role == role_groupMaker)
                         {
                             List<UserGroup> adminMembers = members.Where(m => m.role == role_groupAdmin).OrderBy(d => d.dateRole).ToList();
                             List<UserGroup> normalMembers = members.Where(m => m.role == role_groupNormal).OrderBy(d => d.dateJoin).ToList();
@@ -111,9 +106,11 @@ namespace API.Areas.UserInfo.Controllers
                             newMaster.role = role_groupMaker;
                             newMaster.dateRole = DateTime.Today;
 
-                            _context.Remove(userGroup);
-                            _context.SaveChanges();
+                            _context.Update(newMaster);
                         }
+
+                        _context.Remove(userGroup);
+                        _context.SaveChanges();
                     }
                 }
                 catch (Exception)
