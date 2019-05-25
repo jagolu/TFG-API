@@ -58,7 +58,7 @@ namespace API.Areas.GroupManage.Controllers
                 {
                     return BadRequest(new { error = "" });
                 }
-                if (PasswordHasher.hashPassword(group.password) != joinGroupInfo.password)
+                if(!PasswordHasher.areEquals(joinGroupInfo.password, group.password))
                 {
                     return BadRequest(new { error = "IncorrectPasswordJoiningGroup" });
                 }

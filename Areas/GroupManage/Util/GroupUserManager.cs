@@ -1,7 +1,6 @@
 ﻿using API.Data;
 using API.Data.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.GroupManage.Util

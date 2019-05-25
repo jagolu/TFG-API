@@ -26,7 +26,7 @@ namespace API.Areas.Identity.Controllers
         {
             var userExist = this._context.User.Where(u => u.email == user.email);
 
-            if ((userExist.Count() != 1) || (PasswordHasher.hashPassword(user.password) != userExist.First().password)) {
+            if( userExist.Count() != 1 || !PasswordHasher.areEquals(user.password, userExist.First().password)) { 
                 return BadRequest(new { error = "WrongEmailOrPassword" });
             }
 
