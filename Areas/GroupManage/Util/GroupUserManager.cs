@@ -8,56 +8,46 @@ namespace API.Areas.GroupManage.Util
 {
     public static class GroupUserManager
     {
-        public static bool CheckUserGroup(User caller, ref Group group, string groupName, ref UserGroup targetUserGroup, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
+        public static bool CheckUserGroup(User caller, ref Group group, string groupName, ref UserGroup ugTarget, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
         {
             try
             {
-                var groups = context.Group.Where(g => g.name == groupName); //The group
-                var targetUsers = context.User.Where(u => u.publicId == publicUserId); //The user who will be the new admin
-
-                // The group of the target user don't exist
-                if (groups.Count() != 1 || targetUsers.Count() != 1)
+                UserGroup ugCaller = new UserGroup();
+                //The caller or the group doesnt exist, or the user is not a member of the group
+                if (!UserInGroup.checkUserInGroup(caller.id, ref group, groupName, ref ugCaller, context)) 
                 {
                     return false;
                 }
 
-                group = groups.First();
-                User targetUser = targetUsers.First();
-
-                context.Entry(group).Collection("users").Load();
-                Guid targetUserid = targetUser.id;
-                List<UserGroup> members = group.users.Where(u => u.userId == caller.id || u.userId == targetUserid).ToList();
-
-                //The users are not members of the group
-                if (members.Count() != 2)
+                if (ugCaller.blocked)
                 {
                     return false;
                 }
 
-                UserGroup ugCaller = members.Where(m => m.userId == caller.id).First();
-                if(ugCaller.blocked) //The user is blocked
+                var targetUsers = context.User.Where(u => u.publicId == publicUserId); //The target user
+
+                if(targetUsers.Count() != 1 || !UserInGroup.checkUserInGroup(targetUsers.First().id, ref group, groupName, ref ugTarget, context))
                 {
                     return false;
                 }
-                targetUserGroup = members.Where(m => m.userId != caller.id).First();
 
                 context.Entry(ugCaller).Reference("role").Load();
-                context.Entry(targetUserGroup).Reference("role").Load();
-                context.Entry(targetUserGroup).Reference("blockedBy").Load();
+                context.Entry(ugTarget).Reference("role").Load();
+                context.Entry(ugTarget).Reference("blockedBy").Load();
                 string ugCallerRole = ugCaller.role.name;
-                string targetUserGroupRole = targetUserGroup.role.name;
+                string targetUserGroupRole = ugTarget.role.name;
 
                 bool can;
                 switch (type)
                 {
                     case TypeCheckGroupUser.MAKE_ADMIN:
-                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, targetUserGroup.blocked, context);
+                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, ugTarget.blocked, context);
                         break;
                     case TypeCheckGroupUser.REMOVE_USER:
-                        can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, targetUserGroup.blocked, targetUserGroup.blocked ? targetUserGroup.blockedBy.name : "", context);
+                        can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, ugTarget.blocked, ugTarget.blocked ? ugTarget.blockedBy.name : "", context);
                         break;
                     case TypeCheckGroupUser.BLOCK_USER:
-                        can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, targetUserGroup, make_unmake, context);
+                        can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, ugTarget, make_unmake, context);
                         break;
                     default:
                         can = false;
