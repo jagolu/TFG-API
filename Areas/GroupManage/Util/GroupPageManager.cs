@@ -26,6 +26,8 @@ namespace API.Areas.GroupManage.Util
                 page.name = group.name;
                 page.type = group.type;
                 page.role = callerInGroup_role;
+                page.dateJoin = callerInGroup.dateJoin;
+                page.dateRole = callerInGroup.dateRole;
                 page.actualCapacity = group.users.ToList().Count();
                 page.canPutPassword = group.canPutPassword;
                 page.createDate = group.dateCreated;
