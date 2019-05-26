@@ -53,7 +53,7 @@ namespace API.Areas.GroupManage.Controllers
         {
             Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
             bool role = ugCaller.role == role_groupMaker;
-            bool newPass = newPassword != null && newPassword.Length > 0;
+            bool newPass = newPassword != null && newPassword.Length > 0 && PasswordHasher.validPassword(newPassword);
             bool oldPass = oldPassword != null && oldPassword.Length > 0;
             bool canPutPass = group.canPutPassword;
             bool hasPassword = group.password != null;
