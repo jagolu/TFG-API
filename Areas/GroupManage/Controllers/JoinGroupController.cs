@@ -32,7 +32,7 @@ namespace API.Areas.GroupManage.Controllers
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             Group group = new Group();
 
-            if (isUnderLimitations(user))
+            if (!isUnderLimitations(user))
             {
                 return BadRequest(new { error = "MaxGroupJoinsReached" });
             }
@@ -90,7 +90,7 @@ namespace API.Areas.GroupManage.Controllers
             _context.Entry(user).Collection("groups").Load();
             _context.Entry(user).Reference("limitations").Load();
 
-            if (user.groups.Count() >= user.limitations.maxGroupJoins)
+            if (user.groups.Where(g=> !g.blocked).ToList().Count() >= user.limitations.maxGroupJoins)
             {
                 return false;
             }
