@@ -27,41 +27,23 @@ namespace API.Areas.GroupManage.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("JoinGroup")]
-        public IActionResult JoinGroup([FromBody] JoinGroup joinGroupInfo)
+        public IActionResult JoinGroup([FromBody] JoinGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-            _context.Entry(user).Collection("groups").Load();
-            _context.Entry(user).Reference("limitations").Load();
+            Group group = new Group();
 
-            if(user.groups.Count() >= user.limitations.maxGroupJoins)
+            if (isUnderLimitations(user))
             {
                 return BadRequest(new { error = "MaxGroupJoinsReached" });
             }
-
-            //Group with the same name
-            var dbGroup = _context.Group.Where(g => g.name == joinGroupInfo.groupName);
-
-            if(dbGroup.Count() != 1)
-            {
-                return BadRequest(new { error = "" });
-            }
-            Group group = dbGroup.First();
-
-            if (_context.UserGroup.Where(ug => ug.userId == user.id && ug.groupId == group.id).Count() != 0)
+            if(!hasPermissions(user, ref group, order.groupName))
             {
                 return BadRequest(new { error = "" });
             }
 
-            if(group.password != null)
+            if(group.password != null && !PasswordHasher.areEquals(order.password, group.password))
             {
-                if(joinGroupInfo == null)
-                {
-                    return BadRequest(new { error = "" });
-                }
-                if(!PasswordHasher.areEquals(joinGroupInfo.password, group.password))
-                {
-                    return BadRequest(new { error = "IncorrectPasswordJoiningGroup" });
-                }
+                return BadRequest(new { error = "IncorrectPasswordJoiningGroup" });
             }
 
             try
@@ -83,6 +65,36 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return StatusCode(500);
             }
+        }
+
+        private bool hasPermissions(User user, ref Group group, string groupName)
+        {
+            var dbGroup = _context.Group.Where(g => g.name == groupName);
+
+            if (dbGroup.Count() != 1)
+            {
+                return false;
+            }
+            group = dbGroup.First();
+
+            if (_context.UserGroup.Where(ug => ug.userId == user.id && ug.groupId == dbGroup.First().id).Count() != 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool isUnderLimitations(User user)
+        {
+            _context.Entry(user).Collection("groups").Load();
+            _context.Entry(user).Reference("limitations").Load();
+
+            if (user.groups.Count() >= user.limitations.maxGroupJoins)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
