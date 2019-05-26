@@ -7,7 +7,6 @@ namespace API.Areas.GroupManage.Models
         [Required]
         public string name { get; set; }
 
-        [Required]
         public string newPassword { get; set; }
         public string oldPassword { get; set; }
     }

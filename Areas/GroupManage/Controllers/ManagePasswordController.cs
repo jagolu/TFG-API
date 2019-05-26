@@ -39,10 +39,10 @@ namespace API.Areas.GroupManage.Controllers
             }
             if(group.password!=null && !PasswordHasher.areEquals(order.oldPassword, group.password))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest(new { error = "IncorrectOldPassword" });
             }
 
-            group.password = PasswordHasher.hashPassword(order.newPassword);
+            group.password = order.newPassword == null ? null : PasswordHasher.hashPassword(order.newPassword);
             _context.Update(group);
             _context.SaveChanges();
             
@@ -53,17 +53,17 @@ namespace API.Areas.GroupManage.Controllers
         {
             Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
             bool role = ugCaller.role == role_groupMaker;
-            bool newPass = newPassword != null;
-            bool oldPass = oldPassword != null;
+            bool newPass = newPassword != null && newPassword.Length > 0;
+            bool oldPass = oldPassword != null && oldPassword.Length > 0;
             bool canPutPass = group.canPutPassword;
             bool hasPassword = group.password != null;
 
-            if(!role || !newPass || !canPutPass)
+            if(!role || !canPutPass)
             {
                 return false;
             }
 
-            if (  (oldPass && !hasPassword) || (!oldPass && hasPassword) )
+            if (  (!oldPass || !hasPassword) && (!newPass || oldPass || hasPassword) )
             {
                 return false;
             }
