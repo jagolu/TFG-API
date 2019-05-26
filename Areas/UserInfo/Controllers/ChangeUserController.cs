@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using API.Areas.UserInfo.Models;
 using API.Data;
 using API.Data.Models;
@@ -33,7 +32,7 @@ namespace API.Areas.UserInfo.Controllers
 
             try {
                 user.nickname = changeNickname(info.nickname, user.nickname);
-                user.password = changePassword(info.oldpassword, info.newPassword, info.repeatNewPassword, user.password);
+                user.password = changePassword(info.oldpassword, info.newPassword, user.password);
                 user.profileImg = info.image ?? user.profileImg;
 
                 _context.Update(user);
@@ -50,9 +49,9 @@ namespace API.Areas.UserInfo.Controllers
             return Ok();
         }
 
-        private string changePassword(string oldPassword, string newPassword, string repeatNewPassword, string userActualPassword)
+        private string changePassword(string oldPassword, string newPassword, string userActualPassword)
         {
-            if (newPassword == null || repeatNewPassword == null) {
+            if (newPassword == null) {
                 return userActualPassword;
             }
 
@@ -68,18 +67,11 @@ namespace API.Areas.UserInfo.Controllers
                 throw new Exception("IncorrectOldPassword");
             }
 
-            //The both new password are not equal
-            if (newPassword != repeatNewPassword) {
-                throw new Exception("");
-            }
-
-
-            if(newPassword.Length<8 || newPassword.Length > 20 || !Regex.IsMatch(newPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$")) {
+            if (!PasswordHasher.validPassword(newPassword)){ 
                 throw new Exception("");
             }
 
             _changePass = true;
-
             return PasswordHasher.hashPassword(newPassword);
         }
 
