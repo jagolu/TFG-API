@@ -36,6 +36,10 @@ namespace API.Data
                 .IsUnique();
 
             mb.Entity<User>()
+                .HasIndex(u => u.tokenPassword)
+                .IsUnique();
+
+            mb.Entity<User>()
                 .HasIndex(u => u.email)
                 .IsUnique();
 

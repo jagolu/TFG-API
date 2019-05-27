@@ -34,6 +34,11 @@ namespace API.Data.Models
         [MaxLength]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString();
 
+        [MaxLength]
+        public string tokenPassword { get; set; } = null;
+
+        public DateTime tokenPassword_expirationTime { get; set; } = new DateTime(1,1,1);
+
         [Required]
         public DateTime dateSignUp { get; set; } = DateTime.Today;
 
