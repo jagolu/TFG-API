@@ -7,6 +7,7 @@ using API.Areas.Identity.Models;
 using API.Areas.Identity.Util;
 using API.Data;
 using API.Data.Models;
+using API.Util;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +24,7 @@ namespace API.Areas.Identity.Controllers
         private IConfiguration _configuration;
         private readonly IHttpClientFactory _http;
 
-        public SocialLogController(ApplicationDBContext context,
-                                IConfiguration configuration,
+        public SocialLogController(ApplicationDBContext context, IConfiguration configuration,
                                 IHttpClientFactory clientFactory)
         {
             _context = context;
@@ -50,45 +50,70 @@ namespace API.Areas.Identity.Controllers
                 if(isGoogleType && !await verifyGoogleToken(socialUser.authToken, socialUser.id)) {
                     return BadRequest(new { error = "InvalidSocialToken" });
                 }
-
                 if (!isGoogleType && !await verifyFacebookToken(socialUser.authToken, socialUser.id)) {
                     return BadRequest(new { error = "InvalidSocialToken" });
                 }
-                
-                User user = addSocialUser(socialUser);
+
+                User user = new User();
+
+                if(!existsUser(socialUser.email, ref user)) //The new user doesn't exists
+                {
+                    //The new user doesn't exist but his password isn't correct or is null
+                    if (!PasswordHasher.validPassword(socialUser.password))
+                    {
+                        //The user is trying to log without signUp first
+                        return BadRequest(new { error = "NotSocialSignYet" });//No registrado
+                    }
+                    //The new user doesn't exist and his password is correct and != null
+                    user = addSocialUser(socialUser);
+                }
+                else //The new user already exists
+                {
+                    //The new user already exists but he has sent a new password (wtf?)
+                    if (PasswordHasher.validPassword(socialUser.password) || socialUser.password != null)
+                    {
+                        //The user is trying to reSignUp again
+                        return BadRequest(new { error = "EmailAlreadyExistsError" });
+                    }
+
+                    //Here the user already exists and doesn't send a password, so is
+                    // trying to do a normal logIn
+                }
 
                 UserSession session = MakeUserSession.getUserSession(_context, user, socialUser.provider);
-
                 if (session == null) return StatusCode(500);
 
                 return Ok(session);
-
             } catch (Exception) {
                 return StatusCode(500);
             }
         }
 
+        private bool existsUser(string email, ref User user)
+        {
+            var userExists = _context.User.Where(u => u.email == email);
+            if (userExists.Count() != 1)
+            {
+                return false;
+            }
+            user = userExists.First();
+            return true;
+        }
+
         private User addSocialUser(UserMediaLog socialUser)
         {
-            var userExist = _context.User.Where(u => u.email == socialUser.email);
-
-            if (userExist.Count() == 1) return userExist.First();
-
             User newUser = new User {
                 email = socialUser.email,
                 nickname = socialUser.firstName,
-                password = null,
+                password = PasswordHasher.hashPassword(socialUser.password),
                 tokenValidation = null,
                 role = _context.Role.Where(r => r.name == "NORMAL_USER").First(),
                 profileImg = getImage(socialUser.urlImage)
             };
 
             _context.User.Add(newUser);
-
             _context.SaveChanges();
-
             _context.Limitations.Add(new Limitations { User = newUser });
-
             _context.SaveChanges();
 
             return newUser;
@@ -131,11 +156,8 @@ namespace API.Areas.Identity.Controllers
         private Boolean isValidFacebookToken(FacebookResponse res, string userId)
         {
             if (res.data.app_id != _configuration["Social:facebookId"]) return false;
-
             if (res.data.error != null) return res.data.error.is_valid;
-
             if (userId != res.data.user_id) return false;
-
             return res.data.is_valid;
         }
 

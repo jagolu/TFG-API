@@ -39,6 +39,7 @@ namespace API.Util
 
         public static bool validPassword(string pass)
         {
+            if (pass == null) return false;
             if (pass.Length < 8 || pass.Length > 20 || !Regex.IsMatch(pass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$"))
             {
                 return false;
