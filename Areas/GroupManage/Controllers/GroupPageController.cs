@@ -30,7 +30,7 @@ namespace API.Areas.GroupManage.Controllers
             // If the group doesn't exist
             if (groups.Count() != 1)
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             Group group = groups.First();
@@ -39,7 +39,7 @@ namespace API.Areas.GroupManage.Controllers
             // If the user doesn't belong to the group
             if (group.users.Where(u => u.userId == user.id && !u.blocked).Count() != 1)
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             return Ok(GroupPageManager.GetPage(user, group, _context));

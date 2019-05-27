@@ -32,7 +32,7 @@ namespace API.Areas.Shop.Controllers
             //TODO falta comprobacion de pago
             if(_context.ShopOffers.Where(so=> so.offerCode == item.productId).Count() != 1)
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             //Realizar la comprobacion del pago

@@ -35,12 +35,12 @@ namespace API.Areas.Shop.Controllers
 
             if(dbGroup.Count() != 1)
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             if(morePlaces != 5 && morePlaces != 25 && morePlaces != 50)
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             dbGroup.First().capacity = dbGroup.First().capacity + morePlaces;

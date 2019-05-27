@@ -35,7 +35,7 @@ namespace API.Areas.GroupManage.Controllers
 
             if (!GroupUserManager.CheckUserGroup(user, ref group, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.REMOVE_USER, false))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             try

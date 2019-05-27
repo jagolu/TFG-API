@@ -41,7 +41,8 @@ namespace API.Areas.UserInfo.Controllers
             } catch (DbUpdateException) {
                 return StatusCode(500);
             } catch (Exception e) {
-                return BadRequest(new { error=e.Message });
+                if (e.Message == "") return BadRequest();
+                else return BadRequest(new { error = e.Message });
             }
 
             if (_changePass) return Ok(new { success = "PassChanged"});

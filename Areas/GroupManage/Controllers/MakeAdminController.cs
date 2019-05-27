@@ -32,7 +32,7 @@ namespace API.Areas.GroupManage.Controllers
 
             if(!GroupUserManager.CheckUserGroup(user, ref group, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.MAKE_ADMIN, order.make_unmake))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             try

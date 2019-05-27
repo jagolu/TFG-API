@@ -31,11 +31,11 @@ namespace API.Areas.GroupManage.Controllers
 
             if(!UserInGroup.checkUserInGroup(user.id, ref group, order.name, ref ugCaller, _context))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
             if(!hasPermissions(ugCaller, group, order.newPassword, order.oldPassword))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
             if(group.password!=null && !PasswordHasher.areEquals(order.oldPassword, group.password))
             {

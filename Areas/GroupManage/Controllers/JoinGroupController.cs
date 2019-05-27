@@ -38,7 +38,7 @@ namespace API.Areas.GroupManage.Controllers
             }
             if(!hasPermissions(user, ref group, order.groupName))
             {
-                return BadRequest(new { error = "" });
+                return BadRequest();
             }
 
             if(group.password != null && !PasswordHasher.areEquals(order.password, group.password))
