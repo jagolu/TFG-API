@@ -76,8 +76,13 @@ namespace API.Areas.GroupManage.Controllers
                 return false;
             }
             group = dbGroup.First();
+            _context.Entry(group).Collection("users").Load();
 
             if (_context.UserGroup.Where(ug => ug.userId == user.id && ug.groupId == dbGroup.First().id).Count() != 0)
+            {
+                return false;
+            }
+            if(group.users.Count() >= group.capacity)
             {
                 return false;
             }
