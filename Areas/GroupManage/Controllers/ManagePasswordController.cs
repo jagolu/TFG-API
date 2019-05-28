@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using API.Areas.GroupManage.Models;
+﻿using API.Areas.GroupManage.Models;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
