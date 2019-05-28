@@ -27,14 +27,9 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult removeGroup([FromBody] RemoveGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
-            UserGroup ugCaller = new UserGroup();
             Group group = new Group();
 
-            if (!UserInGroup.checkUserInGroup(user.id, ref group, order.name, ref ugCaller, _context))
-            {
-                return BadRequest();
-            }
-            if (!hasPermissions(ugCaller, user))
+            if (!CallerInGroup.CheckUserCapabilities(user, ref group, order.name, TypeCheckCapabilites.REMOVE_GROUP, _context))
             {
                 return BadRequest();
             }
@@ -52,20 +47,6 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-        private bool hasPermissions(UserGroup ugCaller, User caller)
-        {
-            _context.Entry(ugCaller).Reference("role").Load();
-            Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
-            Role caller_role = ugCaller.role;
-
-            if(role_groupMaker != caller_role)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void removeGroup(Group group)

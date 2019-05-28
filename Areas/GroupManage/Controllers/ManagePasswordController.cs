@@ -26,14 +26,9 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult managePassword([FromBody] ManagePassword order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
-            UserGroup ugCaller = new UserGroup();
             Group group = new Group();
 
-            if(!UserInGroup.checkUserInGroup(user.id, ref group, order.name, ref ugCaller, _context))
-            {
-                return BadRequest();
-            }
-            if(!hasPermissions(ugCaller, group, order.newPassword, order.oldPassword))
+            if(!CallerInGroup.CheckUserCapabilities(user, ref group, order.name, TypeCheckCapabilites.MANAGE_PASSWORD, _context, order.newPassword, order.oldPassword))
             {
                 return BadRequest();
             }
@@ -47,28 +42,6 @@ namespace API.Areas.GroupManage.Controllers
             _context.SaveChanges();
             
             return Ok(GroupPageManager.GetPage(user, group, _context));
-        }
-
-        private bool hasPermissions(UserGroup ugCaller, Group group, string newPassword, string oldPassword)
-        {
-            Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
-            bool role = ugCaller.role == role_groupMaker;
-            bool newPass = newPassword != null && newPassword.Length > 0 && PasswordHasher.validPassword(newPassword);
-            bool oldPass = oldPassword != null && oldPassword.Length > 0;
-            bool canPutPass = group.canPutPassword;
-            bool hasPassword = group.password != null;
-
-            if(!role || !canPutPass)
-            {
-                return false;
-            }
-
-            if (  (!oldPass || !hasPassword) && (!newPass || oldPass || hasPassword) )
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }
