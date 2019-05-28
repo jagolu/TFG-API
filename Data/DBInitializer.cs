@@ -1,6 +1,7 @@
 ﻿using API.Data.Models;
 using API.Util;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Data
@@ -44,38 +45,19 @@ namespace API.Data
 
         private static void createDevelopmentUser(ApplicationDBContext context)
         {
-            User u1 = new User
+            List<User> test_users = new List<User>();
+
+            for(int i = 0; i < 7; i++)
             {
-                email = "u1@gmail.com",
-                nickname = "u1_test",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
-            User u2 = new User
-            {
-                email = "u2@gmail.com",
-                nickname = "u2_test",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
-            User u3 = new User
-            {
-                email = "u3@gmail.com",
-                nickname = "u3_test",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
-            User u4 = new User
-            {
-                email = "u4@gmail.com",
-                nickname = "u4_test",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "NORMAL_USER").First()
-            };
+                test_users.Add(new User
+                {
+                    email = "u"+i+"@gmail.com",
+                    nickname = "u"+i+"_test",
+                    password = PasswordHasher.hashPassword("asdfasdf1A"),
+                    tokenValidation = null,
+                    role = context.Role.Where(r => r.name == "NORMAL_USER").First()
+                });
+            }
             User admin = new User
             {
                 email = "a@gmail.com",
@@ -85,27 +67,14 @@ namespace API.Data
                 role = context.Role.Where(r => r.name == "ADMIN").First()
             };
 
-
-            if (context.User.Where(u => u.email == "u1@gmail.com").Count() == 0)
+            test_users.ForEach(tu =>
             {
-                context.Add(u1);
-                context.Limitations.Add(new Limitations { User = u1 });
-            }
-            if (context.User.Where(u => u.email == "u2@gmail.com").Count() == 0)
-            {
-                context.Add(u2);
-                context.Limitations.Add(new Limitations { User = u2 });
-            }
-            if (context.User.Where(u => u.email == "u3@gmail.com").Count() == 0)
-            {
-                context.Add(u3);
-                context.Limitations.Add(new Limitations { User = u3 });
-            }
-            if (context.User.Where(u => u.email == "u4@gmail.com").Count() == 0)
-            {
-                context.Add(u4);
-                context.Limitations.Add(new Limitations { User = u4 });
-            }
+                if (context.User.Where(u => u.email == tu.email).Count() == 0)
+                {
+                    context.Add(tu);
+                    context.Limitations.Add(new Limitations { User = tu });
+                }
+            });
             if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0)
             {
                 context.Add(admin);
