@@ -58,7 +58,7 @@ namespace API.Areas.GroupManage.Util
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
