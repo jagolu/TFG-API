@@ -35,6 +35,8 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 _context.Add(new MatchDay
                 {
                     Competition = league,
+                    date = parse(match.utcDate),
+                    status = match.status,
                     number = match.matchday.Value,
                     group = match.group,
                     HomeTeam = homeTeam,
@@ -77,6 +79,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             MatchDay matchday = matchD.First();
 
+            matchday.status = match.status;
             matchday.homeGoals = match.score.fullTime.homeTeam;
             matchday.awayGoals = match.score.fullTime.awayTeam;
             matchday.homeEndPenalties = match.score.penalties.homeTeam;
@@ -145,6 +148,21 @@ namespace API.ScheduledTasks.VirtualBets.Util
             {
                 return null;
             }
+        }
+
+        /**
+         * Function that parses a utcDate string value to
+         * a DateTime value
+         */
+        private static DateTime parse(string date)
+        {
+            DateTime dateret = DateTime.MinValue;
+            if (DateTime.TryParse(date, out dateret))
+            {
+                return dateret;
+            }
+
+            return dateret;
         }
     }
 }

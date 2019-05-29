@@ -9,6 +9,12 @@ namespace API.Data.Models
         public Guid CompetitionId { get; set; }
 
         [Required]
+        public DateTime date { get; set; }
+
+        [Required]
+        public string status { get; set; }
+
+        [Required]
         public int number { get; set; }
 
         public String group { get; set; }
