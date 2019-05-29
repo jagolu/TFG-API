@@ -34,5 +34,6 @@ namespace API.Data.Models
         public DateTime dateCreated { get; set; } = DateTime.Today;
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();
+        public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
     }
 }

@@ -128,9 +128,11 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<FootballBet>()
-                .HasOne(fb => fb.TypeFootballBet)
-                .WithMany(t => t.bets)
-                .HasForeignKey(fb => fb.TypeFootballBetId)
+                .HasOne(fb => fb.Group)
+                .WithMany(g => g.bets)
+                .HasForeignKey(fb => fb.groupId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

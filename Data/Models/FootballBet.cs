@@ -25,7 +25,7 @@ namespace API.Data.Models
         public int maxBet { get; set; }
 
         [Required]
-        public double ganancia { get; set; }
+        public double winRate { get; set; }
 
         [Required]
         public DateTime dateReleased { get; set; } = DateTime.Now;
@@ -35,5 +35,8 @@ namespace API.Data.Models
 
         [Required]
         public DateTime dateChanges { get; set; }
+
+        [Required]
+        public bool ended { get; set; } = false;
     }
 }
