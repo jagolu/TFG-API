@@ -19,6 +19,7 @@ namespace API.Data
         public DbSet<OfferType> OfferTypes { get; set; }
         public DbSet<ShopOffer> ShopOffers { get; set; }
         public DbSet<FootballBet> FootballBets { get; set; }
+        public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -124,6 +125,12 @@ namespace API.Data
                 .HasOne(fb => fb.MatchDay)
                 .WithMany(md => md.bets)
                 .HasForeignKey(fb => fb.matchdayId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<FootballBet>()
+                .HasOne(fb => fb.TypeFootballBet)
+                .WithMany(t => t.bets)
+                .HasForeignKey(fb => fb.TypeFootballBetId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

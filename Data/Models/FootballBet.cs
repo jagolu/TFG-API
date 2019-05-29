@@ -15,6 +15,9 @@ namespace API.Data.Models
         public Guid groupId { get; set; }
         public Group Group { get; set; }
 
+        public Guid TypeFootballBetId { get; set; }
+        public  TypeFootballBet TypeFootballBet { get; set; }
+
         [Required]
         public int minBet { get; set;}
 
