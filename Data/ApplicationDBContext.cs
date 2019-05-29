@@ -92,7 +92,7 @@ namespace API.Data
         private void onCreateMathDay(ModelBuilder mb)
         {
             mb.Entity<MatchDay>()
-                .HasKey(md => new { md.CompetitionId, md.number, md.HomeTeamId, md.AwayTeamId });
+                .HasAlternateKey(md => new { md.CompetitionId, md.number, md.HomeTeamId, md.AwayTeamId });
 
             mb.Entity<MatchDay>()
                 .HasOne(md => md.Competition)

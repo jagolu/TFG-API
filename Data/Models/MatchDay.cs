@@ -1,10 +1,15 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Data.Models
 {
     public class MatchDay
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid id { get; set; }
+
+
         public Competition Competition { get; set; }
         public Guid CompetitionId { get; set; }
 
