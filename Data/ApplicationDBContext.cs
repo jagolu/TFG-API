@@ -18,6 +18,7 @@ namespace API.Data
         public DbSet<MatchDay> MatchDays { get; set; }
         public DbSet<OfferType> OfferTypes { get; set; }
         public DbSet<ShopOffer> ShopOffers { get; set; }
+        public DbSet<FootballBet> FootballBets { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -27,6 +28,7 @@ namespace API.Data
             onCreateGroup(mb);
             onCreateUserGroup(mb);
             onCreateMathDay(mb);
+            onCreateFootballBet(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -110,6 +112,18 @@ namespace API.Data
                 .HasOne(md => md.AwayTeam)
                 .WithMany(t => t.awayMatchDays)
                 .HasForeignKey(md => md.AwayTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateFootballBet(ModelBuilder mb)
+        {
+            mb.Entity<FootballBet>()
+                .HasAlternateKey(fb => new { fb.matchdayId, fb.groupId });
+
+            mb.Entity<FootballBet>()
+                .HasOne(fb => fb.MatchDay)
+                .WithMany(md => md.bets)
+                .HasForeignKey(fb => fb.matchdayId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

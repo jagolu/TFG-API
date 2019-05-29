@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,5 +36,7 @@ namespace API.Data.Models
 
         public int? homeEndPenalties { get; set; }
         public int? awayEndPenalties { get; set; }
+
+        public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
     }
 }
