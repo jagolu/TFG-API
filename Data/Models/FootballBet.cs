@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -38,5 +39,9 @@ namespace API.Data.Models
 
         [Required]
         public bool ended { get; set; } = false;
+
+
+
+        public ICollection<UserBet> userBets { get; set; } = new HashSet<UserBet>();
     }
 }

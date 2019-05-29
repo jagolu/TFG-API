@@ -20,6 +20,7 @@ namespace API.Data
         public DbSet<ShopOffer> ShopOffers { get; set; }
         public DbSet<FootballBet> FootballBets { get; set; }
         public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
+        public DbSet<UserBet> UserBet { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -30,6 +31,7 @@ namespace API.Data
             onCreateUserGroup(mb);
             onCreateMathDay(mb);
             onCreateFootballBet(mb);
+            onCreateUserBet(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -133,6 +135,22 @@ namespace API.Data
                 .HasForeignKey(fb => fb.groupId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
+
+        private void onCreateUserBet(ModelBuilder mb)
+        {
+            mb.Entity<UserBet>()
+                .HasAlternateKey(fb => new { fb.FootballBetId, fb.userId });
+
+            mb.Entity<UserBet>()
+                .HasOne(ub => ub.FootballBet)
+                .WithMany(fb => fb.userBets)
+                .HasForeignKey(ub => ub.FootballBetId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            mb.Entity<UserBet>()
+                .HasOne(ub => ub.User)
+                .WithMany(fb => fb.bets)
+                .HasForeignKey(ub => ub.userId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

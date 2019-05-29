@@ -46,10 +46,9 @@ namespace API.Data.Models
         [Required]
         public Role role { get; set; }
 
-        [Required]
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
-
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
+        public ICollection<UserBet> bets { get; set; } = new HashSet<UserBet>();
 
         [Required]
         public Limitations limitations { get; set; }
