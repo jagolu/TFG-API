@@ -31,6 +31,9 @@ namespace API.Data.Models
         public int capacity { get; set; } = 7;
 
         [Required]
+        public int maxWeekBets { get; set; } = 2;
+
+        [Required]
         public DateTime dateCreated { get; set; } = DateTime.Today;
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();

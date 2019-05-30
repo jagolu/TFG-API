@@ -30,17 +30,39 @@ namespace API.Data
             }
         }
 
+        private static void InitializeTypeFootballBet(ApplicationDBContext context)
+        {
+            var types = new TypeFootballBet[]
+            {
+                new TypeFootballBet{name="FULLTIME_SCORE"},
+                new TypeFootballBet{name="PARTTIME_SCORE"},
+                new TypeFootballBet{name="FULLTIME_WINNER"},
+                new TypeFootballBet{name="PARTTIME_WINNER"}
+            };
+
+            foreach(TypeFootballBet fb in types)
+            {
+                if(context.TypeFootballBet.Where(t => t.name == fb.name).Count() == 0)
+                {
+                    context.TypeFootballBet.Add(fb);
+                }
+            }
+        }
+
         public static void Initialize(ApplicationDBContext context)
         {
             context.Database.EnsureCreated();
 
             InitializeRoles(context);
+            InitializeTypeFootballBet(context);
 
             context.SaveChanges();
 
             createDevelopmentUser(context); //Test users
 
             context.SaveChanges();
+
+            //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
         }
 
         private static void createDevelopmentUser(ApplicationDBContext context)
@@ -80,6 +102,20 @@ namespace API.Data
                 context.Add(admin);
                 context.Limitations.Add(new Limitations { User = admin });
             }
+        }
+
+
+
+
+        private static void aumentarFechaParapruebas(ApplicationDBContext context)
+        {
+            context.MatchDays.ToList().ForEach(md =>
+            {
+                md.date = md.date.AddMonths(4);
+                md.status = "SCHEDULED";
+            });
+
+            context.SaveChanges();
         }
     }
 }

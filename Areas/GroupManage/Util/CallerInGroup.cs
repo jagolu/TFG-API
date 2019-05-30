@@ -25,6 +25,9 @@ namespace API.Areas.GroupManage.Util
                 case TypeCheckCapabilites.REMOVE_GROUP:
                     can = hasPermissionsRemoveGroup(ugCaller, caller, _context);
                     break;
+                case TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET:
+                    can = hasPermissionsStartCreateFootballBet(ugCaller, group, _context);
+                    break;
                 default:
                     can = false;
                     break;
@@ -68,6 +71,26 @@ namespace API.Areas.GroupManage.Util
 
             return true;
         }
+
+        private static bool hasPermissionsStartCreateFootballBet(UserGroup ugCaller, Group group, ApplicationDBContext _context)
+        {
+            _context.Entry(ugCaller).Reference("role").Load();
+
+            Role groupMaker_role = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+            Role groupAdmin_role = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+
+
+            if(ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
+            {
+                return false;
+            }
+            if(group.type != false)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
 
@@ -79,6 +102,6 @@ namespace API.Areas.GroupManage.Util
     {
         MANAGE_PASSWORD = 1,
         REMOVE_GROUP = 2,
-        LEAVE_GROUP = 3
+        STARTCREATE_FOOTBALL_BET = 3
     }
 }
