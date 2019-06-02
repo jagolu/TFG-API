@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace API.Areas.Bet.Controllers
@@ -25,7 +26,7 @@ namespace API.Areas.Bet.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("FootBallBetPage")]
-        public IActionResult getFootBallPage(string groupName)
+        public IActionResult getFootBallPage([Required] string groupName)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
             UserGroup ugCaller = new UserGroup();
@@ -41,7 +42,8 @@ namespace API.Areas.Bet.Controllers
 
             try
             {
-                return Ok(getAvailableMatchDays(group));
+                List<FootBallMatch> availableMatches =  getAvailableMatchDays(group);
+                return Ok(getAvailableBets(availableMatches));
             }
             catch (Exception)
             {
@@ -121,8 +123,6 @@ namespace API.Areas.Bet.Controllers
             {
                 homeTeam = md.HomeTeam.name,
                 awayTeam = md.AwayTeam.name,
-                homeGoals = md.homeGoals,
-                awayGoals = md.awayGoals,
                 competition = md.Competition.name,
                 date = md.date,
                 allowedTypeBets = convertTypeToString(allowedTypes)
@@ -138,6 +138,25 @@ namespace API.Areas.Bet.Controllers
             });
 
             return ret;
+        }
+
+        private List<AvailableBet> getAvailableBets(List<FootBallMatch> matchs)
+        {
+            List<AvailableBet> availableBets = new List<AvailableBet>();
+            _context.Competitions.ToList().ForEach(competition =>
+            {
+                List<FootBallMatch> mtchs_comp = matchs.Where(m => m.competition == competition.name).ToList();
+                if(mtchs_comp.Count() != 0)
+                {
+                    availableBets.Add(new AvailableBet
+                    {
+                        competition = competition.name,
+                        matches = mtchs_comp
+                    });
+                }
+            });
+
+            return availableBets;
         }
     }
 }
