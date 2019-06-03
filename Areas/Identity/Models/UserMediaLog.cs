@@ -25,5 +25,7 @@ namespace API.Areas.Identity.Models
 
         [Required]
         public string urlImage { get; set; }
+
+        public string password { get; set; }
     }
 }

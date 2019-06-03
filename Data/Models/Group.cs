@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace API.Models
+namespace API.Data.Models
 {
     public class Group
     {
@@ -22,11 +22,21 @@ namespace API.Models
         public string password { get; set; } = null;
 
         [Required]
+        public bool canPutPassword { get; set; } = false;
+
+        [Required]
         public Boolean open { get; set; } = true;
+
+        [Required]
+        public int capacity { get; set; } = 7;
+
+        [Required]
+        public int maxWeekBets { get; set; } = 2;
 
         [Required]
         public DateTime dateCreated { get; set; } = DateTime.Today;
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();
+        public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
     }
 }

@@ -1,5 +1,5 @@
 ﻿using API.Data;
-using API.Models;
+using API.Data.Models;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 

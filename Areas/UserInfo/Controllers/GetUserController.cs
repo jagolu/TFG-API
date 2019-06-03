@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using API.Areas.UserInfo.Models;
 using API.Data;
-using API.Models;
+using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Areas.UserInfo.Controllers
@@ -38,8 +37,7 @@ namespace API.Areas.UserInfo.Controllers
                     img = user.profileImg,
                     user_role = user.role.name,
                     rolesGroup = getRoleGroups(user),
-                    timeSignUp = user.dateSignUp,
-                    password = user.password != null
+                    timeSignUp = user.dateSignUp
                 };
 
                 return Ok(userShow);    
@@ -49,16 +47,23 @@ namespace API.Areas.UserInfo.Controllers
             }
         }
 
-        private List<RoleGroup> getRoleGroups(User u)
+        private List<RoleGroup> getRoleGroups(User user)
         {
             List<RoleGroup> roleGroups = new List<RoleGroup>();
+            _context.Entry(user).Collection("groups").Load();
 
-            u.groups.ToList().ForEach(
-                i => roleGroups.Add(new RoleGroup {
-                    group = i.Group.name,
-                    groupType = i.Group.type ? "OFICIAL" : "VIRTUAL",
-                    role = i.role.name
-                })
+            user.groups.ToList().ForEach(
+                group => {
+                    _context.Entry(group).Reference("Group").Load();
+                    _context.Entry(group).Reference("role").Load();
+
+                    roleGroups.Add(new RoleGroup
+                    {
+                        name = group.Group.name,
+                        type = group.Group.type,
+                        role = group.role.name
+                    });
+                }
             );
 
             return roleGroups;

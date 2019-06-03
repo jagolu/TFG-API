@@ -19,7 +19,5 @@ namespace API.Areas.UserInfo.Models
         public List<RoleGroup> rolesGroup { get; set; }
 
         public DateTime timeSignUp { get; set; }
-
-        public bool password { get; set; }
     }
 }

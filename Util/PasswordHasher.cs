@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace API.Util
 {
@@ -27,6 +25,27 @@ namespace API.Util
                 iterationCount: int.Parse(_configuration["Crypt:hashCount"]),
                 numBytesRequested: int.Parse(_configuration["Crypt:subkeyLength"])
             )); ;
+        }
+
+        public static bool areEquals(string pass, string hashPass)
+        {
+            if(hashPassword(pass) != hashPass)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool validPassword(string pass)
+        {
+            if (pass == null) return false;
+            if (pass.Length < 8 || pass.Length > 20 || !Regex.IsMatch(pass, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$"))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

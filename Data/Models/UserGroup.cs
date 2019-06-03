@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Models
+namespace API.Data.Models
 {
     public class UserGroup
     {
@@ -15,7 +15,9 @@ namespace API.Models
         public Role role { get; set; }
 
         [Required]
-        public Boolean open { get; set; } = true;
+        public Boolean blocked { get; set; } = false;
+
+        public Role blockedBy { get; set; }
 
         [Required]
         public DateTime dateJoin { get; set; } = DateTime.Today;

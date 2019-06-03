@@ -1,6 +1,6 @@
 ﻿using API.Areas.Identity.Models;
 using API.Data;
-using API.Models;
+using API.Data.Models;
 using API.Util;
 using System;
 using System.Collections.Generic;
@@ -42,7 +42,8 @@ namespace API.Areas.Identity.Util
             UserSession session = new UserSession
             {
                 api_token = nToken,
-                role = user.role.name
+                role = user.role.name,
+                username = user.nickname
             };
 
             return session;
@@ -51,12 +52,11 @@ namespace API.Areas.Identity.Util
         private static List<UserGroups> getUserGroups(User u, ApplicationDBContext _context)
         {
             List<UserGroups> userGroups = new List<UserGroups>();
-            List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userId == u.id).ToList();
+            List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userId == u.id && !ug.blocked).ToList();
 
             groups.ForEach(g =>
             {
                 _context.Entry(g).Reference("Group").Load();
-                _context.Entry(g).Reference("role").Load();
 
                 userGroups.Add(new UserGroups
                 {
