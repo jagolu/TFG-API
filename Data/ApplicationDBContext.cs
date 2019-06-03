@@ -20,6 +20,7 @@ namespace API.Data
         public DbSet<ShopOffer> ShopOffers { get; set; }
         public DbSet<FootballBet> FootballBets { get; set; }
         public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
+        public DbSet<TypePay> TypePay { get; set; }
         public DbSet<UserBet> UserBet { get; set; }
 
 

@@ -49,6 +49,23 @@ namespace API.Data
             }
         }
 
+        private static void InitializeTypePay(ApplicationDBContext context)
+        {
+            var types = new TypePay[]
+            {
+                new TypePay{name="EXACT_BET"},
+                new TypePay{name="CLOSER_BET"}
+            };
+
+            foreach(TypePay fb in types)
+            {
+                if(context.TypeFootballBet.Where(t => t.name == fb.name).Count() == 0)
+                {
+                    context.TypePay.Add(fb);
+                }
+            }
+        }
+
         public static void Initialize(ApplicationDBContext context)
         {
             context.Database.EnsureCreated();

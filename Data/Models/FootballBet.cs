@@ -20,6 +20,9 @@ namespace API.Data.Models
         public TypeFootballBet type { get; set; }
 
         [Required]
+        public TypePay typePay { get; set; }
+
+        [Required]
         public int minBet { get; set;}
 
         [Required]
