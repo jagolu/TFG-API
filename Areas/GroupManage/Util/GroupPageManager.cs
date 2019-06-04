@@ -25,7 +25,6 @@ namespace API.Areas.GroupManage.Util
                 GroupPage page = new GroupPage();
                 page.name = group.name;
                 page.type = group.type;
-                page.role = callerInGroup_role;
                 page.dateJoin = callerInGroup.dateJoin;
                 page.dateRole = callerInGroup.dateRole;
                 page.actualCapacity = group.users.ToList().Count();
@@ -43,7 +42,6 @@ namespace API.Areas.GroupManage.Util
                 return new GroupPage{
                     name = "",
                     type = false,
-                    role = "",
                     bets = new List<GroupBet>(),
                     members = new List<GroupMember>(),
                     actualCapacity = 0,
