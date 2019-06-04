@@ -79,6 +79,9 @@ namespace API.Areas.GroupManage.Util
                 members = addFromList(members, group.users.Where(g => g.blocked && g.userId != callerId).ToList(), _context);
             }
 
+            UserGroup ownMember = group.users.Where(g => g.userId == callerId).First();
+            members.Add(formatGroupMember(ownMember, _context));
+
             return members;
         }
 
@@ -86,22 +89,31 @@ namespace API.Areas.GroupManage.Util
         {
             outList.ForEach(user =>
             {
-                _context.Entry(user).Reference("User").Load();
-
-                mainList.Add(new GroupMember
-                {
-                    userName = user.User.nickname,
-                    publicUserId = user.User.publicId,
-                    role = user.role.name,
-                    dateJoin = user.dateJoin,
-                    dateRole = user.dateRole,
-                    img = user.User.profileImg,
-                    blocked = user.blocked,
-                    blockedBy = user.blockedBy != null ? user.blockedBy.name : ""
-                });
+                mainList.Add(formatGroupMember(user, _context));
             });
 
             return mainList;
+        }
+
+
+        private static GroupMember formatGroupMember(UserGroup ug, ApplicationDBContext _context)
+        {
+            _context.Entry(ug).Reference("User").Load();
+            _context.Entry(ug).Reference("role").Load();
+            _context.Entry(ug).Reference("Group").Load();
+            GroupMember ret = new GroupMember
+            {
+                userName = ug.User.nickname,
+                publicUserId = ug.User.publicId,
+                role = ug.role.name,
+                dateJoin = ug.dateJoin,
+                dateRole = ug.dateRole,
+                img = ug.User.profileImg,
+                blocked = ug.blocked,
+                blockedBy = ug.blockedBy != null ? ug.blockedBy.name : ""
+            };
+
+            return ret;
         }
     }
 }
