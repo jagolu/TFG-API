@@ -113,6 +113,8 @@ namespace API.Areas.GroupManage.Util
                 blockedBy = ug.blockedBy != null ? ug.blockedBy.name : ""
             };
 
+            if (!ug.Group.type) ret.coins = ug.coins;
+
             return ret;
         }
     }
