@@ -34,10 +34,10 @@ namespace API.Data
         {
             var types = new TypeFootballBet[]
             {
-                new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55},
-                new TypeFootballBet{name="PARTTIME_SCORE", winRate=0.6},
-                new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35},
-                new TypeFootballBet{name="PARTTIME_WINNER", winRate=0.4}
+                new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55, description="The players must guess the exact result of the match."},
+                new TypeFootballBet{name="PARTTIME_SCORE", winRate=0.6, description="The players must guess the exact result of the first half of the match."},
+                new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35, description="The players must guess the winner of the match."},
+                new TypeFootballBet{name="PARTTIME_WINNER", winRate=0.4, description="The players must guess the winner of the first half of the match."}
             };
 
             foreach(TypeFootballBet fb in types)
@@ -53,8 +53,8 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="EXACT_BET", winRate=2},
-                new TypePay{name="CLOSER_BET", winRate=1}
+                new TypePay{name="EXACT_BET", winRate=2, description="The prize will be for the player who hits the exact result."},
+                new TypePay{name="CLOSER_BET", winRate=1, description="The prize will be for the player or players who come closest to the exact result."}
             };
 
             foreach(TypePay fb in types)

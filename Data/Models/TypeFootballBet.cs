@@ -13,6 +13,10 @@ namespace API.Data.Models
         public string name { get; set; }
 
         [Required]
+        [MaxLength]
+        public string description { get; set; }
+
+        [Required]
         public double winRate { get; set; }
     }
 }

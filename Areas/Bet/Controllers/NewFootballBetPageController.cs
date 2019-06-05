@@ -137,6 +137,7 @@ namespace API.Areas.Bet.Controllers
                 ret.Add(new NameWinRate
                 {
                     name = t.name,
+                    description = t.description,
                     winRate = t.winRate
                 });
             });
@@ -173,6 +174,7 @@ namespace API.Areas.Bet.Controllers
                 tp.Add(new NameWinRate
                 {
                     name = type.name,
+                    description = type.description,
                     winRate = type.winRate
                 });
             });
