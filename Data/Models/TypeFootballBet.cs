@@ -11,5 +11,8 @@ namespace API.Data.Models
 
         [Required]
         public string name { get; set; }
+
+        [Required]
+        public double winRate { get; set; }
     }
 }

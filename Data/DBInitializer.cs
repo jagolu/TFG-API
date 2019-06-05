@@ -34,10 +34,10 @@ namespace API.Data
         {
             var types = new TypeFootballBet[]
             {
-                new TypeFootballBet{name="FULLTIME_SCORE"},
-                new TypeFootballBet{name="PARTTIME_SCORE"},
-                new TypeFootballBet{name="FULLTIME_WINNER"},
-                new TypeFootballBet{name="PARTTIME_WINNER"}
+                new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55},
+                new TypeFootballBet{name="PARTTIME_SCORE", winRate=0.6},
+                new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35},
+                new TypeFootballBet{name="PARTTIME_WINNER", winRate=0.4}
             };
 
             foreach(TypeFootballBet fb in types)
@@ -53,13 +53,13 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="EXACT_BET"},
-                new TypePay{name="CLOSER_BET"}
+                new TypePay{name="EXACT_BET", winRate=2},
+                new TypePay{name="CLOSER_BET", winRate=1}
             };
 
             foreach(TypePay fb in types)
             {
-                if(context.TypeFootballBet.Where(t => t.name == fb.name).Count() == 0)
+                if(context.TypePay.Where(t => t.name == fb.name).Count() == 0)
                 {
                     context.TypePay.Add(fb);
                 }
@@ -72,6 +72,7 @@ namespace API.Data
 
             InitializeRoles(context);
             InitializeTypeFootballBet(context);
+            InitializeTypePay(context);
 
             context.SaveChanges();
 
