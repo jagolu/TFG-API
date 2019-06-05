@@ -38,9 +38,6 @@ namespace API.Data.Models
         public DateTime dateLastBet { get; set; }
 
         [Required]
-        public DateTime dateChanges { get; set; }
-
-        [Required]
         public bool ended { get; set; } = false;
 
         [Required]
