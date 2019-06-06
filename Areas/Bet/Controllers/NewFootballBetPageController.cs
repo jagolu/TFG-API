@@ -37,7 +37,7 @@ namespace API.Areas.Bet.Controllers
             }
             if (!checkMaxBetAllowed(group))
             {
-                return BadRequest(new { error = "" });
+                return Ok("MaximunWeekBetsReached");
             }
 
             try
