@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.Areas.Bet.Models;
 using API.Areas.GroupManage.Models;
 using API.Data;
 using API.Data.Models;
@@ -32,7 +33,7 @@ namespace API.Areas.GroupManage.Util
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
-                page.bets = getBets(_context);
+                page.bets = getBets(group, _context);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -54,15 +55,44 @@ namespace API.Areas.GroupManage.Util
 
         }
 
-        private static List<GroupBet> getBets(ApplicationDBContext _context)
+        private static List<GroupBet> getBets(Group group, ApplicationDBContext _context)
         {
-            return new List<GroupBet>{
-                new GroupBet { betName = "bet1", betBody = "betBody1"},
-                new GroupBet { betName = "bet2", betBody = "betBody2"},
-                new GroupBet { betName = "bet3", betBody = "betBody3"},
-                new GroupBet { betName = "bet4", betBody = "betBody4"},
-                new GroupBet { betName = "bet5", betBody = "betBody5"}
-            };
+            List<GroupBet> bets = new List<GroupBet>();
+            _context.Entry(group).Collection("bets").Load();
+
+            group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
+            {
+                _context.Entry(bet).Reference("MatchDay").Load();
+                _context.Entry(bet.MatchDay).Reference("Competition").Load();
+                _context.Entry(bet).Reference("type").Load();
+                _context.Entry(bet).Reference("typePay").Load();
+                _context.Entry(bet.MatchDay).Reference("HomeTeam").Load();
+                _context.Entry(bet.MatchDay).Reference("AwayTeam").Load();
+                bets.Add(new GroupBet
+                {
+                    bet = bet.id.ToString(),
+                    competition = bet.MatchDay.Competition.name,
+                    betName = bet.MatchDay.HomeTeam.name +" vs "+bet.MatchDay.AwayTeam.name,
+                    typeBet = new NameWinRate
+                    {
+                        name = bet.type.name,
+                        description = bet.type.description,
+                        winRate = bet.type.winRate
+                    },
+                    typePay = new NameWinRate
+                    {
+                        name = bet.typePay.name,
+                        description = bet.typePay.description,
+                        winRate = bet.typePay.winRate
+                    },
+                    minBet = bet.minBet,
+                    maxBet = bet.maxBet,
+                    matchdayDate = bet.MatchDay.date,
+                    lastBetTime = bet.dateLastBet
+                });
+            });
+
+            return bets;
         }
 
         private static List<GroupMember> getMembers(Guid callerId, string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
