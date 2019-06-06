@@ -53,7 +53,8 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="EXACT_BET", winRate=2, description="The prize will be for the player who hits the exact result."},
+                new TypePay{name="EXACT_BET", winRate=1.5, description="The prize will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
+                new TypePay{name="EXACT_BET_NORETURN", winRate=2, description="The prize will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
                 new TypePay{name="CLOSER_BET", winRate=1, description="The prize will be for the player or players who come closest to the exact result."}
             };
 
