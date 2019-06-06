@@ -33,6 +33,7 @@ namespace API.Areas.Bet.Controllers
             MatchDay match = new MatchDay();
             TypeFootballBet typeBet = new TypeFootballBet();
             TypePay typePay = new TypePay();
+
             if (!CallerInGroup.CheckUserCapabilities(caller, ref group, order.groupName, TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET, _context))
             {
                 return BadRequest();
@@ -60,11 +61,13 @@ namespace API.Areas.Bet.Controllers
                     MatchDay=match,
                     Group=group,
                     type=typeBet,
+                    typePay=typePay,
                     minBet=order.minBet,
                     maxBet=order.maxBet,
                     winRate=typeBet.winRate+typePay.winRate,
                     dateLastBet=order.lastBetTime                    
                 });
+                _context.SaveChanges();
 
                 return Ok(GroupPageManager.GetPage(caller, group, _context));
             }
@@ -121,11 +124,11 @@ namespace API.Areas.Bet.Controllers
 
                 if(typeB.Count() != 1 || typeP.Count() != 1)
                 {
-                    type_bet = typeB.First();
-                    type_pay = typeP.First();
-
                     return false;
                 }
+
+                type_bet = typeB.First();
+                type_pay = typeP.First();
 
                 return true;
             }
