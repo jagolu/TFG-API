@@ -37,7 +37,14 @@ namespace API.Areas.Bet.Controllers
             }
             if (!checkMaxBetAllowed(group))
             {
-                return Ok("MaximunWeekBetsReached");
+                List<AvailableBet> badRet = new List<AvailableBet>();
+                badRet.Add(new AvailableBet
+                {
+                    competition = "MaximunWeekBetsReached",
+                    matches = new List<FootBallMatch>(),
+                    allowedTypePays = new List<NameWinRate>()
+                });
+                return Ok(badRet);
             }
 
             try
