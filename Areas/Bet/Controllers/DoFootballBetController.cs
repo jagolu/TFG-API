@@ -31,7 +31,6 @@ namespace API.Areas.Bet.Controllers
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
             UserGroup ugCaller = new UserGroup();
             Group group = new Group();
-            MatchDay match = new MatchDay();
             FootballBet fb = new FootballBet();
 
             if(!UserInGroup.checkUserInGroup(caller.id, ref group, order.groupName, ref ugCaller, _context))

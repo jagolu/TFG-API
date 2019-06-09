@@ -16,13 +16,8 @@ namespace API.Areas.GroupManage.Util
             {
                 if (members.Count() == 1) // The user in the group is the only member in
                 {
-                    _context.UserGroup.Where(ug => ug.groupId == userGroup.groupId && ug.blocked).ToList().ForEach(ug =>
-                    {
-                        _context.Remove(ug);
-                    });
-                    _context.Remove(userGroup);
-                    _context.Remove(_context.Group.Where(g => g.id == userGroup.groupId).First());
-                    _context.SaveChanges();
+                    _context.Entry(userGroup).Reference("Group").Load();
+                    RemoveGroup.Remove(userGroup.Group, _context);
                 }
                 else
                 {
