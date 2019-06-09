@@ -19,7 +19,7 @@ namespace API.Data.Models
         [Required]
         public int bet { get; set; }
 
-        public string winner { get; set; }
+        public int? winner { get; set; }
 
         public int? homeGoals { get; set; }
         public int? awayGoals { get; set; }
