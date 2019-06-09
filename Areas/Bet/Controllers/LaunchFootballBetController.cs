@@ -54,7 +54,7 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest();
             }
-            if(checkMaxMin(order.minBet, order.maxBet)){
+            if(!checkMaxMin(order.minBet, order.maxBet)){
                 return BadRequest();
             }
             try
