@@ -48,7 +48,7 @@ namespace API.Data.Models
 
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
-        public ICollection<UserBet> bets { get; set; } = new HashSet<UserBet>();
+        public ICollection<UserFootballBet> footballBets { get; set; } = new HashSet<UserFootballBet>();
 
         [Required]
         public Limitations limitations { get; set; }

@@ -45,6 +45,6 @@ namespace API.Data.Models
 
 
 
-        public ICollection<UserBet> userBets { get; set; } = new HashSet<UserBet>();
+        public ICollection<UserFootballBet> userBets { get; set; } = new HashSet<UserFootballBet>();
     }
 }
