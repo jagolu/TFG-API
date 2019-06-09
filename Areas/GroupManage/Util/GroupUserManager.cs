@@ -25,7 +25,7 @@ namespace API.Areas.GroupManage.Util
 
                 var targetUsers = context.User.Where(u => u.publicId == publicUserId); //The target user
 
-                if(targetUsers.Count() != 1 || !UserInGroup.checkUserInGroup(targetUsers.First().id, ref group, groupName, ref ugTarget, context))
+                if(targetUsers.Count() != 1 || !UserInGroup.checkUserInGroup(targetUsers.First().id, ref group, groupName, ref ugTarget, context, false))
                 {
                     return false;
                 }

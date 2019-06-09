@@ -7,7 +7,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class UserInGroup
     {
-        public static bool checkUserInGroup(Guid callerId, ref Group group, string groupName, ref UserGroup ugCaller, ApplicationDBContext context)
+        public static bool checkUserInGroup(Guid callerId, ref Group group, string groupName, ref UserGroup ugCaller, ApplicationDBContext context, bool matterBlock = true)
         {
             try
             {
@@ -21,6 +21,10 @@ namespace API.Areas.GroupManage.Util
 
                 var callerInGroup = context.UserGroup.Where(ug => ug.groupId == groups.First().id && ug.userId == callerId);
                 if(callerInGroup.Count() != 1)
+                {
+                    return false;
+                }
+                if(matterBlock && callerInGroup.First().blocked)
                 {
                     return false;
                 }
