@@ -54,6 +54,9 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest();
             }
+            if(checkMaxMin(order.minBet, order.maxBet){
+                return BadRequest();
+            }
             try
             {
                 _context.Add(new FootballBet
@@ -136,6 +139,15 @@ namespace API.Areas.Bet.Controllers
             {
                 return false;
             }
+        }
+
+        private bool checkMaxMin(int min, int max)
+        {
+            if (min > max) return false;
+            if (min < 100 || min > 10000) return false;
+            if (max < 100 || max > 10000) return false;
+
+            return true;
         }
     }
 }
