@@ -33,7 +33,7 @@ namespace API.Areas.GroupManage.Util
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
-                page.bets = getBets(group, _context);
+                page.bets = getBets(callerInGroup, group, _context);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -55,7 +55,7 @@ namespace API.Areas.GroupManage.Util
 
         }
 
-        private static List<GroupBet> getBets(Group group, ApplicationDBContext _context)
+        private static List<GroupBet> getBets(UserGroup caller, Group group, ApplicationDBContext _context)
         {
             List<GroupBet> bets = new List<GroupBet>();
             _context.Entry(group).Collection("bets").Load();
@@ -63,12 +63,13 @@ namespace API.Areas.GroupManage.Util
             group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Reference("MatchDay").Load();
+                _context.Entry(bet).Collection("userBets").Load();
                 _context.Entry(bet.MatchDay).Reference("Competition").Load();
                 _context.Entry(bet).Reference("type").Load();
                 _context.Entry(bet).Reference("typePay").Load();
                 _context.Entry(bet.MatchDay).Reference("HomeTeam").Load();
                 _context.Entry(bet.MatchDay).Reference("AwayTeam").Load();
-                bets.Add(new GroupBet
+                if(bet.userBets.Where(ub => ub.userId == caller.userId).Count() == 0) bets.Add(new GroupBet
                 {
                     bet = bet.id.ToString(),
                     competition = bet.MatchDay.Competition.name,
