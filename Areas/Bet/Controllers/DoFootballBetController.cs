@@ -34,11 +34,15 @@ namespace API.Areas.Bet.Controllers
             MatchDay match = new MatchDay();
             FootballBet fb = new FootballBet();
 
-            if(UserInGroup.checkUserInGroup(caller.id, ref group, order.groupName, ref ugCaller, _context))
+            if(!UserInGroup.checkUserInGroup(caller.id, ref group, order.groupName, ref ugCaller, _context))
             {
                 return BadRequest();
             }
             if (!getBet(ref fb, order.footballbet, group))
+            {
+                return BadRequest();
+            }
+            if(!checkUserInBet(fb, caller))
             {
                 return BadRequest();
             }
@@ -50,7 +54,7 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest(new { error = "BetEnded" });
             }
-            if (fb.dateLastBet > DateTime.Now)
+            if (fb.dateLastBet < DateTime.Now)
             {
                 return BadRequest(new { error = "BetLastBetPassed" });
             }
@@ -73,6 +77,7 @@ namespace API.Areas.Bet.Controllers
                     homeGoals = order.homeGoals,
                     awayGoals = order.awayGoals
                 });
+
                 ugCaller.coins -= order.bet;
                 _context.Update(ugCaller);
 
@@ -94,7 +99,7 @@ namespace API.Areas.Bet.Controllers
             {
                 return false;
             }
-            if (!group.type)
+            if (group.type)
             {
                 return false;
             }
@@ -138,6 +143,16 @@ namespace API.Areas.Bet.Controllers
                 return false;
             }
 
+            return true;
+        }
+
+        private bool checkUserInBet(FootballBet fb, User caller)
+        {
+            var existBet =_context.UserFootballBet.Where(ufb => ufb.userId == caller.id && ufb.FootballBetId == fb.id);
+            if(existBet.Count() != 0)
+            {
+                return false;
+            }
             return true;
         }
     }
