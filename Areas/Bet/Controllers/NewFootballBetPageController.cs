@@ -83,8 +83,8 @@ namespace API.Areas.Bet.Controllers
 
         private List<FootBallMatch> getAvailableMatchDays(Group group)
         {
-            DateTime now = DateTime.UtcNow;
-            DateTime aWeek = DateTime.UtcNow.AddDays(8);
+            DateTime now = DateTime.Now;
+            DateTime aWeek = DateTime.Now.AddDays(8);
             List<TypeFootballBet> allTypes = _context.TypeFootballBet.ToList();
             List<FootballBet> doneBets = group.bets.ToList(); //Group bets
             List<FootBallMatch> retmatchs = new List<FootBallMatch>(); //return array
