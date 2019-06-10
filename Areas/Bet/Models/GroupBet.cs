@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace API.Areas.Bet.Models
 {
@@ -22,6 +23,10 @@ namespace API.Areas.Bet.Models
             this.maxBet = bet.maxBet;
             this.matchdayDate = bet.MatchDay.date;
             this.lastBetTime = bet.dateLastBet;
+            if (bet.typePay.name.Contains("GROUP"))
+            {
+                this.usersJoined = bet.userBets.Count();
+            }
         }
         public string bet { get; set; }
         public string competition { get; set; }
@@ -32,5 +37,6 @@ namespace API.Areas.Bet.Models
         public int maxBet { get; set; }
         public DateTime matchdayDate { get; set; }
         public DateTime lastBetTime { get; set; }
+        public int? usersJoined { get; set; }
     }
 }

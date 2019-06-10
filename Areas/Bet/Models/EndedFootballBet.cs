@@ -12,10 +12,8 @@ namespace API.Areas.Bet.Models
             _context.Entry(bet).Reference("typePay").Load();
             _context.Entry(bet).Collection("userBets").Load();
             var userBet = bet.userBets.Where(b => b.userId == caller.id);
-            bool groupbet = bet.typePay.name.Contains("GROUP");
 
             this.bet = new GroupBet(bet, _context);
-            this.usersJoined = groupbet ? bet.userBets.Count() : 0;
             this.ended = bet.ended;
             if (userBet.Count() != 0)
             {
@@ -26,7 +24,7 @@ namespace API.Areas.Bet.Models
                 });
             }
             else this.ownBet = null;
-            if (!groupbet)
+            if (bet.ended)
             {
                 this.users = new List<HistoryUserFootballBet>();
                 bet.userBets.Where(b => b.userId != caller.id).ToList().ForEach(bb =>
@@ -38,7 +36,6 @@ namespace API.Areas.Bet.Models
         }
 
         public GroupBet bet { get; set; }
-        public int usersJoined { get; set; }
         public bool ended { get; set; }
         public List<HistoryUserFootballBet> users { get; set; }
         public List<HistoryUserFootballBet> ownBet { get; set; }
