@@ -62,35 +62,17 @@ namespace API.Areas.GroupManage.Util
 
             group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
             {
-                _context.Entry(bet).Reference("MatchDay").Load();
-                _context.Entry(bet).Collection("userBets").Load();
-                _context.Entry(bet.MatchDay).Reference("Competition").Load();
-                _context.Entry(bet).Reference("type").Load();
-                _context.Entry(bet).Reference("typePay").Load();
-                _context.Entry(bet.MatchDay).Reference("HomeTeam").Load();
-                _context.Entry(bet.MatchDay).Reference("AwayTeam").Load();
-                if(bet.userBets.Where(ub => ub.userId == caller.userId).Count() == 0) bets.Add(new GroupBet
+                //_context.Entry(bet).Reference("MatchDay").Load();
+                //_context.Entry(bet).Collection("userBets").Load();
+                //_context.Entry(bet.MatchDay).Reference("Competition").Load();
+                //_context.Entry(bet).Reference("type").Load();
+                //_context.Entry(bet).Reference("typePay").Load();
+                //_context.Entry(bet.MatchDay).Reference("HomeTeam").Load();
+                //_context.Entry(bet.MatchDay).Reference("AwayTeam").Load();
+                if(bet.userBets.Where(ub => ub.userId == caller.userId).Count() == 0)
                 {
-                    bet = bet.id.ToString(),
-                    competition = bet.MatchDay.Competition.name,
-                    betName = bet.MatchDay.HomeTeam.name +" vs "+bet.MatchDay.AwayTeam.name,
-                    typeBet = new NameWinRate
-                    {
-                        name = bet.type.name,
-                        description = bet.type.description,
-                        winRate = bet.type.winRate
-                    },
-                    typePay = new NameWinRate
-                    {
-                        name = bet.typePay.name,
-                        description = bet.typePay.description,
-                        winRate = bet.typePay.winRate
-                    },
-                    minBet = bet.minBet,
-                    maxBet = bet.maxBet,
-                    matchdayDate = bet.MatchDay.date,
-                    lastBetTime = bet.dateLastBet
-                });
+                    bets.Add(new GroupBet(bet, _context));
+                }
             });
 
             return bets;

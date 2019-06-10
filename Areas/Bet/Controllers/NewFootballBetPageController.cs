@@ -141,12 +141,7 @@ namespace API.Areas.Bet.Controllers
             List<NameWinRate> ret = new List<NameWinRate>();
             types.ForEach(t =>
             {
-                ret.Add(new NameWinRate
-                {
-                    name = t.name,
-                    description = t.description,
-                    winRate = t.winRate
-                });
+                ret.Add(new NameWinRate(t));
             });
 
             return ret;
@@ -178,12 +173,7 @@ namespace API.Areas.Bet.Controllers
             List<NameWinRate> tp = new List<NameWinRate>();
             _context.TypePay.ToList().ForEach(type =>
             {
-                tp.Add(new NameWinRate
-                {
-                    name = type.name,
-                    description = type.description,
-                    winRate = type.winRate
-                });
+                tp.Add(new NameWinRate(type));
             });
 
             return tp;
