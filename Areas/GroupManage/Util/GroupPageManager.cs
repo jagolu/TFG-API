@@ -62,7 +62,8 @@ namespace API.Areas.GroupManage.Util
 
             group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
             {
-                if(bet.userBets.Where(ub => ub.userId == caller.id).Count() == 0)
+                _context.Entry(bet).Collection("userBets").Load();
+                if (bet.userBets.Where(ub => ub.userId == caller.id && ub.valid).Count() == 0)
                 {
                     bets.Add(new GroupBet(bet, _context));
                 }
@@ -86,7 +87,7 @@ namespace API.Areas.GroupManage.Util
             group.bets.ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
-                bool contains = bet.userBets.Where(b => b.userId == caller.id).Count() != 1;
+                bool contains = bet.userBets.Where(b => b.userId == caller.id).Count() > 0;
                 if (availableroles.Contains(ugCaller.role) || contains)
                 {
                     history.Add(new EndedFootballBet(caller, bet, _context));
