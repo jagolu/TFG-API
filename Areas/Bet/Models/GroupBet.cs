@@ -1,7 +1,6 @@
-﻿using API.Areas.Bet.Models;
-using System;
+﻿using System;
 
-namespace API.Areas.GroupManage.Models
+namespace API.Areas.Bet.Models
 {
     public class GroupBet
     {
