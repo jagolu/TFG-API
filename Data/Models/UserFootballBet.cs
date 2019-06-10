@@ -27,8 +27,10 @@ namespace API.Data.Models
         [Required]
         public DateTime dateDone { get; set; } = DateTime.Now;
 
+        public DateTime dateInvalid { get; set; }
+
         [Required]
-        public bool closed { get; set; } = false;
+        public bool valid { get; set; } = true;
 
         [Required]
         public int earnings { get; set; } = 0;

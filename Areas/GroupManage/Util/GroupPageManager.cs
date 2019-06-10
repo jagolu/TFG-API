@@ -33,8 +33,8 @@ namespace API.Areas.GroupManage.Util
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
-                page.bets = getBets(callerInGroup, group, _context);
-                page.betsHistory = getHistory(caller, group, _context);
+                page.bets = getBets(caller, group, _context);
+                page.myBets = getHistory(caller, group, _context);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -55,14 +55,14 @@ namespace API.Areas.GroupManage.Util
             }
         }
 
-        private static List<GroupBet> getBets(UserGroup caller, Group group, ApplicationDBContext _context)
+        private static List<GroupBet> getBets(User caller, Group group, ApplicationDBContext _context)
         {
             List<GroupBet> bets = new List<GroupBet>();
             _context.Entry(group).Collection("bets").Load();
 
             group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
             {
-                if(bet.userBets.Where(ub => ub.userId == caller.userId).Count() == 0)
+                if(bet.userBets.Where(ub => ub.userId == caller.id).Count() == 0)
                 {
                     bets.Add(new GroupBet(bet, _context));
                 }
@@ -75,10 +75,22 @@ namespace API.Areas.GroupManage.Util
         {
             List<EndedFootballBet> history = new List<EndedFootballBet>();
             _context.Entry(group).Collection("bets").Load();
+            _context.Entry(group).Collection("users").Load();
+            UserGroup ugCaller = group.users.Where(u => u.userId == caller.id).First();
+            List<Role> availableroles = _context.Role.Where(r => r.name == "GROUP_MAKER" || r.name == "GROUP_ADMIN").ToList();
+            _context.Entry(ugCaller).Reference("role").Load();
+            List<FootballBet> bets = new List<FootballBet>();
+
+            if (availableroles.Contains(ugCaller.role)) bets = group.bets.ToList();
 
             group.bets.ToList().ForEach(bet =>
             {
-                history.Add(new EndedFootballBet(caller, bet, _context));
+                _context.Entry(bet).Collection("userBets").Load();
+                bool contains = bet.userBets.Where(b => b.userId == caller.id).Count() != 1;
+                if (availableroles.Contains(ugCaller.role) || contains)
+                {
+                    history.Add(new EndedFootballBet(caller, bet, _context));
+                }
             });
 
             return history;
