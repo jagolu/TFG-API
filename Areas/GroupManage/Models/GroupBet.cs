@@ -8,7 +8,6 @@ namespace API.Areas.GroupManage.Models
         public GroupBet(Data.Models.FootballBet bet, Data.ApplicationDBContext _context)
         {
             _context.Entry(bet).Reference("MatchDay").Load();
-            //_context.Entry(bet).Collection("userBets").Load();
             _context.Entry(bet.MatchDay).Reference("Competition").Load();
             _context.Entry(bet).Reference("type").Load();
             _context.Entry(bet).Reference("typePay").Load();

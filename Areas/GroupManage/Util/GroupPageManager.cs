@@ -34,6 +34,7 @@ namespace API.Areas.GroupManage.Util
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
                 page.bets = getBets(callerInGroup, group, _context);
+                page.betsHistory = getHistory(caller, group, _context);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -52,7 +53,6 @@ namespace API.Areas.GroupManage.Util
                     maxCapacity = 0
                 };
             }
-
         }
 
         private static List<GroupBet> getBets(UserGroup caller, Group group, ApplicationDBContext _context)
@@ -62,13 +62,6 @@ namespace API.Areas.GroupManage.Util
 
             group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
             {
-                //_context.Entry(bet).Reference("MatchDay").Load();
-                //_context.Entry(bet).Collection("userBets").Load();
-                //_context.Entry(bet.MatchDay).Reference("Competition").Load();
-                //_context.Entry(bet).Reference("type").Load();
-                //_context.Entry(bet).Reference("typePay").Load();
-                //_context.Entry(bet.MatchDay).Reference("HomeTeam").Load();
-                //_context.Entry(bet.MatchDay).Reference("AwayTeam").Load();
                 if(bet.userBets.Where(ub => ub.userId == caller.userId).Count() == 0)
                 {
                     bets.Add(new GroupBet(bet, _context));
@@ -76,6 +69,19 @@ namespace API.Areas.GroupManage.Util
             });
 
             return bets;
+        }
+
+        public static List<EndedFootballBet> getHistory(User caller, Group group, ApplicationDBContext _context)
+        {
+            List<EndedFootballBet> history = new List<EndedFootballBet>();
+            _context.Entry(group).Collection("bets").Load();
+
+            group.bets.ToList().ForEach(bet =>
+            {
+                history.Add(new EndedFootballBet(caller, bet, _context));
+            });
+
+            return history;
         }
 
         private static List<GroupMember> getMembers(Guid callerId, string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
