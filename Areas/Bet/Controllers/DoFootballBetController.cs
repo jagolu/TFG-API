@@ -1,4 +1,5 @@
 ﻿using API.Areas.Bet.Models;
+using API.Areas.Bet.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
@@ -6,8 +7,6 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 
 namespace API.Areas.Bet.Controllers
@@ -33,15 +32,7 @@ namespace API.Areas.Bet.Controllers
             Group group = new Group();
             FootballBet fb = new FootballBet();
 
-            if(!UserInGroup.checkUserInGroup(caller.id, ref group, order.groupName, ref ugCaller, _context))
-            {
-                return BadRequest();
-            }
-            if (!getBet(ref fb, order.footballbet, group))
-            {
-                return BadRequest();
-            }
-            if(!checkUserInBet(fb, caller))
+            if(!UserInFootballBet.check(caller, ref group, order.groupName, ref ugCaller, ref fb, order.footballbet, _context))
             {
                 return BadRequest();
             }
@@ -90,23 +81,6 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
-        private bool getBet(ref FootballBet fb, string betId, Group group)
-        {
-            List<FootballBet> fbs = _context.FootballBets
-                .Where(md => md.id.ToString() == betId && md.groupId == group.id).ToList();
-            if (fbs.Count() != 1)
-            {
-                return false;
-            }
-            if (group.type)
-            {
-                return false;
-            }
-
-            fb = fbs.First();
-            return true;
-        }
-
         private bool checkBet(int userBet, int userCoins, FootballBet fb)
         {
             _context.Entry(fb).Reference("typePay").Load();
@@ -142,16 +116,6 @@ namespace API.Areas.Bet.Controllers
                 return false;
             }
 
-            return true;
-        }
-
-        private bool checkUserInBet(FootballBet fb, User caller)
-        {
-            var existBet =_context.UserFootballBet.Where(ufb => ufb.userId == caller.id && ufb.FootballBetId == fb.id && ufb.valid);
-            if(existBet.Count() != 0)
-            {
-                return false;
-            }
             return true;
         }
     }
