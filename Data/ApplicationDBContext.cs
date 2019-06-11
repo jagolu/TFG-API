@@ -140,7 +140,7 @@ namespace API.Data
         private void onCreateUserFootballBet(ModelBuilder mb)
         {
             mb.Entity<UserFootballBet>()
-                .HasAlternateKey(fb => new { fb.FootballBetId, fb.userId });
+                .HasAlternateKey(fb => new { fb.FootballBetId, fb.userId, fb.dateDone });
 
             mb.Entity<UserFootballBet>()
                 .HasOne(ub => ub.FootballBet)
