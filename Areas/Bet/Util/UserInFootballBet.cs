@@ -8,7 +8,7 @@ namespace API.Areas.Bet.Util
 {
     public static class UserInFootballBet
     {
-        public static bool check(User caller, ref Group group, string groupName, ref UserGroup ugCaller, ref FootballBet footballBet, string footballBetId, ApplicationDBContext _context)
+        public static bool check(User caller, ref Group group, string groupName, ref UserGroup ugCaller, ref FootballBet footballBet, string footballBetId, ApplicationDBContext _context, bool checkOnlyBet = true)
         {
             if (!UserInGroup.checkUserInGroup(caller.id, ref group, groupName, ref ugCaller, _context))
             {
@@ -18,7 +18,7 @@ namespace API.Areas.Bet.Util
             {
                 return false;
             }
-            if (!checkUserInBet(footballBet, caller, _context))
+            if (checkOnlyBet && !checkUserInBet(footballBet, caller, _context))
             {
                 return false;
             }
