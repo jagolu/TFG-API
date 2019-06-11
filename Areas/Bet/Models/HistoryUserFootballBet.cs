@@ -7,6 +7,7 @@ namespace API.Areas.Bet.Models
         public HistoryUserFootballBet(API.Data.Models.UserFootballBet ub, API.Data.ApplicationDBContext _context, bool ended)
         {
             _context.Entry(ub).Reference("User").Load();
+            this.userFootballBet = ub.id.ToString();
             this.username = ub.User.nickname;
             this.valid = ub.valid;
             this.dateInvalid = ub.dateInvalid;
@@ -20,6 +21,7 @@ namespace API.Areas.Bet.Models
                 this.earnings = ub.earnings;
             }
         }
+        public string userFootballBet { get; set; }
         public string username { get; set; }
         public int? bet { get; set; }
         public int? homeGoals { get; set; }
