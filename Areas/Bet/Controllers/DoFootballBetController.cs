@@ -110,17 +110,17 @@ namespace API.Areas.Bet.Controllers
         private bool checkBet(int userBet, int userCoins, FootballBet fb)
         {
             _context.Entry(fb).Reference("typePay").Load();
-            bool typeGroup = fb.typePay.name.Contains("GROUP");
+            bool typeJackpot = fb.typePay.name.Contains("JACKPOT");
 
             if(userBet > userCoins)
             {
                 return false;
             }
-            if(typeGroup && userBet != fb.minBet)
+            if(typeJackpot && userBet != fb.minBet)
             {
                 return false;
             }
-            if(!typeGroup && (userBet<fb.minBet || userBet>fb.maxBet))
+            if(!typeJackpot && (userBet<fb.minBet || userBet>fb.maxBet))
             {
                 return false;
             }

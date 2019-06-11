@@ -53,9 +53,9 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="GROUP_EXACT_BET", winRate=0, description="The prize will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
-                new TypePay{name="GROUP_EXACT_BET_NORETURN", winRate=0, description="The prize will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
-                new TypePay{name="GROUP_CLOSER_BET", winRate=0, description="The prize will be for the player or players who come closest to the exact result."},
+                new TypePay{name="BACKPOT_EXACT_BET", winRate=0, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
+                new TypePay{name="JACKPOT_EXACT_BET_NORETURN", winRate=0, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
+                new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, description="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
                 new TypePay{name="SOLO_EXACT_BET", winRate=1.5, description="Every player bets alone and win a prize by a winrate, if the player does not win, the player will get his coins back."},
                 new TypePay{name="SOLO_EXACT_BET_NORETURN", winRate=2, description="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lost the coins bet."}
             };
