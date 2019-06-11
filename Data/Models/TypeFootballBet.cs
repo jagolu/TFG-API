@@ -18,5 +18,8 @@ namespace API.Data.Models
 
         [Required]
         public double winRate { get; set; }
+
+        [Required]
+        public double winLoseCancel { get; set; }
     }
 }
