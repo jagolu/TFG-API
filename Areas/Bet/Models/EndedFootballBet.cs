@@ -18,7 +18,7 @@ namespace API.Areas.Bet.Models
             if (userBet.Count() != 0)
             {
                 this.ownBet = new List<HistoryUserFootballBet>();
-                bet.userBets.Where(b => b.userId == caller.id).ToList().ForEach(bb =>
+                bet.userBets.Where(b => b.userId == caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
                 {
                     this.ownBet.Add(new HistoryUserFootballBet(bb, _context, true));
                 });
@@ -27,7 +27,7 @@ namespace API.Areas.Bet.Models
             if (bet.ended)
             {
                 this.users = new List<HistoryUserFootballBet>();
-                bet.userBets.Where(b => b.userId != caller.id).ToList().ForEach(bb =>
+                bet.userBets.Where(b => b.userId != caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
                 {
                     this.users.Add(new HistoryUserFootballBet(bb, _context, bet.ended));
                 });

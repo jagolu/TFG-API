@@ -60,7 +60,7 @@ namespace API.Areas.GroupManage.Util
             List<GroupBet> bets = new List<GroupBet>();
             _context.Entry(group).Collection("bets").Load();
 
-            group.bets.Where(b => !b.ended && !b.cancelled).ToList().ForEach(bet =>
+            group.bets.Where(b => !b.ended && !b.cancelled).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
                 if (bet.userBets.Where(ub => ub.userId == caller.id && ub.valid).Count() == 0)
@@ -84,7 +84,7 @@ namespace API.Areas.GroupManage.Util
 
             if (availableroles.Contains(ugCaller.role)) bets = group.bets.ToList();
 
-            group.bets.ToList().ForEach(bet =>
+            group.bets.OrderByDescending(bb => bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
                 bool contains = bet.userBets.Where(b => b.userId == caller.id).Count() > 0;
