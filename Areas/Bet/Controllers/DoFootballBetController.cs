@@ -147,7 +147,7 @@ namespace API.Areas.Bet.Controllers
 
         private bool checkUserInBet(FootballBet fb, User caller)
         {
-            var existBet =_context.UserFootballBet.Where(ufb => ufb.userId == caller.id && ufb.FootballBetId == fb.id);
+            var existBet =_context.UserFootballBet.Where(ufb => ufb.userId == caller.id && ufb.FootballBetId == fb.id && ufb.valid);
             if(existBet.Count() != 0)
             {
                 return false;
