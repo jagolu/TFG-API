@@ -134,8 +134,11 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                md.date = md.date.AddMonths(4);
-                md.status = "SCHEDULED";
+                if (md.date > DateTime.Now.AddMonths(5))
+                {
+                    md.date = md.date.AddMonths(5);
+                    md.status = "SCHEDULED";
+                }
             });
 
             context.SaveChanges();
