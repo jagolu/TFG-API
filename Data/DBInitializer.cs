@@ -55,7 +55,7 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="BACKPOT_EXACT_BET", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
+                new TypePay{name="JACKPOT_EXACT_BET", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
                 new TypePay{name="JACKPOT_EXACT_BET_NORETURN", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
                 new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
                 new TypePay{name="SOLO_EXACT_BET", winRate=1.5, winLoseCancel=0.3, description="Every player bets alone and win a prize by a winrate, if the player does not win, the player will get his coins back."},
@@ -134,7 +134,7 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                if (md.date > DateTime.Now.AddMonths(5))
+                if (md.date > DateTime.Now.AddMonths(-5))
                 {
                     md.date = md.date.AddMonths(5);
                     md.status = "SCHEDULED";
