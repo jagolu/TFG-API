@@ -14,11 +14,12 @@
         public class Score
         {
             public string duration { get; set; }
-            public FullTime fullTime { get; set; }
+            public TimeGoals fullTime { get; set; }
+            public TimeGoals halfTime { get; set; }
             public Penalties penalties { get; set; }
 
 
-            public class FullTime
+            public class TimeGoals
             {
                 public int? homeTeam { get; set; }
                 public int? awayTeam { get; set; }

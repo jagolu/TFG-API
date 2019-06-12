@@ -41,10 +41,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
                     group = match.group,
                     HomeTeam = homeTeam,
                     AwayTeam = awayTeam,
-                    homeGoals = match.status == "FINISHED" ? match.score.fullTime.homeTeam : null,
-                    awayGoals = match.status == "FINISHED" ? match.score.fullTime.awayTeam : null,
-                    homeEndPenalties = match.status == "FINISHED" ? match.score.penalties.homeTeam : null,
-                    awayEndPenalties = match.status == "FINISHED" ? match.score.penalties.awayTeam : null
+                    firstHalfHomeGoals = match.status == "FINISHED" ? match.score.halfTime.homeTeam : null,
+                    firstHalfAwayGoals = match.status == "FINISHED" ? match.score.halfTime.awayTeam : null,
+                    secondHalfHomeGoals = match.status == "FINISHED" ? (match.score.fullTime.homeTeam - match.score.halfTime.homeTeam): null,
+                    secondHalfAwayGoals = match.status == "FINISHED" ? (match.score.fullTime.awayTeam - match.score.halfTime.awayTeam) : null,
+                    fullTimeHomeGoals = match.status == "FINISHED" ? match.score.fullTime.homeTeam : null,
+                    fullTimeAwayGoals = match.status == "FINISHED" ? match.score.fullTime.awayTeam : null
                 });
 
                 return true;
@@ -80,10 +82,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             MatchDay matchday = matchD.First();
 
             matchday.status = match.status;
-            matchday.homeGoals = match.score.fullTime.homeTeam;
-            matchday.awayGoals = match.score.fullTime.awayTeam;
-            matchday.homeEndPenalties = match.score.penalties.homeTeam;
-            matchday.awayEndPenalties = match.score.penalties.awayTeam;
+            matchday.firstHalfHomeGoals = match.score.halfTime.homeTeam;
+            matchday.firstHalfAwayGoals = match.score.halfTime.awayTeam;
+            matchday.secondHalfHomeGoals = match.score.fullTime.homeTeam-match.score.halfTime.homeTeam;
+            matchday.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
+            matchday.fullTimeHomeGoals = match.score.fullTime.homeTeam;
+            matchday.fullTimeAwayGoals = match.score.fullTime.awayTeam;
 
             _context.MatchDays.Update(matchday);
         }
