@@ -107,7 +107,7 @@ namespace API.Areas.Bet.Controllers
             _context.Entry(fb).Reference("type").Load();
             bool type_winner = fb.type.name.Contains("WINNER");
 
-            if(type_winner && ( winner==null ||winner!=1 || winner != 1 || winner != 3 || winner != 13 || winner != 23 || winner != 13))
+            if(type_winner && ( winner==null ||winner>2 || winner < 0))
             {
                 return false;
             }
