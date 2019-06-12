@@ -35,9 +35,11 @@ namespace API.Data
             var types = new TypeFootballBet[]
             {
                 new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55, winLoseCancel=0.1, description="The players must guess the exact result of the match."},
-                new TypeFootballBet{name="PARTTIME_SCORE", winRate=0.6, winLoseCancel=0.12, description="The players must guess the exact result of the first half of the match."},
+                new TypeFootballBet{name="FIRSTHALF_SCORE", winRate=0.6, winLoseCancel=0.12, description="The players must guess the exact result of the first half of the match."},
+                new TypeFootballBet{name="SECONDHALF_SCORE", winRate=0.6, winLoseCancel=0.12, description="The players must guess the exact result of the second half of the match."},
                 new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35, winLoseCancel=0.13, description="The players must guess the winner of the match."},
-                new TypeFootballBet{name="PARTTIME_WINNER", winRate=0.4, winLoseCancel=0.15, description="The players must guess the winner of the first half of the match."}
+                new TypeFootballBet{name="FIRSTHALF_WINNER", winRate=0.4, winLoseCancel=0.15, description="The players must guess the winner of the first half of the match."},
+                new TypeFootballBet{name="SECONDHALF_WINNER", winRate=0.4, winLoseCancel=0.15, description="The players must guess the winner of the second half of the match."}
             };
 
             foreach(TypeFootballBet fb in types)
