@@ -129,6 +129,10 @@ namespace API.Areas.Bet.Controllers
                 {
                     return false;
                 }
+                if(typeB.First().name.Contains("WINNER") && typeP.First().name.Contains("CLOSER"))
+                {
+                    return false;
+                }
 
                 type_bet = typeB.First();
                 type_pay = typeP.First();
