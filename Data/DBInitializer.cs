@@ -34,12 +34,18 @@ namespace API.Data
         {
             var types = new TypeFootballBet[]
             {
-                new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55, winLoseCancel=0.1, description="The players must guess the exact result of the match."},
-                new TypeFootballBet{name="FIRSTHALF_SCORE", winRate=0.6, winLoseCancel=0.12, description="The players must guess the exact result of the first half of the match."},
-                new TypeFootballBet{name="SECONDHALF_SCORE", winRate=0.6, winLoseCancel=0.12, description="The players must guess the exact result of the second half of the match."},
-                new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35, winLoseCancel=0.13, description="The players must guess the winner of the match."},
-                new TypeFootballBet{name="FIRSTHALF_WINNER", winRate=0.4, winLoseCancel=0.15, description="The players must guess the winner of the first half of the match."},
-                new TypeFootballBet{name="SECONDHALF_WINNER", winRate=0.4, winLoseCancel=0.15, description="The players must guess the winner of the second half of the match."}
+                new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55, winLoseCancel=0.1,
+                    description ="The players must guess the exact result of the match."},
+                new TypeFootballBet{name="FIRSTHALF_SCORE", winRate=0.6, winLoseCancel=0.12,
+                    description ="The players must guess the exact result of the first half of the match."},
+                new TypeFootballBet{name="SECONDHALF_SCORE", winRate=0.6, winLoseCancel=0.12,
+                    description ="The players must guess the exact result of the second half of the match."},
+                new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35, winLoseCancel=0.13,
+                    description ="The players must guess the winner of the match."},
+                new TypeFootballBet{name="FIRSTHALF_WINNER", winRate=0.4, winLoseCancel=0.15,
+                    description ="The players must guess the winner of the first half of the match."},
+                new TypeFootballBet{name="SECONDHALF_WINNER", winRate=0.4, winLoseCancel=0.15,
+                    description ="The players must guess the winner of the second half of the match."}
             };
 
             foreach(TypeFootballBet fb in types)
@@ -55,11 +61,12 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="JACKPOT_EXACT_BET", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, the coins will return to each player."},
-                new TypePay{name="JACKPOT_EXACT_BET_NORETURN", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
-                new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, winLoseCancel=100, description="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
-                new TypePay{name="SOLO_EXACT_BET", winRate=1.5, winLoseCancel=0.3, description="Every player bets alone and win a prize by a winrate, if the player does not win, the player will get his coins back."},
-                new TypePay{name="SOLO_EXACT_BET_NORETURN", winRate=2, winLoseCancel=0.4, description="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lost the coins bet."}
+                new TypePay{name="JACKPOT_EXACT_BET", winRate=0, winLoseCancel=100,
+                    description ="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
+                new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, winLoseCancel=100,
+                    description ="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
+                new TypePay{name="SOLO_EXACT_BET", winRate=1.5, winLoseCancel=0.3,
+                    description ="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lose his coins."},
             };
 
             foreach(TypePay fb in types)
