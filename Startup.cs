@@ -74,6 +74,7 @@ namespace API
 
             services.AddHostedService<InitializeVirtualDBHostedService>();
             services.AddHostedService<UpdateCompetitionHostedService>();
+            services.AddHostedService<PayFootballBetHostedService>();
 
             _logger.LogInformation("Added services");
         }
