@@ -14,7 +14,6 @@ namespace API.Areas.Bet.Models
             var userBet = bet.userBets.Where(b => b.userId == caller.id);
 
             this.bet = new GroupBet(bet, _context);
-            this.ended = bet.ended;
             if (userBet.Count() != 0)
             {
                 this.ownBet = new List<HistoryUserFootballBet>();
@@ -36,7 +35,6 @@ namespace API.Areas.Bet.Models
         }
 
         public GroupBet bet { get; set; }
-        public bool ended { get; set; }
         public List<HistoryUserFootballBet> users { get; set; }
         public List<HistoryUserFootballBet> ownBet { get; set; }
     }
