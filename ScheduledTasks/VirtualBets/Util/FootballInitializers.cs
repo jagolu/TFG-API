@@ -20,17 +20,23 @@ namespace API.ScheduledTasks.VirtualBets.Util
          * @param Team awayTeam. 
          *      The away team which plays the match
          * @return bool
-         *      True if the matchday doesn't exists and we did the insert well
-         *      False if the matchday exist or there was any error in the insert statement
+         *      True if the matchday was updated succesfully
+         *      False otherwise
          */
-        public static bool initializeMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, ApplicationDBContext _context)
+        public static bool updateMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, ApplicationDBContext _context)
         {
             try
             {
-                int exist = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
+                DateTime parsedDate = parse(match.utcDate);
+                var exist = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
                                                md.HomeTeamId == homeTeam.id &&
-                                               md.AwayTeamId == awayTeam.id).Count();
-                if (exist != 0) return false;
+                                               md.AwayTeamId == awayTeam.id &&
+                                               md.date == parsedDate);
+                if (exist.Count() != 0)
+                {
+                    updateExistingMatchDay(match, league, homeTeam, awayTeam, exist.First(), _context);
+                    return true;
+                }
 
                 _context.Add(new MatchDay
                 {
@@ -69,27 +75,19 @@ namespace API.ScheduledTasks.VirtualBets.Util
          * @param Team awayTeam. 
          *      The away team which plays the match
          */
-        public static void updateMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, ApplicationDBContext _context)
+        public static void updateExistingMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, MatchDay md, ApplicationDBContext _context)
         {
             if (match.status != "FINISHED") return; //If the match isnt ended dont update
 
-            var matchD = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
-                                                        md.HomeTeamId == homeTeam.id &&
-                                                        md.AwayTeamId == awayTeam.id);
+            md.status = match.status;
+            md.firstHalfHomeGoals = match.score.halfTime.homeTeam;
+            md.firstHalfAwayGoals = match.score.halfTime.awayTeam;
+            md.secondHalfHomeGoals = match.score.fullTime.homeTeam-match.score.halfTime.homeTeam;
+            md.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
+            md.fullTimeHomeGoals = match.score.fullTime.homeTeam;
+            md.fullTimeAwayGoals = match.score.fullTime.awayTeam;
 
-            if (matchD.Count() != 1) return; //Check if the matchday exists to avoid exceptions
-
-            MatchDay matchday = matchD.First();
-
-            matchday.status = match.status;
-            matchday.firstHalfHomeGoals = match.score.halfTime.homeTeam;
-            matchday.firstHalfAwayGoals = match.score.halfTime.awayTeam;
-            matchday.secondHalfHomeGoals = match.score.fullTime.homeTeam-match.score.halfTime.homeTeam;
-            matchday.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
-            matchday.fullTimeHomeGoals = match.score.fullTime.homeTeam;
-            matchday.fullTimeAwayGoals = match.score.fullTime.awayTeam;
-
-            _context.MatchDays.Update(matchday);
+            _context.MatchDays.Update(md);
         }
 
 
@@ -110,9 +108,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 if (teamExist.Count() != 0) return teamExist.First();
 
                 Team newTeam = new Team { name = teamName };
-
                 _context.Teams.Add(newTeam);
-
                 _context.SaveChanges();
 
                 return newTeam;
@@ -141,9 +137,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 if (existLeague.Count() != 0) return existLeague.First();
 
                 Competition newComptetition = new Competition { name = leagueName };
-
                 _context.Competitions.Add(newComptetition);
-
                 _context.SaveChanges();
 
                 return newComptetition;
@@ -165,7 +159,6 @@ namespace API.ScheduledTasks.VirtualBets.Util
             {
                 return dateret;
             }
-
             return dateret;
         }
     }

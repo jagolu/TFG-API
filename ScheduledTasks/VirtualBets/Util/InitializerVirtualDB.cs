@@ -27,7 +27,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
          * @return bool.
          *      True if the initialization was well, false otherwise.
          */
-        public async Task<bool> InitializeAsync(string leagueId)
+        public async Task InitializeAsync(string leagueId)
         {
             string token = _configuration["footballApi:token"];
             bool correct = true;
@@ -46,7 +46,8 @@ namespace API.ScheduledTasks.VirtualBets.Util
                     Team homeTeam = FootballInitializers.initializeTeam(match.homeTeam.name, _context);
                     Team awayTeam = FootballInitializers.initializeTeam(match.awayTeam.name, _context);
 
-                    if (!FootballInitializers.initializeMatchDay(match, league, homeTeam, awayTeam, _context)) //There is any error inserting the new matchday
+                    //There is any error inserting or updating the new matchday
+                    if (!FootballInitializers.updateMatchDay(match, league, homeTeam, awayTeam, _context)) 
                     {
                         correct = false;
                     }
@@ -57,8 +58,6 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _context.Competitions.Update(league); //Set the actual matchday
 
             if(correct) _context.SaveChanges();
-
-            return correct;
         }
     }
 }
