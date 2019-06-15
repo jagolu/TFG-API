@@ -85,6 +85,9 @@ namespace API.ScheduledTasks.VirtualBets
                         CleanVirtualDB(dbContext);
                         correctPL = await initializer.InitializeAsync("PL");
                         correctPD = await initializer.InitializeAsync("PD");
+                        correctPD = await initializer.InitializeAsync("BL1");
+                        correctPD = await initializer.InitializeAsync("SA");
+                        correctPD = await initializer.InitializeAsync("FL1");
                     }
                     else
                     {
@@ -96,6 +99,26 @@ namespace API.ScheduledTasks.VirtualBets
                         if (dbContext.Competitions.Where(c => c.name == "Primera Division").Count() == 0)
                         {
                             correctPD = await initializer.InitializeAsync("PD");
+                        }
+
+                        if (dbContext.Competitions.Where(c => c.name == "Bundesliga").Count() == 0)
+                        {
+                            correctPD = await initializer.InitializeAsync("BL1");
+                        }
+
+                        if (dbContext.Competitions.Where(c => c.name == "Bundesliga").Count() == 0)
+                        {
+                            correctPD = await initializer.InitializeAsync("BL1");
+                        }
+
+                        if (dbContext.Competitions.Where(c => c.name == "Serie A").Count() == 0)
+                        {
+                            correctPD = await initializer.InitializeAsync("SA");
+                        }
+
+                        if (dbContext.Competitions.Where(c => c.name == "Ligue 1").Count() == 0)
+                        {
+                            correctPD = await initializer.InitializeAsync("FL1");
                         }
                     }
 
