@@ -55,7 +55,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 int diffAway = Math.Abs((int)(awayGoals - ub.awayGoals));
                 int fullDiff = diffHome + diffAway;
                 if (fullDiff < closer) closer = fullDiff;
-                diff.Add(new Tuple<Guid, int>(ub.userId, diffHome+diffAway));
+                diff.Add(new Tuple<Guid, int>(ub.id, diffHome+diffAway));
             });
             diff.ForEach(u =>
             {
@@ -74,8 +74,8 @@ namespace API.ScheduledTasks.VirtualBets.Util
             int winner = getWinner(fb.MatchDay, time);
             fb.userBets.Where(b => b.valid).ToList().ForEach(ub =>
             {
-                if (ub.winner == winner) ret.First().Add(ub.userId);
-                else ret.Last().Add(ub.userId);
+                if (ub.winner == winner) ret.First().Add(ub.id);
+                else ret.Last().Add(ub.id);
             });
 
             return ret;
@@ -108,31 +108,36 @@ namespace API.ScheduledTasks.VirtualBets.Util
         private static void payJackpot(FootballBet fb, List<Guid> winners, Group group, ApplicationDBContext _context)
         {
             _context.Entry(group).Collection("users").Load();
+            _context.Entry(fb).Collection("userBets").Load();
             int jackpot = fb.userBets.Count() * fb.minBet;
 
             if (winners.Count() == 0) return;
 
             int div_jack = jackpot / winners.Count();
-            group.users.Where(u => winners.Contains(u.userId)).ToList().ForEach(user =>
+            fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
-                user.coins += div_jack;
-                fb.userBets.Where(uu => uu.userId == user.userId).First().earnings = div_jack;
-                _context.Update(user);
+                userBet.earnings = div_jack;
+                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                u.coins += div_jack;
+                _context.Update(u);
             });
+
         }
 
         private static void payJackpotCloser(FootballBet fb, List<List<Guid>> winners, Group group, ApplicationDBContext _context)
         {
             _context.Entry(group).Collection("users").Load();
+            _context.Entry(fb).Collection("userBets").Load();
             List<Guid> toPay = winners.First().Count() > 0 ? winners.First() : winners.Last();
             int jackpot = fb.userBets.Count() * fb.minBet;
             int div_jack = jackpot / toPay.Count();
 
-            group.users.Where(u => toPay.Contains(u.userId)).ToList().ForEach(user =>
+            fb.userBets.Where(ub => toPay.Contains(ub.id)).ToList().ForEach(userBet =>
             {
-                user.coins += div_jack;
-                fb.userBets.Where(uu => uu.userId == user.userId).First().earnings = div_jack;
-                _context.Update(user);
+                userBet.earnings = div_jack;
+                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                u.coins += div_jack;
+                _context.Update(u);
             });
         }
 
@@ -140,16 +145,18 @@ namespace API.ScheduledTasks.VirtualBets.Util
         {
             _context.Entry(fb).Reference("type").Load();
             _context.Entry(fb).Reference("typePay").Load();
+            _context.Entry(fb).Collection("userBets").Load();
             _context.Entry(group).Collection("users").Load();
             double winRate = fb.type.winRate + fb.typePay.winRate;
 
-            group.users.Where(u => winners.Contains(u.userId)).ToList().ForEach(user =>
+            fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
-                int coinsBet = fb.userBets.Where(ub => ub.userId == user.userId).First().bet;
+                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                int coinsBet = fb.userBets.Where(ub => ub.userId == u.userId).First().bet;
                 double coinsWin = coinsBet * winRate;
-                user.coins += (int)coinsWin;
-                fb.userBets.Where(uu => uu.userId == user.userId).First().earnings = (int)coinsWin;
-                _context.Update(user);
+                u.coins += (int)coinsWin;
+                userBet.earnings = (int)coinsWin;
+                _context.Update(u);
             });
         }
     }
