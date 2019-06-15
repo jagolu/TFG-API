@@ -16,11 +16,14 @@ namespace API.Areas.Bet.Models
             this.bet = new GroupBet(bet, _context, includeResults);
             if (userBet.Count() != 0)
             {
+                bool theUserHasWin = false;
                 this.ownBet = new List<HistoryUserFootballBet>();
                 bet.userBets.Where(b => b.userId == caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
                 {
                     this.ownBet.Add(new HistoryUserFootballBet(bb, _context, true));
+                    theUserHasWin = !theUserHasWin && bb.earnings>0 ? true : false;
                 });
+                if (bet.ended) this.userWins = theUserHasWin;
             }
             else this.ownBet = null;
             if (bet.ended)
@@ -54,5 +57,6 @@ namespace API.Areas.Bet.Models
         public GroupBet bet { get; set; }
         public List<OtherUserBets> users { get; set; }
         public List<HistoryUserFootballBet> ownBet { get; set; }
+        public bool? userWins { get; set; }
     }
 }
