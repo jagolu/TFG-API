@@ -93,9 +93,9 @@ namespace API.ScheduledTasks.VirtualBets
         }
 
         /**
-         * Function to get the time next day at 00:00
+         * Function to get the time next day at 03:05
          * @return TimeSpan
-         *      Return the TimeSpan time to the 06:00 the next day
+         *      Return the TimeSpan time to the 03:05 the next day
          */
         private TimeSpan CalculateInitalNextTime()
         {
@@ -109,7 +109,7 @@ namespace API.ScheduledTasks.VirtualBets
 
             double then = nowDay.AddDays(1).AddHours(3)
                 .ToUniversalTime()
-                .Subtract(new DateTime(1970, 1, 1, 6, 0, 0, DateTimeKind.Utc))
+                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;
 
             int time = ((int)(then - now)) / 1000;
@@ -118,7 +118,7 @@ namespace API.ScheduledTasks.VirtualBets
             int hours = mins / 60; //total hours
 
             hours = hours % 24; //Exactly hours in one day
-            mins = (mins % 60) + 1; //Exactly min in one hour
+            mins = (mins % 60) + 5; //Exactly min in one hour
 
             return new TimeSpan(hours, mins, 0);
         }
