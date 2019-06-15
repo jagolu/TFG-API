@@ -152,8 +152,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
-                int coinsBet = fb.userBets.Where(ub => ub.userId == u.userId).First().bet;
-                double coinsWin = coinsBet * winRate;
+                double coinsWin = userBet.bet * winRate;
                 u.coins += (int)coinsWin;
                 userBet.earnings = (int)coinsWin;
                 _context.Update(u);
