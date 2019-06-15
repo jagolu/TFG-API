@@ -21,7 +21,7 @@ namespace API.Areas.Bet.Models
                 bet.userBets.Where(b => b.userId == caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
                 {
                     this.ownBet.Add(new HistoryUserFootballBet(bb, _context, true));
-                    theUserHasWin = !theUserHasWin && bb.earnings>0 ? true : false;
+                    theUserHasWin = !theUserHasWin && bb.earnings>0 && bb.valid ? true : theUserHasWin;
                 });
                 if (bet.ended) this.userWins = theUserHasWin;
             }
@@ -44,7 +44,7 @@ namespace API.Areas.Bet.Models
                         bool winner = false;
                         anotherUserBets.ForEach(ub =>
                         {
-                            winner = !winner && ub.earnings > 0 ? true : false;
+                            winner = !winner && ub.earnings > 0 && ub.valid ? true : false;
                             otherUserBetsHistory.Add(new HistoryUserFootballBet(ub, _context, bet.ended));
                         });
                         this.users.Add(new OtherUserBets { username = userGroup.User.nickname, winner = winner, bets = otherUserBetsHistory });
