@@ -5,7 +5,7 @@ namespace API.Areas.Bet.Models
 {
     public class GroupBet
     {
-        public GroupBet(Data.Models.FootballBet bet, Data.ApplicationDBContext _context)
+        public GroupBet(Data.Models.FootballBet bet, Data.ApplicationDBContext _context, bool includeResult)
         {
             _context.Entry(bet).Reference("MatchDay").Load();
             _context.Entry(bet.MatchDay).Reference("Competition").Load();
@@ -27,6 +27,15 @@ namespace API.Areas.Bet.Models
             {
                 this.usersJoined = bet.userBets.Count();
             }
+            if (includeResult)
+            {
+                this.firstHalfHomeGoals = bet.MatchDay.firstHalfHomeGoals;
+                this.firstHalfAwayGoals = bet.MatchDay.firstHalfAwayGoals;
+                this.secondHalfHomeGoals = bet.MatchDay.secondHalfHomeGoals;
+                this.secondHalfAwayGoals = bet.MatchDay.secondHalfAwayGoals;
+                this.fullTimeHomeGoals = bet.MatchDay.fullTimeHomeGoals;
+                this.fullTimeAwayGoals = bet.MatchDay.fullTimeAwayGoals;
+            }
         }
         public string bet { get; set; }
         public string competition { get; set; }
@@ -38,5 +47,13 @@ namespace API.Areas.Bet.Models
         public DateTime matchdayDate { get; set; }
         public DateTime lastBetTime { get; set; }
         public int? usersJoined { get; set; }
+
+        //Result matchday
+        public int? firstHalfHomeGoals { get; set; }
+        public int? firstHalfAwayGoals { get; set; }
+        public int? secondHalfHomeGoals { get; set; }
+        public int? secondHalfAwayGoals { get; set; }
+        public int? fullTimeHomeGoals { get; set; }
+        public int? fullTimeAwayGoals { get; set; }
     }
 }

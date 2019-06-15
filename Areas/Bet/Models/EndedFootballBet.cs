@@ -7,13 +7,13 @@ namespace API.Areas.Bet.Models
 {
     public class EndedFootballBet
     {
-        public EndedFootballBet(User caller, FootballBet bet, ApplicationDBContext _context)
+        public EndedFootballBet(User caller, FootballBet bet, ApplicationDBContext _context, bool includeResults)
         {
             _context.Entry(bet).Reference("typePay").Load();
             _context.Entry(bet).Collection("userBets").Load();
             var userBet = bet.userBets.Where(b => b.userId == caller.id);
 
-            this.bet = new GroupBet(bet, _context);
+            this.bet = new GroupBet(bet, _context, includeResults);
             if (userBet.Count() != 0)
             {
                 this.ownBet = new List<HistoryUserFootballBet>();
