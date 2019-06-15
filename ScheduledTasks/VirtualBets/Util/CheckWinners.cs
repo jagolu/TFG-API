@@ -138,6 +138,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
         {
             _context.Entry(fb).Reference("type").Load();
             _context.Entry(fb).Reference("typePay").Load();
+            _context.Entry(group).Collection("users").Load();
             double winRate = fb.type.winRate + fb.typePay.winRate;
 
             group.users.Where(u => winners.Contains(u.userId)).ToList().ForEach(user =>
