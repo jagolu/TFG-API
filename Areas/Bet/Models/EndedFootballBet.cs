@@ -25,17 +25,34 @@ namespace API.Areas.Bet.Models
             else this.ownBet = null;
             if (bet.ended)
             {
-                this.users = new List<HistoryUserFootballBet>();
-                bet.userBets.Where(b => b.userId != caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
+                this.users = new List<OtherUserBets>();
+                _context.Entry(bet).Reference("Group").Load();
+                _context.Entry(bet.Group).Collection("users").Load();
+                //See all the users of the group
+                bet.Group.users.Where(g => g.userId!= caller.id).ToList().ForEach(userGroup =>
                 {
-                    this.users.Add(new HistoryUserFootballBet(bb, _context, bet.ended));
+                    List<UserFootballBet> anotherUserBets = bet.userBets.Where(b => b.userId == userGroup.userId)
+                        .OrderByDescending(bb => bb.dateDone).ToList();
+
+                    if (anotherUserBets.Count() != 0)
+                    {
+                        _context.Entry(userGroup).Reference("User").Load();
+                        List<HistoryUserFootballBet> otherUserBetsHistory = new List<HistoryUserFootballBet>();
+                        bool winner = false;
+                        anotherUserBets.ForEach(ub =>
+                        {
+                            winner = !winner && ub.earnings > 0 ? true : false;
+                            otherUserBetsHistory.Add(new HistoryUserFootballBet(ub, _context, bet.ended));
+                        });
+                        this.users.Add(new OtherUserBets { username = userGroup.User.nickname, winner = winner, bets = otherUserBetsHistory });
+                    }
                 });
             }
             else this.users = null;
         }
 
         public GroupBet bet { get; set; }
-        public List<HistoryUserFootballBet> users { get; set; }
+        public List<OtherUserBets> users { get; set; }
         public List<HistoryUserFootballBet> ownBet { get; set; }
     }
 }

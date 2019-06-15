@@ -35,6 +35,7 @@ namespace API.Areas.GroupManage.Util
                 page.maxCapacity = group.capacity;
                 page.bets = getBets(caller, group, _context);
                 page.myBets = getActiveBets(caller, group, _context, false);
+                page.betsHistory = getActiveBets(caller, group, _context, true);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
