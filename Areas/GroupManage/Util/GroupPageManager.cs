@@ -34,7 +34,7 @@ namespace API.Areas.GroupManage.Util
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
                 page.bets = getBets(caller, group, _context);
-                page.myBets = getHistory(caller, group, _context);
+                page.myBets = getActiveBets(caller, group, _context);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -72,19 +72,19 @@ namespace API.Areas.GroupManage.Util
             return bets;
         }
 
-        public static List<EndedFootballBet> getHistory(User caller, Group group, ApplicationDBContext _context)
+        public static List<EndedFootballBet> getActiveBets(User caller, Group group, ApplicationDBContext _context)
         {
             List<EndedFootballBet> history = new List<EndedFootballBet>();
             _context.Entry(group).Collection("bets").Load();
             _context.Entry(group).Collection("users").Load();
             UserGroup ugCaller = group.users.Where(u => u.userId == caller.id).First();
-            List<Role> availableroles = _context.Role.Where(r => r.name == "GROUP_MAKER" || r.name == "GROUP_ADMIN").ToList();
             _context.Entry(ugCaller).Reference("role").Load();
-            List<FootballBet> bets = new List<FootballBet>();
+            List<Role> availableroles = _context.Role.Where(r => r.name == "GROUP_MAKER" || r.name == "GROUP_ADMIN").ToList();
+            //List<FootballBet> bets = new List<FootballBet>();
 
-            if (availableroles.Contains(ugCaller.role)) bets = group.bets.ToList();
+            //if (availableroles.Contains(ugCaller.role)) bets = group.bets.Where(b => !b.ended).ToList();
 
-            group.bets.OrderByDescending(bb => bb.dateReleased).ToList().ForEach(bet =>
+            group.bets.Where(b=> !b.ended).OrderByDescending(bb => bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
                 bool contains = bet.userBets.Where(b => b.userId == caller.id).Count() > 0;
