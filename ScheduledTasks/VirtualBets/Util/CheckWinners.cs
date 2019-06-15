@@ -74,7 +74,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             int winner = getWinner(fb.MatchDay, time);
             fb.userBets.Where(b => b.valid).ToList().ForEach(ub =>
             {
-                if (ub.bet == winner) ret.First().Add(ub.userId);
+                if (ub.winner == winner) ret.First().Add(ub.userId);
                 else ret.Last().Add(ub.userId);
             });
 
