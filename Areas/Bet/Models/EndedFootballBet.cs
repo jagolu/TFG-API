@@ -44,7 +44,7 @@ namespace API.Areas.Bet.Models
                         bool winner = false;
                         anotherUserBets.ForEach(ub =>
                         {
-                            winner = !winner && ub.earnings > 0 && ub.valid ? true : false;
+                            winner = !winner && ub.earnings > 0 && ub.valid ? true : winner;
                             otherUserBetsHistory.Add(new HistoryUserFootballBet(ub, _context, bet.ended));
                         });
                         this.users.Add(new OtherUserBets { username = userGroup.User.nickname, winner = winner, bets = otherUserBetsHistory });
