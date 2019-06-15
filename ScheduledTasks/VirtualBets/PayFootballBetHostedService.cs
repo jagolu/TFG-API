@@ -1,12 +1,9 @@
 ﻿using API.Data;
 using API.ScheduledTasks.VirtualBets.Util;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,12 +13,10 @@ namespace API.ScheduledTasks.VirtualBets
     {
         private readonly IServiceScopeFactory scopeFactory;
         private Timer _timer;
-        private IConfiguration _configuration;
 
-        public PayFootballBetHostedService(IServiceScopeFactory sf, IConfiguration config)
+        public PayFootballBetHostedService(IServiceScopeFactory sf)
         {
             scopeFactory = sf;
-            _configuration = config;
         }
 
        
@@ -33,8 +28,8 @@ namespace API.ScheduledTasks.VirtualBets
             _timer = new Timer(
                 DoWork,
                 null,
-                //TimeSpan.FromMinutes(2), //30 seconds from now, to wait the football database is initialized
-                TimeSpan.FromHours(5), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
+               //TimeSpan.Zero, 
+               TimeSpan.FromHours(5), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
                 CalculateInitalNextTime() //tomorrow
             );
 
@@ -55,7 +50,7 @@ namespace API.ScheduledTasks.VirtualBets
         /**
          * Initialize the database for virtual bets
          */
-        private async void DoWork(object state)
+        private void DoWork(object state)
         {
             try
             {

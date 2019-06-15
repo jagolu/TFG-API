@@ -71,8 +71,8 @@ namespace API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddHostedService<InitializeVirtualDBHostedService>();
-            //services.AddHostedService<PayFootballBetHostedService>();
+            //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
+            //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
 
             _logger.LogInformation("Added services");
         }
