@@ -26,7 +26,7 @@ namespace API.Areas.Bet.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("CancelUserFootballBet")]
-        public IActionResult doFootballBet([FromBody] CancelUserFootballBet order)
+        public IActionResult cancelUserFootballBet([FromBody] CancelUserFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
             UserGroup ugCaller = new UserGroup();
