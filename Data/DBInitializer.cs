@@ -1,6 +1,5 @@
 ﻿using API.Data.Models;
 using API.Util;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,21 +12,12 @@ namespace API.Data
             var roles = new Role[] {
                 new Role{name="ADMIN"},
                 new Role{name="NORMAL_USER"},
-                new Role{name="GROUP_MAKER" },
+                new Role{name="GROUP_MAKER"},
                 new Role{name="GROUP_ADMIN"},
                 new Role{name="GROUP_NORMAL"}
             };
 
-            foreach (Role r in roles) {
-                Boolean isIn = false;
-                foreach(Role r2 in context.Role) {
-                    if (r.name == r2.name) {
-                        isIn = true;
-                        break;
-                    }
-                }
-                if (!isIn) context.Role.Add(r);
-            }
+            roles.Where(r => context.Role.All(role => role.name != r.name)).ToList().ForEach(rr => context.Add(rr));
         }
 
         private static void InitializeTypeFootballBet(ApplicationDBContext context)
@@ -48,13 +38,7 @@ namespace API.Data
                     description ="The players must guess the winner of the second half of the match."}
             };
 
-            foreach(TypeFootballBet fb in types)
-            {
-                if(context.TypeFootballBet.Where(t => t.name == fb.name).Count() == 0)
-                {
-                    context.TypeFootballBet.Add(fb);
-                }
-            }
+            types.Where(t => context.TypeFootballBet.All(type => type.name != t.name)).ToList().ForEach(tfb => context.Add(tfb));
         }
 
         private static void InitializeTypePay(ApplicationDBContext context)
@@ -69,14 +53,48 @@ namespace API.Data
                     description ="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lose his coins."},
             };
 
-            foreach(TypePay fb in types)
+            types.Where(t => context.TypePay.All(type => type.name != t.name)).ToList().ForEach(tp => context.Add(tp));
+        }
+
+        private static void createDevelopmentUser(ApplicationDBContext context)
+        {
+            List<User> test_users = new List<User>();
+            Role normal = context.Role.Where(r => r.name == "NORMAL_USER").First();
+            string hashedPassword = PasswordHasher.hashPassword("asdfasdf1A");
+
+            for (int i = 0; i < 7; i++)
             {
-                if(context.TypePay.Where(t => t.name == fb.name).Count() == 0)
+                test_users.Add(new User
                 {
-                    context.TypePay.Add(fb);
-                }
+                    email = "u" + i + "@gmail.com",
+                    nickname = "u" + i + "_test",
+                    password = hashedPassword,
+                    tokenValidation = null,
+                    role = normal
+                });
+            }
+            User admin = new User
+            {
+                email = "a@gmail.com",
+                nickname = "a_ADMIN",
+                password = hashedPassword,
+                tokenValidation = null,
+                role = context.Role.Where(r => r.name == "ADMIN").First()
+            };
+
+
+            test_users.Where(u => context.User.All(dbUser => dbUser.email != u.email)).ToList().ForEach(newU => {
+                context.Add(newU);
+                context.Limitations.Add(new Limitations { User = newU });
+            });
+
+            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0)
+            {
+                context.Add(admin);
+                context.Limitations.Add(new Limitations { User = admin });
             }
         }
+
 
         public static void Initialize(ApplicationDBContext context)
         {
@@ -85,54 +103,14 @@ namespace API.Data
             InitializeRoles(context);
             InitializeTypeFootballBet(context);
             InitializeTypePay(context);
-
             context.SaveChanges();
 
-            createDevelopmentUser(context); //Test users
-
+            createDevelopmentUser(context); //Test users & admin user
             context.SaveChanges();
 
             //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
         }
 
-        private static void createDevelopmentUser(ApplicationDBContext context)
-        {
-            List<User> test_users = new List<User>();
-
-            for(int i = 0; i < 7; i++)
-            {
-                test_users.Add(new User
-                {
-                    email = "u"+i+"@gmail.com",
-                    nickname = "u"+i+"_test",
-                    password = PasswordHasher.hashPassword("asdfasdf1A"),
-                    tokenValidation = null,
-                    role = context.Role.Where(r => r.name == "NORMAL_USER").First()
-                });
-            }
-            User admin = new User
-            {
-                email = "a@gmail.com",
-                nickname = "a_ADMIN",
-                password = PasswordHasher.hashPassword("asdfasdf1A"),
-                tokenValidation = null,
-                role = context.Role.Where(r => r.name == "ADMIN").First()
-            };
-
-            test_users.ForEach(tu =>
-            {
-                if (context.User.Where(u => u.email == tu.email).Count() == 0)
-                {
-                    context.Add(tu);
-                    context.Limitations.Add(new Limitations { User = tu });
-                }
-            });
-            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0)
-            {
-                context.Add(admin);
-                context.Limitations.Add(new Limitations { User = admin });
-            }
-        }
 
 
 
