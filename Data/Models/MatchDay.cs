@@ -31,11 +31,12 @@ namespace API.Data.Models
         public Team AwayTeam { get; set; }
         public Guid AwayTeamId { get; set; }
 
-        public int? homeGoals { get; set; }
-        public int? awayGoals { get; set; }
-
-        public int? homeEndPenalties { get; set; }
-        public int? awayEndPenalties { get; set; }
+        public int? firstHalfHomeGoals { get; set; }
+        public int? firstHalfAwayGoals { get; set; }
+        public int? secondHalfHomeGoals { get; set; }
+        public int? secondHalfAwayGoals { get; set; }
+        public int? fullTimeHomeGoals { get; set; }
+        public int? fullTimeAwayGoals { get; set; }
 
         public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
     }

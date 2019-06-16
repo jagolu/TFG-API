@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using API.Areas.GroupManage.Models;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
@@ -24,7 +22,7 @@ namespace API.Areas.GroupManage.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("RemoveGroup")]
-        public IActionResult removeGroup([FromBody] RemoveGroup order)
+        public IActionResult removeGroup([FromBody] Models.RemoveGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
             Group group = new Group();
@@ -39,7 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             }
             try
             {
-                removeGroup(group);
+                Util.RemoveGroup.Remove(group, _context);
 
                 return Ok(new { success = "SuccesfullGroupRemoved" });
             }
@@ -47,19 +45,6 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-        private void removeGroup(Group group)
-        {
-            _context.Entry(group).Collection("users").Load();
-            group.users.ToList().ForEach(user =>
-            {
-                _context.Remove(user);
-            });
-
-            _context.SaveChanges();
-            _context.Remove(group);
-            _context.SaveChanges();
         }
     }
 }

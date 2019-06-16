@@ -39,7 +39,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 {
                     ErrorFootballApiMessage err = JsonConvert.DeserializeObject<ErrorFootballApiMessage>(result);
 
-                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
+                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute & retry
 
                     if (err.errorCode == 429) return await getMatchesFromCompetition(token, leagueId, _http);
 
@@ -65,7 +65,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
          * @return CompetitionMatches.
          *      The matches in the competition
          */
-        public async static Task<CompetitionMatches> getMatchesFromMatchDay(string token, string leagueid, int matchday, IHttpClientFactory _http)
+        public async static Task<CompetitionMatches> getMatchesFromMatchDay__unused(string token, string leagueid, int matchday, IHttpClientFactory _http)
         {
             string path = "competitions/" + leagueid + "/matches?matchday="+matchday;
 
@@ -84,7 +84,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
                     Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
 
-                    if(err.errorCode == 429) return await getMatchesFromMatchDay(token, leagueid, matchday, _http);
+                    if(err.errorCode == 429) return await getMatchesFromMatchDay__unused(token, leagueid, matchday, _http);
 
                     return null;
                 }

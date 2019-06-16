@@ -16,5 +16,7 @@ namespace API.Areas.GroupManage.Models
 
         [JsonConverter(typeof(ConvertBase64ToBlob))]
         public Byte[] img { get; set; }
+
+        public int? coins { get; set; }
     }
 }

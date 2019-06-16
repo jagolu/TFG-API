@@ -20,6 +20,9 @@ namespace API.Data.Models
         public TypeFootballBet type { get; set; }
 
         [Required]
+        public TypePay typePay { get; set; }
+
+        [Required]
         public int minBet { get; set;}
 
         [Required]
@@ -35,16 +38,18 @@ namespace API.Data.Models
         public DateTime dateLastBet { get; set; }
 
         [Required]
-        public DateTime dateChanges { get; set; }
+        public DateTime dateEnded { get; set; }
 
         [Required]
         public bool ended { get; set; } = false;
+
+        public DateTime dateCancelled { get; set; }
 
         [Required]
         public bool cancelled { get; set; } = false;
 
 
 
-        public ICollection<UserBet> userBets { get; set; } = new HashSet<UserBet>();
+        public ICollection<UserFootballBet> userBets { get; set; } = new HashSet<UserFootballBet>();
     }
 }

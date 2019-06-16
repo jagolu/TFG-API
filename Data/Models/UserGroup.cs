@@ -20,6 +20,9 @@ namespace API.Data.Models
         public Role blockedBy { get; set; }
 
         [Required]
+        public int coins { get; set; } = 500;
+
+        [Required]
         public DateTime dateJoin { get; set; } = DateTime.Today;
 
         [Required]

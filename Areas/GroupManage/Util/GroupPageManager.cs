@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.Areas.Bet.Models;
 using API.Areas.GroupManage.Models;
 using API.Data;
 using API.Data.Models;
@@ -25,7 +26,6 @@ namespace API.Areas.GroupManage.Util
                 GroupPage page = new GroupPage();
                 page.name = group.name;
                 page.type = group.type;
-                page.role = callerInGroup_role;
                 page.dateJoin = callerInGroup.dateJoin;
                 page.dateRole = callerInGroup.dateRole;
                 page.actualCapacity = group.users.ToList().Count();
@@ -33,7 +33,10 @@ namespace API.Areas.GroupManage.Util
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
-                page.bets = getBets(_context);
+                page.bets = getBets(caller, group, _context);
+                page.manageBets = getManageBets(caller, group, _context);
+                page.myBets = getActiveBets(caller, group, _context, false);
+                page.betsHistory = getActiveBets(caller, group, _context, true);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
 
                 return page;
@@ -43,28 +46,54 @@ namespace API.Areas.GroupManage.Util
                 return new GroupPage{
                     name = "",
                     type = false,
-                    role = "",
                     bets = new List<GroupBet>(),
                     members = new List<GroupMember>(),
                     actualCapacity = 0,
                     canPutPassword = false,
                     createDate = new DateTime(),
                     hasPassword = false,
-                    maxCapacity = 0
+                    maxCapacity = 0,
+                    dateJoin = new DateTime(),
+                    dateRole = new DateTime(),
+                    manageBets = new List<BetsManager>(),
+                    myBets = new List<EndedFootballBet>(),
+                    betsHistory = new List<EndedFootballBet>()
                 };
             }
-
         }
 
-        private static List<GroupBet> getBets(ApplicationDBContext _context)
+        private static List<GroupBet> getBets(User caller, Group group, ApplicationDBContext _context)
         {
-            return new List<GroupBet>{
-                new GroupBet { betName = "bet1", betBody = "betBody1"},
-                new GroupBet { betName = "bet2", betBody = "betBody2"},
-                new GroupBet { betName = "bet3", betBody = "betBody3"},
-                new GroupBet { betName = "bet4", betBody = "betBody4"},
-                new GroupBet { betName = "bet5", betBody = "betBody5"}
-            };
+            List<GroupBet> bets = new List<GroupBet>();
+            _context.Entry(group).Collection("bets").Load();
+
+            group.bets.Where(b => !b.ended && !b.cancelled).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
+            {
+                _context.Entry(bet).Collection("userBets").Load();
+                if (bet.userBets.Where(ub => ub.userId == caller.id && ub.valid).Count() == 0)
+                {
+                    bets.Add(new GroupBet(bet, _context, false));
+                }
+            });
+
+            return bets;
+        }
+
+        public static List<EndedFootballBet> getActiveBets(User caller, Group group, ApplicationDBContext _context, bool ended)
+        {
+            List<EndedFootballBet> history = new List<EndedFootballBet>();
+            _context.Entry(group).Collection("bets").Load();
+            _context.Entry(group).Collection("users").Load();
+
+            group.bets.Where(b=> b.ended==ended).OrderByDescending(bb => bb.dateReleased).ToList().ForEach(bet =>
+            {
+                _context.Entry(bet).Collection("userBets").Load();
+                if (bet.userBets.Where(b => b.userId == caller.id).Count() > 0)
+                {
+                    history.Add(new EndedFootballBet(caller, bet, _context, ended));
+                }
+            });
+            return history;
         }
 
         private static List<GroupMember> getMembers(Guid callerId, string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
@@ -79,6 +108,9 @@ namespace API.Areas.GroupManage.Util
                 members = addFromList(members, group.users.Where(g => g.blocked && g.userId != callerId).ToList(), _context);
             }
 
+            UserGroup ownMember = group.users.Where(g => g.userId == callerId).First();
+            members.Add(formatGroupMember(ownMember, _context));
+
             return members;
         }
 
@@ -86,22 +118,61 @@ namespace API.Areas.GroupManage.Util
         {
             outList.ForEach(user =>
             {
-                _context.Entry(user).Reference("User").Load();
-
-                mainList.Add(new GroupMember
-                {
-                    userName = user.User.nickname,
-                    publicUserId = user.User.publicId,
-                    role = user.role.name,
-                    dateJoin = user.dateJoin,
-                    dateRole = user.dateRole,
-                    img = user.User.profileImg,
-                    blocked = user.blocked,
-                    blockedBy = user.blockedBy != null ? user.blockedBy.name : ""
-                });
+                mainList.Add(formatGroupMember(user, _context));
             });
 
             return mainList;
+        }
+
+        private static GroupMember formatGroupMember(UserGroup ug, ApplicationDBContext _context)
+        {
+            _context.Entry(ug).Reference("User").Load();
+            _context.Entry(ug).Reference("role").Load();
+            _context.Entry(ug).Reference("Group").Load();
+            GroupMember ret = new GroupMember
+            {
+                userName = ug.User.nickname,
+                publicUserId = ug.User.publicId,
+                role = ug.role.name,
+                dateJoin = ug.dateJoin,
+                dateRole = ug.dateRole,
+                img = ug.User.profileImg,
+                blocked = ug.blocked,
+                blockedBy = ug.blockedBy != null ? ug.blockedBy.name : ""
+            };
+
+            if (!ug.Group.type) ret.coins = ug.coins;
+
+            return ret;
+        }
+
+        private static List<BetsManager> getManageBets(User caller, Group group, ApplicationDBContext _context)
+        {
+            List<BetsManager> bets = new List<BetsManager>();
+            _context.Entry(group).Collection("bets").Load();
+            _context.Entry(group).Collection("users").Load();
+            _context.Entry(caller).Reference("role").Load();
+            Role maker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+
+            if (maker != group.users.Where(u=>u.userId == caller.id).First().role)
+            {
+                return null;
+            }
+
+            group.bets.OrderByDescending(o => o.dateReleased).ToList().ForEach(b =>
+            {
+                bets.Add(new BetsManager
+                {
+                    bet = new GroupBet(b, _context, b.ended || b.cancelled),
+                    dateLaunch = b.dateReleased,
+                    ended = b.ended,
+                    dateEnd = b.dateEnded,
+                    dateCancelled = b.dateCancelled,
+                    cancelled = b.cancelled
+                });
+            });
+
+            return bets;
         }
     }
 }

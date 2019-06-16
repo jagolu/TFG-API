@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Data.Models
 {
-    public class UserBet
+    public class UserFootballBet
     {
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,7 +19,7 @@ namespace API.Data.Models
         [Required]
         public int bet { get; set; }
 
-        public Team Team { get; set; }
+        public int? winner { get; set; }
 
         public int? homeGoals { get; set; }
         public int? awayGoals { get; set; }
@@ -27,10 +27,12 @@ namespace API.Data.Models
         [Required]
         public DateTime dateDone { get; set; } = DateTime.Now;
 
-        [Required]
-        public bool closed { get; set; } = false;
+        public DateTime dateInvalid { get; set; }
 
         [Required]
-        public int penalization { get; set; } = 0;
+        public bool valid { get; set; } = true;
+
+        [Required]
+        public int earnings { get; set; } = 0;
     }
 }

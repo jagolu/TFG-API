@@ -37,7 +37,14 @@ namespace API.Areas.Bet.Controllers
             }
             if (!checkMaxBetAllowed(group))
             {
-                return BadRequest(new { error = "" });
+                List<AvailableBet> badRet = new List<AvailableBet>();
+                badRet.Add(new AvailableBet
+                {
+                    competition = "MaximunWeekBetsReached",
+                    matches = new List<FootBallMatch>(),
+                    allowedTypePays = new List<NameWinRate>()
+                });
+                return Ok(badRet);
             }
 
             try
@@ -76,8 +83,8 @@ namespace API.Areas.Bet.Controllers
 
         private List<FootBallMatch> getAvailableMatchDays(Group group)
         {
-            DateTime now = DateTime.UtcNow;
-            DateTime aWeek = DateTime.UtcNow.AddDays(8);
+            DateTime now = DateTime.Now;
+            DateTime aWeek = DateTime.Now.AddDays(8);
             List<TypeFootballBet> allTypes = _context.TypeFootballBet.ToList();
             List<FootballBet> doneBets = group.bets.ToList(); //Group bets
             List<FootBallMatch> retmatchs = new List<FootBallMatch>(); //return array
@@ -121,20 +128,20 @@ namespace API.Areas.Bet.Controllers
 
             mainArray.Add(new FootBallMatch
             {
-                homeTeam = md.HomeTeam.name,
-                awayTeam = md.AwayTeam.name,
                 competition = md.Competition.name,
+                match_name = md.HomeTeam.name+" vs "+md.AwayTeam.name,
+                matchday = md.id.ToString(),
                 date = md.date,
-                allowedTypeBets = convertTypeToString(allowedTypes)
+                allowedTypeBets = convertTypeToString(allowedTypes),
             });
         }
 
-        private List<string> convertTypeToString(List<TypeFootballBet> types)
+        private List<NameWinRate> convertTypeToString(List<TypeFootballBet> types)
         {
-            List<string> ret = new List<string>();
+            List<NameWinRate> ret = new List<NameWinRate>();
             types.ForEach(t =>
             {
-                ret.Add(t.name);
+                ret.Add(new NameWinRate(t));
             });
 
             return ret;
@@ -151,12 +158,25 @@ namespace API.Areas.Bet.Controllers
                     availableBets.Add(new AvailableBet
                     {
                         competition = competition.name,
-                        matches = mtchs_comp
+                        matches = mtchs_comp,
+                        allowedTypePays = getTypePays()
                     });
                 }
+
             });
 
             return availableBets;
+        }
+
+        private List<NameWinRate> getTypePays()
+        {
+            List<NameWinRate> tp = new List<NameWinRate>();
+            _context.TypePay.ToList().ForEach(type =>
+            {
+                tp.Add(new NameWinRate(type));
+            });
+
+            return tp;
         }
     }
 }

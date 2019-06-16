@@ -44,11 +44,6 @@ namespace API.Areas.Identity.Controllers
 
             try { 
                 _context.User.Add(newUser);
-
-                _context.SaveChanges();
-
-                _context.Limitations.Add(new Limitations { User = newUser });
-
                 _context.SaveChanges();
 
                 EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);

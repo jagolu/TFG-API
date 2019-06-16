@@ -87,7 +87,6 @@ namespace API.Areas.GroupManage.Controllers
         {
             int userGroups = 0;
             int limitationGroups = 0;
-            _context.Entry(user).Reference("limitations").Load();
 
             userGroups = _context.UserGroup.Where(ug =>
                 ug.userId == user.id &&
@@ -96,11 +95,11 @@ namespace API.Areas.GroupManage.Controllers
 
             if (type) //Official group //Max groups that the user can create
             {
-                limitationGroups = user.limitations.createOfficialGroup;
+                limitationGroups = user.createOfficialGroup;
             }
             else //Virtual group //Max groups that the user can create
             {
-                limitationGroups = user.limitations.createVirtualGroup;
+                limitationGroups = user.createVirtualGroup;
             }
 
             return userGroups < limitationGroups; //The user cant create a new group of the specificated type
@@ -115,10 +114,9 @@ namespace API.Areas.GroupManage.Controllers
          */
         private bool canCreateANewGroup(User user)
         {
-            _context.Entry(user).Reference("limitations").Load();
             int totalUserGroupJoined = _context.UserGroup.Where(ug => ug.userId == user.id ).Count();
 
-            return totalUserGroupJoined < user.limitations.maxGroupJoins;
+            return totalUserGroupJoined < user.maxGroupJoins;
         }
     }
 }

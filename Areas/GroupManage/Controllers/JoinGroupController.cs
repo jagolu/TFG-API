@@ -93,9 +93,8 @@ namespace API.Areas.GroupManage.Controllers
         private bool isUnderLimitations(User user)
         {
             _context.Entry(user).Collection("groups").Load();
-            _context.Entry(user).Reference("limitations").Load();
 
-            if (user.groups.Where(g=> !g.blocked).ToList().Count() >= user.limitations.maxGroupJoins)
+            if (user.groups.Where(g=> !g.blocked).ToList().Count() >= user.maxGroupJoins)
             {
                 return false;
             }

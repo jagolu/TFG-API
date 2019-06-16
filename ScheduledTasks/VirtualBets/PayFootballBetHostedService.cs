@@ -1,45 +1,40 @@
 ﻿using API.Data;
 using API.ScheduledTasks.VirtualBets.Util;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Net.Http;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace API.ScheduledTasks.VirtualBets
 {
-    internal class InitializeVirtualDBHostedService : IHostedService, IDisposable
+    public class PayFootballBetHostedService : IHostedService, IDisposable
     {
         private readonly IServiceScopeFactory scopeFactory;
         private Timer _timer;
-        private IConfiguration _configuration;
-        private readonly IHttpClientFactory _http;
 
-        public InitializeVirtualDBHostedService(IServiceScopeFactory sf, IConfiguration config, IHttpClientFactory http)
+        public PayFootballBetHostedService(IServiceScopeFactory sf)
         {
             scopeFactory = sf;
-            _configuration = config;
-            _http = http;
         }
 
-
+       
         /**
          * Start the service
          */
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(
-                DoWork, 
+                DoWork,
                 null,
-                TimeSpan.Zero, //Right now
-                CalculateInitalNextTime() //The next first August or the next month
+               //TimeSpan.Zero, 
+               TimeSpan.FromHours(5), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
+                CalculateInitalNextTime() //tomorrow
             );
 
             return Task.CompletedTask;
         }
-
 
         /**
          * If the application fails, the task and timer will cancel
@@ -55,29 +50,34 @@ namespace API.ScheduledTasks.VirtualBets
         /**
          * Initialize the database for virtual bets
          */
-        private async void DoWork(object state)
+        private void DoWork(object state)
         {
-            //TODO initialize the database
-            using (var scope = scopeFactory.CreateScope())
+            try
             {
-                try
+                using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-                    InitializerVirtualDB initializer = new InitializerVirtualDB(dbContext, _configuration, _http);
-                    
-                    await initializer.InitializeAsync("PL");
-                    await initializer.InitializeAsync("PD");
-                    await initializer.InitializeAsync("BL1");
-                    await initializer.InitializeAsync("SA");
-                    await initializer.InitializeAsync("FL1");
-                }
-                catch (Exception)
-                {
-                    _timer?.Change(TimeSpan.FromDays(1), TimeSpan.FromDays(2));
-                }
-            }
-        } 
 
+                    dbContext.FootballBets.Where(fb => !fb.ended && !fb.cancelled).ToList().ForEach(bet =>
+                    {
+                        dbContext.Entry(bet).Reference("MatchDay").Load();
+                        if (bet.MatchDay.status == "FINISHED")
+                        {
+                            CheckWinners.checkWinner(bet, dbContext);
+                            bet.ended = true;
+                            dbContext.SaveChanges();
+                        }
+                    });
+                }
+
+                //Set cron next day
+                _timer?.Change(CalculateInitalNextTime(), CalculateInitalNextTime());
+            }
+            catch (Exception)
+            {
+                _timer?.Change(TimeSpan.FromHours(1), TimeSpan.FromHours(2));
+            }
+        }
 
         /**
          * Delete the timer
@@ -87,11 +87,10 @@ namespace API.ScheduledTasks.VirtualBets
             _timer?.Dispose();
         }
 
-
         /**
-         * Function to get the time to the next day at 00:05
+         * Function to get the time next day at 03:05
          * @return TimeSpan
-         *      Return the TimeSpan time to the next day at 00:05
+         *      Return the TimeSpan time to the 03:05 the next day
          */
         private TimeSpan CalculateInitalNextTime()
         {
@@ -103,7 +102,7 @@ namespace API.ScheduledTasks.VirtualBets
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;
 
-            double then = nowDay.AddDays(1)
+            double then = nowDay.AddDays(1).AddHours(3)
                 .ToUniversalTime()
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;

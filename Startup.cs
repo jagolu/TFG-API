@@ -12,7 +12,6 @@ using System.Text;
 using API.Util;
 using API.ScheduledTasks.VirtualBets;
 using Microsoft.Extensions.Logging;
-using API.ScheduledTasks.InitializeNextMatchDay;
 
 namespace API
 {
@@ -72,8 +71,8 @@ namespace API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddHostedService<InitializeVirtualDBHostedService>();
-            services.AddHostedService<UpdateCompetitionHostedService>();
+            //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
+            //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
 
             _logger.LogInformation("Added services");
         }
