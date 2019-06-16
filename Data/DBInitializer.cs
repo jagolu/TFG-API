@@ -115,9 +115,9 @@ namespace API.Data
                 //md.date = md.date.AddMonths(5);
                 //md.status = "SCHEDULED";
                 md.status = "FINISHED";
+                context.SaveChanges();
             });
 
-            context.SaveChanges();
         }
     }
 }
