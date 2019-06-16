@@ -166,6 +166,7 @@ namespace API.Areas.GroupManage.Util
                     bet = new GroupBet(b, _context, b.ended || b.cancelled),
                     dateLaunch = b.dateReleased,
                     ended = b.ended,
+                    dateEnd = b.dateEnded,
                     dateCancelled = b.dateCancelled,
                     cancelled = b.cancelled
                 });
