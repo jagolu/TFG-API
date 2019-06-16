@@ -38,6 +38,9 @@ namespace API.Data.Models
         public DateTime dateLastBet { get; set; }
 
         [Required]
+        public DateTime dateEnded { get; set; }
+
+        [Required]
         public bool ended { get; set; } = false;
 
         public DateTime dateCancelled { get; set; }

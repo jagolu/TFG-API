@@ -68,7 +68,8 @@ namespace API.Areas.Bet.Controllers
                     minBet=order.minBet,
                     maxBet=order.maxBet,
                     winRate=typeBet.winRate+typePay.winRate,
-                    dateLastBet=order.lastBetTime                    
+                    dateLastBet=order.lastBetTime,
+                    dateEnded = match.date.AddDays(1)
                 });
                 _context.SaveChanges();
 
