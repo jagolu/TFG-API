@@ -40,6 +40,8 @@ namespace API.Data.Models
         [Required]
         public bool ended { get; set; } = false;
 
+        public DateTime dateCancelled { get; set; }
+
         [Required]
         public bool cancelled { get; set; } = false;
 
