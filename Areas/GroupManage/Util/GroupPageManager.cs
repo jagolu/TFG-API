@@ -52,7 +52,12 @@ namespace API.Areas.GroupManage.Util
                     canPutPassword = false,
                     createDate = new DateTime(),
                     hasPassword = false,
-                    maxCapacity = 0
+                    maxCapacity = 0,
+                    dateJoin = new DateTime(),
+                    dateRole = new DateTime(),
+                    manageBets = new List<BetsManager>(),
+                    myBets = new List<EndedFootballBet>(),
+                    betsHistory = new List<EndedFootballBet>()
                 };
             }
         }
@@ -158,7 +163,7 @@ namespace API.Areas.GroupManage.Util
             {
                 bets.Add(new BetsManager
                 {
-                    bet = new GroupBet(b, _context, b.ended),
+                    bet = new GroupBet(b, _context, b.ended || b.cancelled),
                     dateLaunch = b.dateReleased,
                     ended = b.ended,
                     dateCancelled = b.dateCancelled,
