@@ -12,7 +12,6 @@ namespace API.Data
         public DbSet<Group> Group { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
-        public DbSet<Limitations> Limitations { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Competition> Competitions { get; set; }
         public DbSet<MatchDay> MatchDays { get; set; }

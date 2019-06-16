@@ -83,16 +83,9 @@ namespace API.Data
             };
 
 
-            test_users.Where(u => context.User.All(dbUser => dbUser.email != u.email)).ToList().ForEach(newU => {
-                context.Add(newU);
-                context.Limitations.Add(new Limitations { User = newU });
-            });
+            test_users.Where(u => context.User.All(dbUser => dbUser.email != u.email)).ToList().ForEach(newU => context.Add(newU));
 
-            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0)
-            {
-                context.Add(admin);
-                context.Limitations.Add(new Limitations { User = admin });
-            }
+            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
         }
 
 
