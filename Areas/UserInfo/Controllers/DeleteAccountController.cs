@@ -28,8 +28,7 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-            string userDeletePass = (userDelete.password == null || userDelete.password.Length==0)
-                ? null : PasswordHasher.hashPassword(userDelete.password);
+            string userDeletePass = PasswordHasher.hashPassword(userDelete.password);
             
             
             if(user.password != userDeletePass) {

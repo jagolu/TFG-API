@@ -14,6 +14,8 @@ namespace API.Areas.GroupManage.Util
 
             try
             {
+                removeBets(userGroup, _context);
+
                 if (members.Count() == 1) // The user in the group is the only member in
                 {
                     _context.Entry(userGroup).Reference("Group").Load();
@@ -57,6 +59,18 @@ namespace API.Areas.GroupManage.Util
             {
                 return false;
             }
+        }
+
+        private static void removeBets(UserGroup ug, ApplicationDBContext context)
+        {
+            context.Entry(ug).Reference("User").Load();
+            context.Entry(ug.User).Collection("footballBets").Load();
+            ug.User.footballBets.ToList().ForEach(b =>
+            { 
+                context.Remove(b);
+            });
+
+            context.SaveChanges();
         }
     }
 }
