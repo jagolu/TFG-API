@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace API.Areas.Bet.Models
 {
@@ -25,7 +24,7 @@ namespace API.Areas.Bet.Models
             this.lastBetTime = bet.dateLastBet;
             if (bet.typePay.name.Contains("JACKPOT"))
             {
-                this.usersJoined = bet.userBets.Count();
+                this.usersJoined = bet.usersJoined;
             }
             if (includeResult)
             {
