@@ -48,6 +48,9 @@ namespace API.Data.Models
         [Required]
         public bool cancelled { get; set; } = false;
 
+        [Required]
+        public int usersJoined { get; set; } = 0;
+
 
 
         public ICollection<UserFootballBet> userBets { get; set; } = new HashSet<UserFootballBet>();

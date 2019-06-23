@@ -68,8 +68,10 @@ namespace API.Areas.Bet.Controllers
                     awayGoals = order.awayGoals
                 });
 
+                fb.usersJoined++;
                 ugCaller.coins -= order.bet;
                 _context.Update(ugCaller);
+                _context.Update(fb);
 
                 _context.SaveChanges();
 
