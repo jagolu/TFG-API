@@ -11,6 +11,7 @@ namespace API.Data
         public DbSet<Role> Role { get; set; }
         public DbSet<Group> Group { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }
+        public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Competition> Competitions { get; set; }
@@ -32,6 +33,7 @@ namespace API.Data
             onCreateMathDay(mb);
             onCreateFootballBet(mb);
             onCreateUserFootballBet(mb);
+            onCreateChatGroup(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -92,6 +94,18 @@ namespace API.Data
                 .WithMany(g => g.users)
                 .HasForeignKey(ug => ug.groupId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateChatGroup(ModelBuilder mb)
+        {
+            mb.Entity<GroupChatMessage>()
+                .HasKey(c => new { c.groupId, c.publicUserId, c.time});
+
+            mb.Entity<GroupChatMessage>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.chatMessages)
+                .HasForeignKey(ug => ug.groupId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         private void onCreateMathDay(ModelBuilder mb)
