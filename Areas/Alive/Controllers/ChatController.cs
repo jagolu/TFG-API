@@ -42,7 +42,7 @@ namespace API.Areas.Alive.Controllers
 
             try
             {
-                _context.Entry(group).Collection("messages").Load();
+                _context.Entry(group).Collection("chatMessages").Load();
                 ChatLogin retMessages = new ChatLogin();
                 retMessages.callerPublicId = user.publicId;
                 retMessages.messages = new List<ChatMessage>();
