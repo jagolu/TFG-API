@@ -46,7 +46,7 @@ namespace API.Areas.Alive.Controllers
                 ChatLogin retMessages = new ChatLogin();
                 retMessages.callerPublicId = user.publicId;
                 retMessages.messages = new List<ChatMessage>();
-                group.chatMessages.ToList().ForEach(msg =>
+                group.chatMessages.OrderBy(m => m.time).ToList().ForEach(msg =>
                 {
                     retMessages.messages.Add(new ChatMessage(msg, _context));
                 });
