@@ -15,8 +15,7 @@ namespace API.Data.Models
         public string publicUserId { get; set; }
 
         [Required]
-        [StringLength(16)]
-        public string role { get; set; }
+        public Role role { get; set; }
 
         [Required]
         [StringLength(128)]

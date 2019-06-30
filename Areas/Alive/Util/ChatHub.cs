@@ -51,7 +51,7 @@ namespace API.Areas.Alive.Util
                         Group = group,
                         username = data.username,
                         publicUserId = data.publicUserId,
-                        role = data.role,
+                        role = ugCaller.role,
                         message = data.message,
                         time = data.time
                     });
