@@ -7,6 +7,7 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,11 +21,13 @@ namespace API.Areas.Alive.Controllers
     {
         private IHubContext<ChatHub> _hub;
         private ApplicationDBContext _context;
+        private readonly string _groupChatSocketId;
 
-        public ChatController(ApplicationDBContext context, IHubContext<ChatHub> hub)
+        public ChatController(ApplicationDBContext context, IHubContext<ChatHub> hub, IConfiguration configuration)
         {
             _context = context;
             _hub = hub;
+            _groupChatSocketId = configuration["socket:chatRoom"];
         }
 
         [ActionName("ChatLogin")]
@@ -63,7 +66,7 @@ namespace API.Areas.Alive.Controllers
 
         public async System.Threading.Tasks.Task sendWelcomeMessageAsync(string groupName, User user)
         {
-            await _hub.Clients.All.SendAsync(groupName,
+            await _hub.Clients.All.SendAsync(_groupChatSocketId+groupName,
                 new ChatMessage
                 {
                     group = "",

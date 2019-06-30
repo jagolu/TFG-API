@@ -13,9 +13,11 @@ namespace API.Areas.Alive.Util
     public class ChatHub : Hub
     {
         private readonly IServiceScopeFactory scopeFactory;
-        public ChatHub(IServiceScopeFactory sf)
+        private readonly string groupSocketId;
+        public ChatHub(IServiceScopeFactory sf, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             scopeFactory = sf;
+            groupSocketId = configuration["socket:chatRoom"];
         }
 
         public async Task BroadcastChartData(ChatMessage data)
@@ -55,7 +57,7 @@ namespace API.Areas.Alive.Util
                     });
                     dbContext.SaveChanges();
 
-                    await Clients.All.SendAsync(data.group, data);
+                    await Clients.All.SendAsync(groupSocketId+data.group, data);
                 }
             }
             catch(Exception)
