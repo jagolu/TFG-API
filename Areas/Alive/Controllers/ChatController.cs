@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using static API.Areas.Alive.Models.ChatLogin;
+using static API.Areas.Alive.Models.ChatLogin.ChatUserMesssages;
 
 namespace API.Areas.Alive.Controllers
 {
@@ -48,11 +50,8 @@ namespace API.Areas.Alive.Controllers
                 _context.Entry(group).Collection("chatMessages").Load();
                 ChatLogin retMessages = new ChatLogin();
                 retMessages.callerPublicId = user.publicId;
-                retMessages.messages = new List<ChatMessage>();
-                group.chatMessages.OrderBy(m => m.time).ToList().ForEach(msg =>
-                {
-                    retMessages.messages.Add(new ChatMessage(msg, _context));
-                });
+                retMessages.group = group.name;
+                retMessages.userMessages= filterMessages(group.chatMessages.OrderBy(m => m.time).ToList());
 
                 await sendWelcomeMessageAsync(groupName, user);
 
@@ -77,6 +76,36 @@ namespace API.Areas.Alive.Controllers
                     time = DateTime.Now
                 }
             );
+        }
+
+        public List<ChatUserMesssages> filterMessages(List<GroupChatMessage> msgs)
+        {
+            string lastUserId = "";
+            List<ChatUserMesssages> messages = new List<ChatUserMesssages>();
+
+            msgs.ForEach(msg =>
+            {
+                if (msg.publicUserId != lastUserId)
+                {
+                    _context.Entry(msg).Reference("role").Load();
+                    lastUserId = msg.publicUserId;
+                    List<SingleUserChatMessage> newMessages = new List<SingleUserChatMessage>();
+                    newMessages.Add(new SingleUserChatMessage { message = msg.message, time = msg.time });
+                    messages.Add(new ChatUserMesssages
+                    {
+                        username = msg.username,
+                        publicUserId = msg.publicUserId,
+                        role = msg.role.name,
+                        messages = newMessages
+                    });
+                }
+                else
+                {
+                    messages.Last().messages.Add(new SingleUserChatMessage { message = msg.message, time = msg.time });
+                }
+            });
+
+            return messages;
         }
     }
 }
