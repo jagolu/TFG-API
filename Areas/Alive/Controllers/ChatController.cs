@@ -54,7 +54,6 @@ namespace API.Areas.Alive.Controllers
                 retMessages.userMessages= filterMessages(group.chatMessages.OrderBy(m => m.time).ToList());
 
                 await sendWelcomeMessageAsync(groupName, user);
-
                 return Ok(retMessages);
             }
             catch (Exception)
