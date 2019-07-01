@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Identity.Models;
 using API.Areas.Identity.Util;
@@ -31,7 +32,7 @@ namespace API.Areas.Identity.Controllers
             string email = TokenGenerator.getEmailClaim(req.token);
             string refreshToken = TokenGenerator.getRefreshTokenClaim(req.token);
 
-            var savedRefreshToken = _context.UserToken.Where(ut => ut.refreshToken == refreshToken);
+            List<UserToken> savedRefreshToken = _context.UserToken.Where(ut => ut.refreshToken == refreshToken).ToList();
 
             if (savedRefreshToken.Count() != 1) {
                 return StatusCode(401);

@@ -38,5 +38,6 @@ namespace API.Data.Models
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();
         public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
+        public ICollection<GroupChatMessage> chatMessages { get; set; } = new HashSet<GroupChatMessage>();
     }
 }

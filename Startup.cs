@@ -56,10 +56,11 @@ namespace API
 
             services.AddCors(options => {
                 options.AddPolicy("_myAllowSpecificOrigins",
-                    builder => {
-                        builder.AllowAnyOrigin()
+                    builder => { builder
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                     });
             });
 
@@ -68,7 +69,7 @@ namespace API
             });
 
             services.AddHttpClient();
-
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
@@ -94,6 +95,10 @@ namespace API
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Areas.Alive.Util.ChatHub>("/chatter");
+            });
             app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
