@@ -12,7 +12,8 @@ namespace API.Areas.Common.Util
             New whatsGoingOn = new New();
 
             if (type == TypeGroupNew.BLOCK_USER) whatsGoingOn = blockUser(user, group, makeUnmake);
-            else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = blockUser(user, group, makeUnmake);
+            else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = join_left(user, group, makeUnmake);
+            else if(type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake)
 
             try
             {
@@ -47,6 +48,23 @@ namespace API.Areas.Common.Util
             New n = new New
             {
                 Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New makeAdmin(User user, Group group, bool makeUnmake)
+        {
+            string title = makeUnmake ? "Has sido elegido administrador!" : "Ya no eres administrador";
+            string message = makeUnmake ? "El creador del grupo  \"" + group.name + "\" te nombrado administrador. Ahora tienes más privilegios en el grupo. No traiciones su confianza!" :
+                "El creador del grupo \"" + group.name + "\" te ha quitado los privilegios de administrador. Vuelves a ser un usuario normal en el grupo.";
+
+            New n = new New
+            {
+                Group = group,
+                User = user,
                 title = title,
                 message = message
             };

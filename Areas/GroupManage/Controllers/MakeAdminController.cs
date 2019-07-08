@@ -41,6 +41,9 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Update(targetUser);
                 _context.SaveChanges();
 
+                _context.Entry(targetUser).Reference("User").Load();
+                Common.Util.GroupNew.launch(targetUser.User, group, Common.Models.TypeGroupNew.MAKE_ADMIN, order.make_unmake, _context);
+
                 return Ok(GroupPageManager.GetPage(user, group,  _context));
             }
             catch (Exception)

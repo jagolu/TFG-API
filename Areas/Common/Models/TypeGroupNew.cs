@@ -3,6 +3,7 @@
     public enum TypeGroupNew
     {
         BLOCK_USER = 1,
-        JOIN_LEFT = 2
+        JOIN_LEFT = 2,
+        MAKE_ADMIN = 3
     }
 }
