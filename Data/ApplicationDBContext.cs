@@ -22,6 +22,7 @@ namespace API.Data
         public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
         public DbSet<TypePay> TypePay { get; set; }
         public DbSet<UserFootballBet> UserFootballBet { get; set; }
+        public DbSet<New> News { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -34,6 +35,7 @@ namespace API.Data
             onCreateFootballBet(mb);
             onCreateUserFootballBet(mb);
             onCreateChatGroup(mb);
+            onCreateNew(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -166,6 +168,21 @@ namespace API.Data
                 .WithMany(fb => fb.footballBets)
                 .HasForeignKey(ub => ub.userId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateNew(ModelBuilder mb)
+        {
+            mb.Entity<New>()
+                .HasOne(n => n.Group)
+                .WithMany(g => g.news)
+                .HasForeignKey(n => n.groupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            mb.Entity<New>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.news)
+                .HasForeignKey(n => n.userId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
