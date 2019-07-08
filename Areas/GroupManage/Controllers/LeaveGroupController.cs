@@ -36,6 +36,7 @@ namespace API.Areas.GroupManage.Controllers
                 return StatusCode(500);
             }
 
+            Common.Util.GroupNew.launch(user, group, Common.Models.TypeGroupNew.JOIN_LEFT, false, _context);
 
             return Ok(new { success="SuccesfullGroupLeave"});
         }
