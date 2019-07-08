@@ -13,7 +13,8 @@ namespace API.Areas.Common.Util
 
             if (type == TypeGroupNew.BLOCK_USER) whatsGoingOn = blockUser(user, group, makeUnmake);
             else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = join_left(user, group, makeUnmake);
-            else if(type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake)
+            else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
+            else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
 
             try
             {
@@ -65,6 +66,22 @@ namespace API.Areas.Common.Util
             {
                 Group = group,
                 User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New makePrivate(Group group, bool makeUnmake)
+        {
+            string title = makeUnmake ? "Un grupo se ha vuelto privado" : "Un grupo se ha vuelto publico";
+            string message = makeUnmake ? "El creador del grupo  \"" + group.name + "\" ha establecido una contraseña al mismo. A partir de ahora todo nuevo usuario deberá introducir una nueva contraseña para poder unirse." :
+                "El creador del grupo \"" + group.name + "\" ha quitado la contraseña de acceso al grupo. Cualquiera puede unirse libremente.";
+
+            New n = new New
+            {
+                Group = group,
                 title = title,
                 message = message
             };
