@@ -15,6 +15,7 @@ namespace API.Areas.Common.Util
             else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = join_left(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
+            else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
 
             try
             {
@@ -82,6 +83,22 @@ namespace API.Areas.Common.Util
             New n = new New
             {
                 Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New removeGroup(User user, Group group, bool isMaker)
+        {
+            string title = isMaker ? "Has eliminado un grupo" : "El creado del grupo lo ha eliminado!";
+            string message = isMaker ? "Has eliminado el grupo  \"" + group.name + "\". Todos los miembros han salido del mismo y sus datos han sido borrados." :
+                "El creador del grupo \"" + group.name + "\" lo ha eliminado. Por lo tanto se te ha echado y se han eliminado todos los datos relacionados con él..";
+
+            New n = new New
+            {
+                User = user,
                 title = title,
                 message = message
             };
