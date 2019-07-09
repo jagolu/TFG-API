@@ -105,5 +105,20 @@ namespace API.Areas.Common.Util
 
             return n;
         }
+
+        private static New kickUser(User user, Group group)
+        {
+            string title = "Has eliminado un grupo";
+            string message = "Has eliminado el grupo \"" + group.name + "\". Todos los miembros han salido del mismo y sus datos han sido borrados.";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
     }
 }

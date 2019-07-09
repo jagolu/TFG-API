@@ -40,8 +40,9 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
-                _context.UserGroup.Remove(targetUser);
-                _context.SaveChanges();
+                _context.Entry(targetUser).Reference("User").Load();
+                User sendNew = targetUser.User;
+                QuitUserFromGroup.quitUser(targetUser, _context);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
