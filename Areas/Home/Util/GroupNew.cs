@@ -24,6 +24,9 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.CREATE_GROUP_USER) whatsGoingOn = createGroup_user(user, group);
             else if (type == TypeGroupNew.CREATE_GROUP_GROUP) whatsGoingOn = createGroup_group(user, group);
 
+            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, makeUnmake);
+            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group);
+
             try
             {
                 context.Add(whatsGoingOn);
@@ -208,6 +211,38 @@ namespace API.Areas.Home.Util
             string title = "El grupo fue creado!";
             string message = "El grupo fue creado por \"" + user.nickname + "\" el dia " + 
                                 group.dateCreated.Day + "/"+group.dateCreated.Month+"/"+group.dateCreated.Year+".";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New launchFootballBet_user(User user, Group group, bool isLauncher)
+        {
+            string title = !isLauncher ? "Se ha lanzado una nueva apuesta en uno de tus grupos" :
+                            "Has lanzado una apuesta";
+            string message = !isLauncher ? "Se ha lanzado una nueva apuesta en el grupo \"" + group.name + "\"":
+                                "Has lanzado una nueva apuesta en el grupo \"" + group.name + "\"";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New launchFootballBet_group(Group group)
+        {
+            string title = "Se ha lanzado una nueva apuesta!";
+            string message = "";
 
             New n = new New
             {
