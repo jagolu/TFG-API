@@ -11,8 +11,9 @@ namespace API.Areas.Home.Util
         {
             New whatsGoingOn = new New();
 
-            if (type == TypeGroupNew.BLOCK_USER) whatsGoingOn = blockUser(user, group, makeUnmake);
             else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = join_left(user, group, makeUnmake);
+            if (type == TypeGroupNew.BLOCK_USER_USER) whatsGoingOn = blockUser_user(user, group, makeUnmake);
+            else if (type == TypeGroupNew.BLOCK_USER_GROUP) whatsGoingOn = blockUser_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
@@ -26,7 +27,23 @@ namespace API.Areas.Home.Util
             catch (Exception){}
         }
 
-        private static New blockUser(User user, Group group, bool makeUnmake)
+        private static New blockUser_group(User user, Group group, bool makeUnmake)
+        {
+            string title = makeUnmake ? "Un miembro ha sido bloqueado!" : "Un miembro ha sido desbloqueado desbloqueado!";
+            string message = makeUnmake ? "Uno de los administradores del grupo \"" + group.name + "\" ha bloqueado a \""+user.nickname+"\"." :
+                "Uno de los administradores del grupo \"" + group.name + "\" ha desbloqueado a \"" + user.nickname + "\".";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New blockUser_user(User user, Group group, bool makeUnmake)
         {
             string title = makeUnmake ? "Has sido bloqueado!" : "Has sido desbloqueado!";
             string message = makeUnmake ? "Uno de los administradores del grupo \"" + group.name + "\" te ha bloqueado. No podras volver a entrar en el grupo hasta que hayas sido desbloqueado." :
@@ -34,7 +51,6 @@ namespace API.Areas.Home.Util
 
             New n = new New
             {
-                Group = group,
                 User = user,
                 title = title,
                 message = message

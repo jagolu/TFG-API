@@ -2,8 +2,9 @@
 {
     public enum TypeGroupNew
     {
-        BLOCK_USER = 1,
         JOIN_LEFT = 2,
+        BLOCK_USER_USER = 1,
+        BLOCK_USER_GROUP = 11,
         MAKE_ADMIN = 3,
         MAKE_PRIVATE = 4,
         REMOVE_GROUP = 5,
