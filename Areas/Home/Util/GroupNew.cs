@@ -1,9 +1,9 @@
-﻿using API.Areas.Common.Models;
+﻿using API.Areas.Home.Models;
 using API.Data;
 using API.Data.Models;
 using System;
 
-namespace API.Areas.Common.Util
+namespace API.Areas.Home.Util
 {
     public static class GroupNew
     {

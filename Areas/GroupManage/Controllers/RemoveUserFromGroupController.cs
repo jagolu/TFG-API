@@ -49,7 +49,7 @@ namespace API.Areas.GroupManage.Controllers
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     group = dbContext.Group.Where(g => g.name == order.groupName).First();
 
-                    Common.Util.GroupNew.launch(sendNew, group, Common.Models.TypeGroupNew.KICK_USER, false, dbContext);
+                    Home.Util.GroupNew.launch(sendNew, group, Home.Models.TypeGroupNew.KICK_USER, false, dbContext);
 
                     return Ok(GroupPageManager.GetPage(user, group, dbContext));
                 }

@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace API.Areas.Common.Models
+namespace API.Areas.Home.Models
 {
-    public class Message
+    public class NewMessage
     {
+
         public string title { get; set; }
 
         public string body { get; set; }
-
-        public string owner { get; set; }
-
+        
         public DateTime time { get; set; }
     }
 }

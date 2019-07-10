@@ -1,4 +1,4 @@
-﻿namespace API.Areas.Common.Models
+﻿namespace API.Areas.Home.Models
 {
     public enum TypeGroupNew
     {
