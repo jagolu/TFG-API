@@ -11,9 +11,10 @@ namespace API.Areas.Home.Util
         {
             New whatsGoingOn = new New();
 
-            else if (type == TypeGroupNew.JOIN_LEFT) whatsGoingOn = join_left(user, group, makeUnmake);
             if (type == TypeGroupNew.BLOCK_USER_USER) whatsGoingOn = blockUser_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.BLOCK_USER_GROUP) whatsGoingOn = blockUser_group(user, group, makeUnmake);
+            else if (type == TypeGroupNew.JOIN_LEFT_GROUP) whatsGoingOn = join_left_group(user, group, makeUnmake);
+            else if (type == TypeGroupNew.JOIN_LEFT_USER) whatsGoingOn = join_left_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
@@ -59,7 +60,7 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New join_left(User user, Group group, bool joinLeft)
+        private static New join_left_group(User user, Group group, bool joinLeft)
         {
             string title = joinLeft ? "Nuevo miembro en \""+group.name+"\"" : "Un miembro ha dejado \""+group.name+"\"";
             string message = joinLeft ? user.nickname+" se ha unido al grupo." : user.nickname+" ha abandonado el grupo.";
@@ -67,6 +68,21 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New join_left_user(User user, Group group, bool joinLeft)
+        {
+            string title = joinLeft ? "Te has unido al grupo \""+group.name+"\"" : "Te has unido al grupo \""+group.name+"\"";
+            string message = "";
+
+            New n = new New
+            {
+                User = user,
                 title = title,
                 message = message
             };

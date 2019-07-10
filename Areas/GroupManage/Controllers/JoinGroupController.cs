@@ -58,7 +58,8 @@ namespace API.Areas.GroupManage.Controllers
 
                 _context.UserGroup.Add(newUser);
                 _context.SaveChanges();
-                Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT, true, _context);
+                Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_GROUP, true, _context);
+                Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_USER, true, _context);
 
                 return Ok(new { success="SuccesfullJoinGroup"});
             }
