@@ -10,6 +10,7 @@
         MAKE_ADMIN_GROUP = 31,
         MAKE_PRIVATE = 4,
         REMOVE_GROUP = 5,
-        KICK_USER = 6
+        KICK_USER_USER = 6,
+        KICK_USER_GROUP = 61
     }
 }

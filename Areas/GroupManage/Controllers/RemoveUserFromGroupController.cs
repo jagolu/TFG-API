@@ -49,7 +49,8 @@ namespace API.Areas.GroupManage.Controllers
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     group = dbContext.Group.Where(g => g.name == order.groupName).First();
 
-                    Home.Util.GroupNew.launch(sendNew, group, Home.Models.TypeGroupNew.KICK_USER, false, dbContext);
+                    Home.Util.GroupNew.launch(sendNew, group, Home.Models.TypeGroupNew.KICK_USER_USER, false, dbContext);
+                    Home.Util.GroupNew.launch(sendNew, group, Home.Models.TypeGroupNew.KICK_USER_GROUP, false, dbContext);
 
                     return Ok(GroupPageManager.GetPage(user, group, dbContext));
                 }

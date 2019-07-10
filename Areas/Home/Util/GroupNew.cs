@@ -19,7 +19,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.MAKE_ADMIN_GROUP) whatsGoingOn = makeAdmin_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
-            else if (type == TypeGroupNew.KICK_USER) whatsGoingOn = kickUser(user, group);
+            else if (type == TypeGroupNew.KICK_USER_USER) whatsGoingOn = kickUser_user(user, group);
+            else if (type == TypeGroupNew.KICK_USER_GROUP) whatsGoingOn = kickUser_group(user, group);
 
             try
             {
@@ -155,7 +156,7 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New kickUser(User user, Group group)
+        private static New kickUser_user(User user, Group group)
         {
             string title = "Te han echado de un grupo.";
             string message = "Uno de los administradores del grupo \"" + group.name + "\" te ha echado.";
@@ -163,6 +164,21 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New kickUser_group(User user, Group group)
+        {
+            string title = "Se ha echado a un miembro del grupo!";
+            string message = "Uno de los administradores del grupo ha echado a \"" + user.nickname + "\".";
+
+            New n = new New
+            {
+                Group = group,
                 title = title,
                 message = message
             };
