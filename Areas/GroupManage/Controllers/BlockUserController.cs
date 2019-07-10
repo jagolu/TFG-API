@@ -48,6 +48,7 @@ namespace API.Areas.GroupManage.Controllers
 
                 _context.Entry(targetUser).Reference("User").Load();
                 Home.Util.GroupNew.launch(targetUser.User, group, Home.Models.TypeGroupNew.BLOCK_USER_USER, order.make_unmake, _context);
+                Home.Util.GroupNew.launch(targetUser.User, group, Home.Models.TypeGroupNew.BLOCK_USER_GROUP, order.make_unmake, _context);
 
                 return Ok(GroupPageManager.GetPage(user, group, _context));
             }
