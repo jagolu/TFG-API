@@ -2,6 +2,8 @@
 {
     public enum TypeGroupNew
     {
+        CREATE_GROUP_GROUP = 1001,
+        CREATE_GROUP_USER = 1002,
         BLOCK_USER_USER = 2001,
         BLOCK_USER_GROUP = 2002,
         JOIN_LEFT_GROUP = 3001,

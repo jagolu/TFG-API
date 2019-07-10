@@ -21,6 +21,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
             else if (type == TypeGroupNew.KICK_USER_USER) whatsGoingOn = kickUser_user(user, group);
             else if (type == TypeGroupNew.KICK_USER_GROUP) whatsGoingOn = kickUser_group(user, group);
+            else if (type == TypeGroupNew.CREATE_GROUP_USER) whatsGoingOn = createGroup_user(user, group);
+            else if (type == TypeGroupNew.CREATE_GROUP_GROUP) whatsGoingOn = createGroup_group(user, group);
 
             try
             {
@@ -175,6 +177,37 @@ namespace API.Areas.Home.Util
         {
             string title = "Se ha echado a un miembro del grupo!";
             string message = "Uno de los administradores del grupo ha echado a \"" + user.nickname + "\".";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New createGroup_user(User user, Group group)
+        {
+            string title = "Has creado un grupo";
+            string message = "Has creado el grupo \"" + group.name + "\".";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New createGroup_group(User user, Group group)
+        {
+            string title = "El grupo fue creado!";
+            string message = "El grupo fue creado por \"" + user.nickname + "\" el dia " + 
+                                group.dateCreated.Day + "/"+group.dateCreated.Month+"/"+group.dateCreated.Year+".";
 
             New n = new New
             {
