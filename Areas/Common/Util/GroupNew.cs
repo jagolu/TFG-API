@@ -16,6 +16,7 @@ namespace API.Areas.Common.Util
             else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
+            else if (type == TypeGroupNew.KICK_USER) whatsGoingOn = kickUser(user, group);
 
             try
             {
@@ -108,8 +109,8 @@ namespace API.Areas.Common.Util
 
         private static New kickUser(User user, Group group)
         {
-            string title = "Has eliminado un grupo";
-            string message = "Has eliminado el grupo \"" + group.name + "\". Todos los miembros han salido del mismo y sus datos han sido borrados.";
+            string title = "Te han echado de un grupo.";
+            string message = "Uno de los administradores del grupo \"" + group.name + "\" te ha echado.";
 
             New n = new New
             {
