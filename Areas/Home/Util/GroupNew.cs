@@ -15,7 +15,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.BLOCK_USER_GROUP) whatsGoingOn = blockUser_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.JOIN_LEFT_GROUP) whatsGoingOn = join_left_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.JOIN_LEFT_USER) whatsGoingOn = join_left_user(user, group, makeUnmake);
-            else if (type == TypeGroupNew.MAKE_ADMIN) whatsGoingOn = makeAdmin(user, group, makeUnmake);
+            else if (type == TypeGroupNew.MAKE_ADMIN_USER) whatsGoingOn = makeAdmin_user(user, group, makeUnmake);
+            else if (type == TypeGroupNew.MAKE_ADMIN_GROUP) whatsGoingOn = makeAdmin_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_PRIVATE) whatsGoingOn = makePrivate(group, makeUnmake);
             else if (type == TypeGroupNew.REMOVE_GROUP) whatsGoingOn = removeGroup(user, group, makeUnmake);
             else if (type == TypeGroupNew.KICK_USER) whatsGoingOn = kickUser(user, group);
@@ -90,7 +91,7 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New makeAdmin(User user, Group group, bool makeUnmake)
+        private static New makeAdmin_user(User user, Group group, bool makeUnmake)
         {
             string title = makeUnmake ? "Has sido elegido administrador!" : "Ya no eres administrador";
             string message = makeUnmake ? "El creador del grupo  \"" + group.name + "\" te nombrado administrador. Ahora tienes más privilegios en el grupo. No traiciones su confianza!" :
@@ -98,8 +99,23 @@ namespace API.Areas.Home.Util
 
             New n = new New
             {
-                Group = group,
                 User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New makeAdmin_group(User user, Group group, bool makeUnmake)
+        {
+            string title = makeUnmake ? "Hay un nuevo administrador en el grupo" : "Un administrador ha dejado de serlo";
+            string message = makeUnmake ? "El creador del grupo ha nombrado como administrador a \""+user.nickname+"\"" :
+                "El creador del grupo ha relegado del cargo de administrador a \"" + user.nickname + "\"";
+
+            New n = new New
+            {
+                Group = group,
                 title = title,
                 message = message
             };
