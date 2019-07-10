@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Bet.Models;
 using API.Areas.GroupManage.Models;
+using API.Areas.Home.Models;
 using API.Data;
 using API.Data.Models;
 
@@ -38,6 +39,7 @@ namespace API.Areas.GroupManage.Util
                 page.myBets = getActiveBets(caller, group, _context, false);
                 page.betsHistory = getActiveBets(caller, group, _context, true);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
+                page.news = getNews(group, _context);
 
                 return page;
             }
@@ -57,7 +59,8 @@ namespace API.Areas.GroupManage.Util
                     dateRole = new DateTime(),
                     manageBets = new List<BetsManager>(),
                     myBets = new List<EndedFootballBet>(),
-                    betsHistory = new List<EndedFootballBet>()
+                    betsHistory = new List<EndedFootballBet>(),
+                    news = new List<NewMessage>()
                 };
             }
         }
@@ -173,6 +176,15 @@ namespace API.Areas.GroupManage.Util
             });
 
             return bets;
+        }
+
+        private static List<NewMessage> getNews(Group group, ApplicationDBContext _context)
+        {
+            List<New> news = _context.News.Where(n => n.groupId == group.id).OrderByDescending(nn => nn.date).ToList();
+            List<NewMessage> retNews = new List<NewMessage>();
+            news.ForEach(n => retNews.Add(new NewMessage(n)));
+
+            return retNews;
         }
     }
 }
