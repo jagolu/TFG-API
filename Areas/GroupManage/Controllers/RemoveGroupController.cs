@@ -37,7 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             }
             try
             {
-                Util.RemoveGroup.Remove(group, _context);
+                RemoveGroup.Remove(group, _context);
 
                 return Ok(new { success = "SuccesfullGroupRemoved" });
             }

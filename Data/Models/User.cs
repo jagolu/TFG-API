@@ -58,5 +58,6 @@ namespace API.Data.Models
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
         public ICollection<UserFootballBet> footballBets { get; set; } = new HashSet<UserFootballBet>();
+        public ICollection<New> news { get; set; } = new HashSet<New>();
     }
 }

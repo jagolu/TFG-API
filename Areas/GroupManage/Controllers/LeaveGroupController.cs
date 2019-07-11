@@ -4,6 +4,8 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace API.Areas.GroupManage.Controllers
 {
@@ -12,10 +14,12 @@ namespace API.Areas.GroupManage.Controllers
     public class LeaveGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public LeaveGroupController(ApplicationDBContext context)
+        public LeaveGroupController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
+            scopeFactory = sf;
         }
 
         [HttpGet]
@@ -36,6 +40,14 @@ namespace API.Areas.GroupManage.Controllers
                 return StatusCode(500);
             }
 
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                var groupE = dbContext.Group.Where(g => g.name == groupName);
+
+                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_GROUP, false, _context);
+                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_USER, false, _context);
+            }
 
             return Ok(new { success="SuccesfullGroupLeave"});
         }

@@ -39,6 +39,8 @@ namespace API.Areas.GroupManage.Controllers
             group.password = order.newPassword == null ? null : PasswordHasher.hashPassword(order.newPassword);
             _context.Update(group);
             _context.SaveChanges();
+
+            Home.Util.GroupNew.launch(null, group, Home.Models.TypeGroupNew.MAKE_PRIVATE, group.password != null, _context);
             
             return Ok(GroupPageManager.GetPage(user, group, _context));
         }

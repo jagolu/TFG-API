@@ -28,7 +28,6 @@ namespace API.Areas.Bet.Controllers
         public IActionResult launchBet([FromBody] LaunchFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
-            UserGroup ugCaller = new UserGroup();
             Group group = new Group();
             MatchDay match = new MatchDay();
             TypeFootballBet typeBet = new TypeFootballBet();
@@ -72,6 +71,8 @@ namespace API.Areas.Bet.Controllers
                     dateEnded = match.date.AddDays(1)
                 });
                 _context.SaveChanges();
+
+                launchNews(caller, group);
 
                 return Ok(GroupPageManager.GetPage(caller, group, _context));
             }
@@ -153,6 +154,20 @@ namespace API.Areas.Bet.Controllers
             if (max < 100 || max > 10000) return false;
 
             return true;
+        }
+
+        private void launchNews(User u, Group group)
+        {
+            _context.Entry(group).Collection("users").Load();
+            Home.Util.GroupNew.launch(null, group, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP, false, _context);
+
+            group.users.Where(g => !g.blocked).ToList().ForEach(ug =>
+            {
+                _context.Entry(ug).Reference("User").Load();
+                bool isLauncher = ug.userId == u.id;
+
+                Home.Util.GroupNew.launch(ug.User, group, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);
+            });
         }
     }
 }

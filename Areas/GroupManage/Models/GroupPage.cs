@@ -20,5 +20,6 @@ namespace API.Areas.GroupManage.Models
         public List<EndedFootballBet> myBets { get; set; }
         public List<EndedFootballBet> betsHistory { get; set; }
         public List<GroupMember> members { get; set; }
+        public List<Home.Models.NewMessage> news { get; set; }
     }
 }
