@@ -26,6 +26,8 @@ namespace API.Areas.Home.Util
 
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group);
+            else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group);
+            else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group);
 
             try
             {
@@ -247,6 +249,36 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New pay_bets_group(Group group)
+        {
+            string title = "Se han pagado los resultados de las apuestas!!";
+            string message = "";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New pay_bets_user(User user, Group group)
+        {
+            string title = "Se han pagado los resultados de las apuestas";
+            string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\"";
+
+            New n = new New
+            {
+                User = user,
                 title = title,
                 message = message
             };

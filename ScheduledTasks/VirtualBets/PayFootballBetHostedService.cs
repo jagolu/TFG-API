@@ -3,6 +3,7 @@ using API.ScheduledTasks.VirtualBets.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,6 +58,7 @@ namespace API.ScheduledTasks.VirtualBets
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                    List<Data.Models.Group> groupsNews = new List<Data.Models.Group>();
 
                     dbContext.FootballBets.Where(fb => !fb.ended && !fb.cancelled).ToList().ForEach(bet =>
                     {
@@ -66,8 +68,26 @@ namespace API.ScheduledTasks.VirtualBets
                             CheckWinners.checkWinner(bet, dbContext);
                             bet.ended = true;
                             dbContext.SaveChanges();
+
+                            //Add the group to launch the pay-new
+                            dbContext.Entry(bet).Reference("Group").Load();
+                            if (!groupsNews.Any(g => g.id == bet.groupId)) groupsNews.Add(bet.Group);
                         }
                     });
+
+                    //Launch the news
+                    groupsNews.ForEach(g =>
+                    {
+                        Areas.Home.Util.GroupNew.launch(null, g, Areas.Home.Models.TypeGroupNew.PAID_BETS_GROUP, false, dbContext);
+
+                        dbContext.Entry(g).Collection("users").Load();
+                        g.users.ToList().ForEach(u =>
+                        {
+                            dbContext.Entry(u).Reference("User").Load();
+                            Areas.Home.Util.GroupNew.launch(u.User, g, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, dbContext);
+                        });
+                    });
+
                 }
 
                 //Set cron next day
