@@ -27,6 +27,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult blockUser([FromBody] MakeAdmin_blockUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
+            if(AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 

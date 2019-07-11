@@ -33,6 +33,7 @@ namespace API.Areas.Identity.Controllers
             }
 
             User user = tokenExists.First();
+            if (API.Util.AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
             user.tokenValidation = null;
 

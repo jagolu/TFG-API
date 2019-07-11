@@ -37,6 +37,7 @@ namespace API.Areas.Alive.Controllers
         public async System.Threading.Tasks.Task<IActionResult> LoginChatAsync([Required]string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             Group group = new Group();
             UserGroup ugCaller = new UserGroup();
 

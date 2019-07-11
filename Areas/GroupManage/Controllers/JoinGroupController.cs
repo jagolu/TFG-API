@@ -27,6 +27,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult JoinGroup([FromBody] JoinGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             Group group = new Group();
 
             if (!isUnderLimitations(user))

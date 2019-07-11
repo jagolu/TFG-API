@@ -25,6 +25,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult removeGroup([FromBody] Models.RemoveGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             Group group = new Group();
 
             if (!CallerInGroup.CheckUserCapabilities(user, ref group, order.name, TypeCheckCapabilites.REMOVE_GROUP, _context))

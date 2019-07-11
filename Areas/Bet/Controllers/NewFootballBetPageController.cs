@@ -29,7 +29,7 @@ namespace API.Areas.Bet.Controllers
         public IActionResult getFootBallPage([Required] string groupName)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
-            UserGroup ugCaller = new UserGroup();
+            if (AdminPolicy.isAdmin(caller, _context)) return BadRequest("notAllowed");
             Group group = new Group();
             if(!CallerInGroup.CheckUserCapabilities(caller, ref group, groupName, TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET, _context))
             {

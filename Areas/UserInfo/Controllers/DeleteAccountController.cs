@@ -28,6 +28,7 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             string userDeletePass = PasswordHasher.hashPassword(userDelete.password);
             
             

@@ -28,6 +28,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult leaveGroup(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to leave the group
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup ugCaller = new UserGroup();
             Group group = new Group();
 

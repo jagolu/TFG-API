@@ -28,6 +28,7 @@ namespace API.Areas.Bet.Controllers
         public IActionResult launchBet([FromBody] LaunchFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(caller, _context)) return BadRequest("notAllowed");
             Group group = new Group();
             MatchDay match = new MatchDay();
             TypeFootballBet typeBet = new TypeFootballBet();

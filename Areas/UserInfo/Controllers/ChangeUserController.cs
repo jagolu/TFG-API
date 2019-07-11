@@ -29,6 +29,7 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult changeUser([FromBody] ChangeUserInfo info)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
             try {
                 user.nickname = changeNickname(info.nickname, user.nickname);

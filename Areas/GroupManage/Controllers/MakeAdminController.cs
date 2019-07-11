@@ -27,6 +27,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult makeAdmin([FromBody] MakeAdmin_blockUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 

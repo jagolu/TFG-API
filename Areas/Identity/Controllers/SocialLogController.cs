@@ -80,6 +80,7 @@ namespace API.Areas.Identity.Controllers
                     // trying to do a normal logIn
                 }
 
+                if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
                 UserSession session = MakeUserSession.getUserSession(_context, user, socialUser.provider);
                 if (session == null) return StatusCode(500);
 

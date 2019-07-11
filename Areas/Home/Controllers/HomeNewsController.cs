@@ -28,6 +28,7 @@ namespace API.Areas.Home.Controllers
         public IActionResult getAuth()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
             try
             {
