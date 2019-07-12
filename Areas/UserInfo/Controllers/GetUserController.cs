@@ -28,7 +28,6 @@ namespace API.Areas.UserInfo.Controllers
         {
             try {
                 User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-                if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
                 _context.Entry(user).Reference("role").Load();
 
