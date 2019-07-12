@@ -22,6 +22,7 @@ namespace API.Data.Models
         public string title { get; set; }
 
         [Required]
+        [MaxLength(257)]
         public string message { get; set; }
     }
 }
