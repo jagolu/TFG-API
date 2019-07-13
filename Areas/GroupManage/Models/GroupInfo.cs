@@ -11,6 +11,7 @@ namespace API.Areas.GroupManage.Models
         public int placesOcupped { get; set; }
         public int totalPlaces { get; set; }
         public DateTime dateCreate { get; set; }
+        public bool open { get; set; }
         public List<GroupMemberAdmin> members { get; set; }
 
         public class GroupMemberAdmin

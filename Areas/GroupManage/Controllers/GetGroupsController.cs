@@ -29,8 +29,11 @@ namespace API.Areas.GroupManage.Controllers
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return new List<GroupInfo>();
+            bool isAdmin = AdminPolicy.isAdmin(user, _context);
+            List<Group> groups = !isAdmin ? _context.Group.Where(g => g.open).ToList()
+                                          : _context.Group.ToList();
 
-            return addGroupsToList(_context.Group.ToList(), AdminPolicy.isAdmin(user, _context));
+            return addGroupsToList(groups, AdminPolicy.isAdmin(user, _context));
         }
 
 
@@ -40,6 +43,8 @@ namespace API.Areas.GroupManage.Controllers
         public List<GroupInfo> searchGroupByName(string name)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            name = name.ToLower().Trim();
+
             if (!user.open) return new List<GroupInfo>();
 
             //The request name is empty
@@ -48,11 +53,10 @@ namespace API.Areas.GroupManage.Controllers
                 return new List<GroupInfo>();
             }
 
-            List<Group> groupsWithTheSameName = _context.Group.Where(g => 
-                g.name.ToLower().Contains(
-                    name.ToLower().Trim()
-                ) && g.open
-            ).ToList();
+            bool isAdmin = AdminPolicy.isAdmin(user, _context);
+            List<Group> groupsWithTheSameName = !isAdmin ? 
+                _context.Group.Where(g => g.name.ToLower().Contains(name) && g.open).ToList() :
+                _context.Group.Where(g =>g.name.ToLower().Contains(name)).ToList();
 
             return addGroupsToList(groupsWithTheSameName, AdminPolicy.isAdmin(user, _context));
         }
@@ -93,6 +97,7 @@ namespace API.Areas.GroupManage.Controllers
                 {
                     name = group.name,
                     type = group.type,
+                    open = group.open,
                     password = group.password != null,
                     placesOcupped = group.users.Count(),
                     totalPlaces = group.capacity,
