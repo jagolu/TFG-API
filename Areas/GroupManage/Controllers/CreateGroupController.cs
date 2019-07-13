@@ -34,6 +34,7 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult createGroup([FromBody] CreateGroup group )
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
             if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
             //Group with the same name
@@ -61,7 +62,7 @@ namespace API.Areas.GroupManage.Controllers
                 UserGroup userG = new UserGroup{
                     User = user,
                     Group = newGroup,
-                    role = _context.Role.Where(r => r.name == "GROUP_MAKER").First(),
+                    role = RoleManager.getGroupMaker(_context),
                     dateRole = DateTime.Today
                 };
 

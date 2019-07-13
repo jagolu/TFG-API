@@ -28,7 +28,7 @@ namespace API.Areas.Identity.Controllers
         public IActionResult rememberPassword([FromBody] RememberPassword order)
         {
             var userExists = _context.User.Where(u => u.email == order.email);
-            if(userExists.Count() != 1)
+            if (userExists.Count() != 1)
             {
                 return BadRequest(new { error = "EmailDontExist"});
             }
@@ -40,6 +40,7 @@ namespace API.Areas.Identity.Controllers
             try
             {
                 User user = userExists.First();
+                if (!user.open) return BadRequest(new { error = "YoureBanned" });
                 String token = Guid.NewGuid().ToString("N");
                 user.tokenPassword = token;
                 user.tokenPassword_expirationTime = DateTime.Now.AddDays(7);

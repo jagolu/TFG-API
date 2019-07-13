@@ -1,6 +1,5 @@
 ﻿using API.Data;
 using API.Data.Models;
-using System.Linq;
 
 namespace API.Util
 {
@@ -9,7 +8,7 @@ namespace API.Util
         public static bool isAdmin(User u, ApplicationDBContext context)
         {
             context.Entry(u).Reference("role").Load();
-            Role admin = context.Role.Where(r => r.name == "ADMIN").First();
+            Role admin = RoleManager.getAdmin(context);
 
             return u.role == admin;
         }

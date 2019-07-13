@@ -29,12 +29,13 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult changeUser([FromBody] ChangeUserInfo info)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            bool isAdmin = AdminPolicy.isAdmin(user, _context);
 
             try {
-                user.nickname = changeNickname(info.nickname, user.nickname);
+                user.nickname = !isAdmin ? changeNickname(info.nickname, user.nickname) : user.nickname;
                 user.password = changePassword(info.oldpassword, info.newPassword, user.password);
-                user.profileImg = info.image ?? user.profileImg;
+                user.profileImg = !isAdmin ? info.image ?? user.profileImg : user.profileImg;
 
                 _context.Update(user);
                 _context.SaveChanges();

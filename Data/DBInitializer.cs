@@ -59,7 +59,7 @@ namespace API.Data
         private static void createDevelopmentUser(ApplicationDBContext context)
         {
             List<User> test_users = new List<User>();
-            Role normal = context.Role.Where(r => r.name == "NORMAL_USER").First();
+            Role normal = RoleManager.getNormalUser(context);
             string hashedPassword = PasswordHasher.hashPassword("asdfasdf1A");
 
             for (int i = 0; i < 7; i++)
@@ -79,7 +79,7 @@ namespace API.Data
                 nickname = "a_ADMIN",
                 password = hashedPassword,
                 tokenValidation = null,
-                role = context.Role.Where(r => r.name == "ADMIN").First()
+                role = RoleManager.getAdmin(context)
             };
 
 

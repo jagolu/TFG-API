@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Shop.Models;
 using API.Data;
+using API.Data.Models;
+using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +28,8 @@ namespace API.Areas.Shop.Controllers
         {
             try
             {
+                User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+                if (!user.open) return BadRequest(new { error = "YoureBanned" });
                 List<OfferShop> offersToShow = new List<OfferShop>();
 
                 _context.ShopOffers.ToList().ForEach(offer =>

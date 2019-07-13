@@ -75,6 +75,10 @@ namespace API.Areas.Identity.Controllers
                         //The user is trying to reSignUp again
                         return BadRequest(new { error = "EmailAlreadyExistsError" });
                     }
+                    if (!user.open)
+                    {
+                        return BadRequest(new { error = "YoureBanned" });
+                    }
 
                     //Here the user already exists and doesn't send a password, so is
                     // trying to do a normal logIn
@@ -108,7 +112,7 @@ namespace API.Areas.Identity.Controllers
                 nickname = socialUser.firstName,
                 password = PasswordHasher.hashPassword(socialUser.password),
                 tokenValidation = null,
-                role = _context.Role.Where(r => r.name == "NORMAL_USER").First(),
+                role = RoleManager.getNormalUser(_context),
                 profileImg = getImage(socialUser.urlImage)
             };
 

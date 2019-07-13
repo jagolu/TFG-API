@@ -27,7 +27,8 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult blockUser([FromBody] MakeAdmin_blockUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
-            if(AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 
@@ -42,7 +43,7 @@ namespace API.Areas.GroupManage.Controllers
                 UserGroup callerUG = user.groups.Where(g => g.groupId == group.id).First();
 
                 targetUser.blocked = !targetUser.blocked;
-                targetUser.role = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
+                targetUser.role = RoleManager.getGroupNormal(_context);
                 targetUser.blockedBy = callerUG.role;
                 _context.Update(targetUser);
                 _context.SaveChanges();
