@@ -51,7 +51,7 @@ namespace API.Areas.GroupManage.Controllers
                 {
                     User = user,
                     Group = group,
-                    role = _context.Role.Where(r => r.name == "GROUP_NORMAL").First(),
+                    role = RoleManager.getGroupNormal(_context),
                     dateRole = DateTime.Today
                 };
 

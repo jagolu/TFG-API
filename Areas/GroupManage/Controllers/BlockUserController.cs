@@ -43,7 +43,7 @@ namespace API.Areas.GroupManage.Controllers
                 UserGroup callerUG = user.groups.Where(g => g.groupId == group.id).First();
 
                 targetUser.blocked = !targetUser.blocked;
-                targetUser.role = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
+                targetUser.role = RoleManager.getGroupNormal(_context);
                 targetUser.blockedBy = callerUG.role;
                 _context.Update(targetUser);
                 _context.SaveChanges();

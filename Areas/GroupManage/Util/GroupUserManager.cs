@@ -79,7 +79,7 @@ namespace API.Areas.GroupManage.Util
         {
             string role_groupMaker = RoleManager.getGroupMaker(context).name;
             string role_groupAdmin = RoleManager.getGroupAdmin(context).name;
-            string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
+            string role_normal = RoleManager.getGroupNormal(context).name;
 
             if(blocked && blockedBy == role_groupMaker && callerRole != role_groupMaker)
             {
@@ -100,7 +100,7 @@ namespace API.Areas.GroupManage.Util
             bool alreadyBlocked = targetUser.blocked;
             string blockByRole = alreadyBlocked ? targetUser.blockedBy.name : null;
             string role_groupMaker = RoleManager.getGroupMaker(context).name;
-            string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
+            string role_normal = RoleManager.getGroupNormal(context).name;
 
             if(callerRole == role_normal) return false;
 

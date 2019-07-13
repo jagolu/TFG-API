@@ -26,7 +26,7 @@ namespace API.Areas.GroupManage.Util
                 {
                     Role role_groupMaker = RoleManager.getGroupMaker(_context);
                     Role role_groupAdmin = RoleManager.getGroupAdmin(_context);
-                    Role role_groupNormal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
+                    Role role_groupNormal = RoleManager.getGroupNormal(_context);
 
                     //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
                     if (userGroup.role == role_groupMaker)

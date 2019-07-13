@@ -21,7 +21,7 @@ namespace API.Areas.GroupManage.Util
                 _context.Entry(callerInGroup).Reference("role").Load();
 
                 string callerInGroup_role = callerInGroup.role.name;
-                string role_group_normal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
+                string role_group_normal = RoleManager.getGroupNormal(_context).name;
                 string role_group_maker = RoleManager.getGroupMaker(_context).name;
                 string role_group_admin = RoleManager.getGroupAdmin(_context).name;
 
