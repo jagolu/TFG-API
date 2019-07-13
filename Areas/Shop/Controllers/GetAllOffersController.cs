@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Shop.Models;
 using API.Data;
+using API.Data.Models;
+using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
