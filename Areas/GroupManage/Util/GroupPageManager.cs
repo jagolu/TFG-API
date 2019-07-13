@@ -6,6 +6,7 @@ using API.Areas.GroupManage.Models;
 using API.Areas.Home.Models;
 using API.Data;
 using API.Data.Models;
+using API.Util;
 
 namespace API.Areas.GroupManage.Util
 {
@@ -21,7 +22,7 @@ namespace API.Areas.GroupManage.Util
 
                 string callerInGroup_role = callerInGroup.role.name;
                 string role_group_normal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
-                string role_group_maker = _context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
+                string role_group_maker = RoleManager.getGroupMaker(_context).name;
                 string role_group_admin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First().name;
 
                 GroupPage page = new GroupPage();
@@ -155,7 +156,7 @@ namespace API.Areas.GroupManage.Util
             _context.Entry(group).Collection("bets").Load();
             _context.Entry(group).Collection("users").Load();
             _context.Entry(caller).Reference("role").Load();
-            Role maker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+            Role maker = RoleManager.getGroupMaker(_context);
 
             if (maker != group.users.Where(u=>u.userId == caller.id).First().role)
             {

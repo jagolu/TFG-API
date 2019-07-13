@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Data.Models;
+using API.Util;
 using System;
 using System.Linq;
 
@@ -63,7 +64,7 @@ namespace API.Areas.GroupManage.Util
 
         private static bool hasPermissionsMakeAdmin(string callerRole, string targetRole, bool makeAdmin, bool blocked, ApplicationDBContext context)
         {
-            string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
+            string role_groupMaker = RoleManager.getGroupMaker(context).name;
             string nextRole = context.Role.Where(r => r.name == (makeAdmin ? "GROUP_NORMAL" : "GROUP_ADMIN")).First().name;
 
             if (targetRole != nextRole || callerRole != role_groupMaker || blocked)
@@ -76,7 +77,7 @@ namespace API.Areas.GroupManage.Util
 
         private static bool hasPermissionsKickUser(string callerRole, string targetRole, bool blocked, string blockedBy, ApplicationDBContext context)
         {
-            string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
+            string role_groupMaker = RoleManager.getGroupMaker(context).name;
             string role_groupAdmin = context.Role.Where(r => r.name == "GROUP_ADMIN").First().name;
             string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
 
@@ -98,7 +99,7 @@ namespace API.Areas.GroupManage.Util
             context.Entry(targetUser).Reference("blockedBy").Load();
             bool alreadyBlocked = targetUser.blocked;
             string blockByRole = alreadyBlocked ? targetUser.blockedBy.name : null;
-            string role_groupMaker = context.Role.Where(r => r.name == "GROUP_MAKER").First().name;
+            string role_groupMaker = RoleManager.getGroupMaker(context).name;
             string role_normal = context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
 
             if(callerRole == role_normal) return false;

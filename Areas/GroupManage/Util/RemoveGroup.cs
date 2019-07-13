@@ -10,7 +10,7 @@ namespace API.Areas.GroupManage.Util
         {
             _context.Entry(group).Collection("users").Load();
             _context.Entry(group).Collection("bets").Load();
-            Role maker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+            Role maker = RoleManager.getGroupMaker(_context);
             group.bets.ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();

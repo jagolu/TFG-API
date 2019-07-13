@@ -23,7 +23,7 @@ namespace API.Areas.GroupManage.Util
                 }
                 else
                 {
-                    Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+                    Role role_groupMaker = RoleManager.getGroupMaker(_context);
                     Role role_groupAdmin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
                     Role role_groupNormal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
 

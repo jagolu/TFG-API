@@ -62,7 +62,7 @@ namespace API.Areas.GroupManage.Controllers
                 UserGroup userG = new UserGroup{
                     User = user,
                     Group = newGroup,
-                    role = _context.Role.Where(r => r.name == "GROUP_MAKER").First(),
+                    role = RoleManager.getGroupMaker(_context),
                     dateRole = DateTime.Today
                 };
 
