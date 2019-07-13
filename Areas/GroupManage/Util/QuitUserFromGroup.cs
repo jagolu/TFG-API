@@ -30,23 +30,7 @@ namespace API.Areas.GroupManage.Util
                     //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
                     if (userGroup.role == role_groupMaker)
                     {
-                        List<UserGroup> adminMembers = members.Where(m => m.role == role_groupAdmin).OrderBy(d => d.dateRole).ToList();
-                        List<UserGroup> normalMembers = members.Where(m => m.role == role_groupNormal).OrderBy(d => d.dateJoin).ToList();
-                        UserGroup newMaster;
-
-                        if (adminMembers.Count() != 0) //The older admin in the group will become in the group maker
-                        {
-                            newMaster = adminMembers.First();
-                        }
-                        else //If there isn't any admin, the older member in the group will become in the group make
-                        {
-                            newMaster = normalMembers.First();
-                        }
-
-                        newMaster.role = role_groupMaker;
-                        newMaster.dateRole = DateTime.Today;
-
-                        _context.Update(newMaster);
+                        manageQuitMaker(members, role_groupMaker, role_groupAdmin, role_groupNormal, _context);
                     }
 
                     _context.Remove(userGroup);
@@ -59,6 +43,28 @@ namespace API.Areas.GroupManage.Util
             {
                 return false;
             }
+        }
+
+        public static void manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, ApplicationDBContext _context)
+        {
+            List<UserGroup> adminMembers = members.Where(m => m.role == admin).OrderBy(d => d.dateRole).ToList();
+            List<UserGroup> normalMembers = members.Where(m => m.role == normal).OrderBy(d => d.dateJoin).ToList();
+            UserGroup newMaster;
+
+            if (adminMembers.Count() != 0) //The older admin in the group will become in the group maker
+            {
+                newMaster = adminMembers.First();
+            }
+            else //If there isn't any admin, the older member in the group will become in the group make
+            {
+                newMaster = normalMembers.First();
+            }
+
+            newMaster.role = maker;
+            newMaster.dateRole = DateTime.Today;
+
+            _context.Update(newMaster);
+            _context.SaveChanges();
         }
 
         private static void removeBets(UserGroup ug, ApplicationDBContext context)
