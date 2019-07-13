@@ -11,7 +11,7 @@ namespace API.Areas.GroupManage.Util
     {
         public static bool quitUser(UserGroup userGroup, ApplicationDBContext _context)
         {
-            List<UserGroup> members = _context.UserGroup.Where(ug => ug.groupId == userGroup.groupId && !ug.blocked).ToList();
+            List<UserGroup> members = getValidUsersInGroup(userGroup, _context);
 
             try
             {
@@ -44,6 +44,15 @@ namespace API.Areas.GroupManage.Util
             {
                 return false;
             }
+        }
+
+        public static List<UserGroup> getValidUsersInGroup(UserGroup caller, ApplicationDBContext _context)
+        {
+            return _context.UserGroup.Where(ug => 
+                                ug.groupId == caller.groupId && 
+                                !ug.blocked &&
+                                ug.User.open
+                    ).ToList();
         }
 
         public static void manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, ApplicationDBContext _context)
