@@ -31,7 +31,7 @@ namespace API.Areas.GroupManage.Util
                     //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
                     if (userGroup.role == role_groupMaker)
                     {
-                        manageQuitMaker(members, role_groupMaker, role_groupAdmin, role_groupNormal, _context);
+                        manageQuitMaker(members, role_groupMaker, role_groupAdmin, role_groupNormal, true, _context);
                     }
 
                     _context.Remove(userGroup);
@@ -55,7 +55,7 @@ namespace API.Areas.GroupManage.Util
                     ).ToList();
         }
 
-        public static void manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, ApplicationDBContext _context)
+        public static void manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, bool leave, ApplicationDBContext _context)
         {
             List<UserGroup> adminMembers = members.Where(m => m.role == admin).OrderBy(d => d.dateRole).ToList();
             List<UserGroup> normalMembers = members.Where(m => m.role == normal).OrderBy(d => d.dateJoin).ToList();
@@ -75,6 +75,11 @@ namespace API.Areas.GroupManage.Util
 
             _context.Update(newMaster);
             _context.SaveChanges();
+
+            _context.Entry(newMaster).Reference("User").Load();
+            _context.Entry(newMaster).Reference("Group").Load();
+            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, Home.Models.TypeGroupNew.MAKE_MAKER_GROUP, leave, _context);
+            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, Home.Models.TypeGroupNew.MAKE_MAKER_USER, leave, _context);
         }
 
         private static void removeBets(UserGroup ug, ApplicationDBContext context)
