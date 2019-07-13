@@ -7,6 +7,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static API.Areas.GroupManage.Models.GroupInfo;
 
 namespace API.Areas.GroupManage.Controllers
 {
@@ -29,7 +30,7 @@ namespace API.Areas.GroupManage.Controllers
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return new List<GroupInfo>();
 
-            return addGroupsToList(_context.Group.ToList());
+            return addGroupsToList(_context.Group.ToList(), AdminPolicy.isAdmin(user, _context));
         }
 
 
@@ -53,7 +54,7 @@ namespace API.Areas.GroupManage.Controllers
                 ) && g.open
             ).ToList();
 
-            return addGroupsToList(groupsWithTheSameName);
+            return addGroupsToList(groupsWithTheSameName, AdminPolicy.isAdmin(user, _context));
         }
 
         [HttpGet]
@@ -80,7 +81,7 @@ namespace API.Areas.GroupManage.Controllers
             return groupsInfo;
         }
 
-        private List<GroupInfo> addGroupsToList(List<Group> groups)
+        private List<GroupInfo> addGroupsToList(List<Group> groups, bool isAdmin)
         {
             List<GroupInfo> groupRet = new List<GroupInfo>();
 
@@ -95,11 +96,36 @@ namespace API.Areas.GroupManage.Controllers
                     password = group.password != null,
                     placesOcupped = group.users.Count(),
                     totalPlaces = group.capacity,
-                    dateCreate = group.dateCreated
+                    dateCreate = group.dateCreated,
+                    members = isAdmin ? getGroupMembers(group) : null
                 });
             });
 
             return groupRet;
+        }
+
+        private List<GroupMemberAdmin> getGroupMembers(Group group)
+        {
+            _context.Entry(group).Collection("users").Load();
+            List<GroupMemberAdmin> members = new List<GroupMemberAdmin>();
+
+            group.users.ToList().ForEach(u =>
+            {
+                _context.Entry(u).Reference("User").Load();
+                _context.Entry(u).Reference("role").Load();
+                members.Add(new GroupMemberAdmin
+                {
+                    username = u.User.nickname,
+                    email = u.User.email,
+                    role = u.role.name,
+                    dateJoin = u.dateJoin,
+                    dateRole = u.dateRole,
+                    blocked = u.blocked,
+                    coins = u.coins
+                });
+            });
+
+            return members;
         }
     }
 }
