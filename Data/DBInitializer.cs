@@ -79,7 +79,7 @@ namespace API.Data
                 nickname = "a_ADMIN",
                 password = hashedPassword,
                 tokenValidation = null,
-                role = context.Role.Where(r => r.name == "ADMIN").First()
+                role = RoleManager.getAdmin(context)
             };
 
 
