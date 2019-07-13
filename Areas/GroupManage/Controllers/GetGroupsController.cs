@@ -94,7 +94,8 @@ namespace API.Areas.GroupManage.Controllers
                     type = group.type,
                     password = group.password != null,
                     placesOcupped = group.users.Count(),
-                    totalPlaces = group.capacity
+                    totalPlaces = group.capacity,
+                    dateCreate = group.dateCreated
                 });
             });
 
