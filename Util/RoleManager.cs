@@ -25,5 +25,10 @@ namespace API.Util
         {
             return _context.Role.Where(r => r.name == "ADMIN").First();
         }
+
+        public static Role getNormalUser(ApplicationDBContext _context)
+        {
+            return _context.Role.Where(r => r.name == "NORMAL_USER").First();
+        }
     }
 }

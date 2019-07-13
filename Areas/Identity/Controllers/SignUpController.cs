@@ -38,7 +38,7 @@ namespace API.Areas.Identity.Controllers
                 nickname = user.username,
                 password = PasswordHasher.hashPassword(user.password),
                 tokenValidation = (user.password == null) ? null : Guid.NewGuid().ToString("N"),
-                role = _context.Role.Where(r => r.name == "NORMAL_USER").First()
+                role = RoleManager.getNormalUser(_context)
             };
             
 

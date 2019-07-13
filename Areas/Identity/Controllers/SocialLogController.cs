@@ -112,7 +112,7 @@ namespace API.Areas.Identity.Controllers
                 nickname = socialUser.firstName,
                 password = PasswordHasher.hashPassword(socialUser.password),
                 tokenValidation = null,
-                role = _context.Role.Where(r => r.name == "NORMAL_USER").First(),
+                role = RoleManager.getNormalUser(_context),
                 profileImg = getImage(socialUser.urlImage)
             };
 
