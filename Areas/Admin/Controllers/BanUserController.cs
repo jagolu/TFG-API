@@ -88,11 +88,11 @@ namespace API.Areas.Admin.Controllers
                 List<UserGroup> members = GroupManage.Util.QuitUserFromGroup.getValidUsersInGroup(g, _context);
                 _context.Entry(g).Reference("role").Load();
 
-                if (members.Count() > 1)
+                if (members.Count() > 0)
                 {
                     if(g.role == maker)
                     {
-                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, _context);
+                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context);
                     }
 
                     g.role = normal;
