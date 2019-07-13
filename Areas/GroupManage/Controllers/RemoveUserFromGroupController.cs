@@ -30,6 +30,8 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult removeUser([FromBody] KickUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 

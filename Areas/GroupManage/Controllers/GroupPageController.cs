@@ -25,6 +25,8 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult getGroupPage(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             var groups = _context.Group.Where(g => g.name == groupName);
 
             // If the group doesn't exist

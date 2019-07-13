@@ -28,6 +28,8 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult leaveGroup(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to leave the group
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup ugCaller = new UserGroup();
             Group group = new Group();
 

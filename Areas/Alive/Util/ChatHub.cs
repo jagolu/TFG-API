@@ -33,6 +33,7 @@ namespace API.Areas.Alive.Util
 
                     Group group = groupExists.First();
                     User user = userExists.First();
+                    if (!user.open) return;
                     var userInGroup = dbContext.UserGroup.Where(ug => ug.groupId == group.id && ug.userId == user.id);
                     if (userInGroup.Count() != 1) return;
                     UserGroup ugCaller = userInGroup.First();

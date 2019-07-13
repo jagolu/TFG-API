@@ -28,6 +28,7 @@ namespace API.Areas.UserInfo.Controllers
         {
             try {
                 User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+                if (!user.open) return BadRequest(new { error = "YoureBanned" });
 
                 _context.Entry(user).Reference("role").Load();
 

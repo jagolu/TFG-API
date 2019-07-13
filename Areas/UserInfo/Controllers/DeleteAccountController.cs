@@ -28,6 +28,8 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             string userDeletePass = PasswordHasher.hashPassword(userDelete.password);
             
             
@@ -53,7 +55,7 @@ namespace API.Areas.UserInfo.Controllers
         private bool deleteAccountBeingNormal(User u)
         {
             _context.Entry(u).Reference("role").Load();
-            if(u.role != _context.Role.Where(r => r.name == "NORMAL_USER").First()) {
+            if(u.role != RoleManager.getNormalUser(_context)) {
                 return false;
             }
 

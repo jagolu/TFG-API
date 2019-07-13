@@ -50,6 +50,7 @@ namespace API.Areas.Identity.Controllers
             }
 
             User user = _context.User.Where(u => u.email == email).First();
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
 
             UserSession session = MakeUserSession.getUserSession(_context, user, req.provider);
 

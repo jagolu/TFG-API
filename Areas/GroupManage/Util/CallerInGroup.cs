@@ -38,7 +38,7 @@ namespace API.Areas.GroupManage.Util
 
         private static bool hasPermissionsManagePassword(UserGroup ugCaller, Group group, string newPassword, string oldPassword, ApplicationDBContext _context)
         {
-            Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+            Role role_groupMaker = RoleManager.getGroupMaker(_context);
             bool role = ugCaller.role == role_groupMaker;
             bool newPass = newPassword != null && newPassword.Length > 0 && PasswordHasher.validPassword(newPassword);
             bool oldPass = oldPassword != null && oldPassword.Length > 0;
@@ -61,7 +61,7 @@ namespace API.Areas.GroupManage.Util
         private static bool hasPermissionsRemoveGroup(UserGroup ugCaller, User caller, ApplicationDBContext _context)
         {
             _context.Entry(ugCaller).Reference("role").Load();
-            Role role_groupMaker = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
+            Role role_groupMaker = RoleManager.getGroupMaker(_context);
             Role caller_role = ugCaller.role;
 
             if (role_groupMaker != caller_role)
@@ -76,11 +76,11 @@ namespace API.Areas.GroupManage.Util
         {
             _context.Entry(ugCaller).Reference("role").Load();
 
-            Role groupMaker_role = _context.Role.Where(r => r.name == "GROUP_MAKER").First();
-            Role groupAdmin_role = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+            Role groupMaker_role = RoleManager.getGroupMaker(_context);
+            Role groupAdmin_role = RoleManager.getGroupAdmin(_context);
 
 
-            if(ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
+            if (ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
             {
                 return false;
             }

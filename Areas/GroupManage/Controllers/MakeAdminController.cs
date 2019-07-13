@@ -27,6 +27,8 @@ namespace API.Areas.GroupManage.Controllers
         public IActionResult makeAdmin([FromBody] MakeAdmin_blockUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+            if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 
@@ -37,7 +39,7 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
-                targetUser.role = _context.Role.Where(r => r.name == (order.make_unmake ? "GROUP_ADMIN" : "GROUP_NORMAL")).First();
+                targetUser.role = order.make_unmake ? RoleManager.getGroupAdmin(_context) : RoleManager.getNormalUser(_context);
                 _context.Update(targetUser);
                 _context.SaveChanges();
 
