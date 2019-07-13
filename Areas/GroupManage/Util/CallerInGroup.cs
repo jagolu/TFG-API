@@ -77,10 +77,10 @@ namespace API.Areas.GroupManage.Util
             _context.Entry(ugCaller).Reference("role").Load();
 
             Role groupMaker_role = RoleManager.getGroupMaker(_context);
-            Role groupAdmin_role = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+            Role groupAdmin_role = RoleManager.getGroupAdmin(_context);
 
 
-            if(ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
+            if (ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
             {
                 return false;
             }

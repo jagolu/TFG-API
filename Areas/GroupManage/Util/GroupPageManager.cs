@@ -23,7 +23,7 @@ namespace API.Areas.GroupManage.Util
                 string callerInGroup_role = callerInGroup.role.name;
                 string role_group_normal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First().name;
                 string role_group_maker = RoleManager.getGroupMaker(_context).name;
-                string role_group_admin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First().name;
+                string role_group_admin = RoleManager.getGroupAdmin(_context).name;
 
                 GroupPage page = new GroupPage();
                 page.name = group.name;

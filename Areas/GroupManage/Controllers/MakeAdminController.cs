@@ -39,7 +39,7 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
-                targetUser.role = _context.Role.Where(r => r.name == (order.make_unmake ? "GROUP_ADMIN" : "GROUP_NORMAL")).First();
+                targetUser.role = order.make_unmake ? RoleManager.getGroupAdmin(_context) : RoleManager.getNormalUser(_context);
                 _context.Update(targetUser);
                 _context.SaveChanges();
 

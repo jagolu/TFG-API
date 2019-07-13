@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Data.Models;
+using API.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace API.Areas.GroupManage.Util
                 else
                 {
                     Role role_groupMaker = RoleManager.getGroupMaker(_context);
-                    Role role_groupAdmin = _context.Role.Where(r => r.name == "GROUP_ADMIN").First();
+                    Role role_groupAdmin = RoleManager.getGroupAdmin(_context);
                     Role role_groupNormal = _context.Role.Where(r => r.name == "GROUP_NORMAL").First();
 
                     //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
