@@ -92,7 +92,7 @@ namespace API.Areas.Admin.Controllers
                 {
                     if(g.role == maker)
                     {
-                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, _context);
+                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context);
                     }
 
                     g.role = normal;

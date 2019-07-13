@@ -23,6 +23,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.KICK_USER_GROUP) whatsGoingOn = kickUser_group(user, group);
             else if (type == TypeGroupNew.CREATE_GROUP_USER) whatsGoingOn = createGroup_user(user, group);
             else if (type == TypeGroupNew.CREATE_GROUP_GROUP) whatsGoingOn = createGroup_group(user, group);
+            else if (type == TypeGroupNew.MAKE_MAKER_GROUP) whatsGoingOn = makeMaker_group(user, group, makeUnmake);
+            else if (type == TypeGroupNew.MAKE_MAKER_USER) whatsGoingOn = makeMaker_user(user, group, makeUnmake);
 
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group);
@@ -217,6 +219,40 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New makeMaker_group(User user, Group group, bool leave)
+        {
+            string bitM = leave ? "se ha marchado" : "ha sido baneado";
+            string title = "El creador del grupo ha cambiado";
+            string message = "Debido a que el creador " +  bitM + ", se ha elegido automáticamente el nuevo creador del mismo."+
+                              "El elegido es \""+user.nickname+"\".";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New makeMaker_user(User user, Group group, bool leave)
+        {
+            string bitM = leave ? "se ha marchado" : "ha sido baneado";
+            string title = "Se te ha elegido como creador de un grupo!!";
+            string message = "Debido a que el creador del grupo \"" + group.name + "\" " + bitM +
+                            ", se te ha elegido automáticamente como nuevo creador del mismo.";
+
+            New n = new New
+            {
+                User = user,
                 title = title,
                 message = message
             };
