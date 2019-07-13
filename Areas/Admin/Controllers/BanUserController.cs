@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Admin.Models;
-using API.Areas.Home.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -44,7 +43,9 @@ namespace API.Areas.Admin.Controllers
             {
                 targetUser.open = !targetUser.open;
                 _context.Update(targetUser);
+
                 _context.SaveChanges();
+                if(order.ban) manageGroups(targetUser);
 
                 EmailSender.sendBanNotification(targetUser.email, targetUser.nickname, order.ban);
 
@@ -56,7 +57,7 @@ namespace API.Areas.Admin.Controllers
             }
         }
 
-        public bool existUser(ref User user, string publicUserId)
+        private bool existUser(ref User user, string publicUserId)
         {
             List<User> existUser = _context.User.Where(u => u.publicId == publicUserId).ToList();
             if (existUser.Count() != 1)
@@ -69,11 +70,41 @@ namespace API.Areas.Admin.Controllers
             return true;
         }
 
-        public bool validOrder(User user, bool order)
+        private bool validOrder(User user, bool order)
         {
             bool userBlock = user.open;
 
             return userBlock != order;
+        }
+
+        private void manageGroups(User user)
+        {
+            _context.Entry(user).Collection("groups").Load();
+            Role maker = RoleManager.getGroupMaker(_context);
+            Role admin = RoleManager.getGroupAdmin(_context);
+            Role normal = RoleManager.getGroupNormal(_context);
+            user.groups.ToList().ForEach(g =>
+            {
+                List<UserGroup> members = GroupManage.Util.QuitUserFromGroup.getValidUsersInGroup(g, _context);
+                _context.Entry(g).Reference("role").Load();
+
+                if (members.Count() > 1)
+                {
+                    if(g.role == maker)
+                    {
+                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, _context);
+                    }
+
+                    g.role = normal;
+                    _context.Update(g);
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    _context.Entry(g).Reference("Group").Load();
+                    GroupManage.Util.RemoveGroup.Remove(g.Group, _context);
+                }
+            });
         }
     }
 }
