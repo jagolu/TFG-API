@@ -6,6 +6,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static API.Areas.Admin.Models.UserSearchInfo;
 
 namespace API.Areas.Admin.Controllers
 {
@@ -63,13 +64,30 @@ namespace API.Areas.Admin.Controllers
 
             users.ForEach(user =>
             {
+                _context.Entry(user).Collection("groups").Load();
+                List<UserInGroup> uGroups = new List<UserInGroup>();
+
+                user.groups.ToList().ForEach(g =>
+                {
+                    _context.Entry(g).Reference("Group").Load();
+                    _context.Entry(g).Reference("role").Load();
+                    uGroups.Add(new UserInGroup
+                    {
+                        groupName = g.Group.name,
+                        role = g.role.name,
+                        blocked = g.blocked,
+                        joinTime = g.dateJoin,
+                        roleTime = g.dateRole
+                    });
+                });
 
                 usersRet.Add(new UserSearchInfo
                 {
                     email = user.email,
                     username = user.nickname,
                     open = user.open,
-                    dateSignUp = user.dateSignUp
+                    dateSignUp = user.dateSignUp,
+                    groups = uGroups
                 });
             });
 
