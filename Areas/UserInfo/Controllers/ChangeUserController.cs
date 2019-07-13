@@ -29,6 +29,7 @@ namespace API.Areas.UserInfo.Controllers
         public IActionResult changeUser([FromBody] ChangeUserInfo info)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
             bool isAdmin = AdminPolicy.isAdmin(user, _context);
 
             try {

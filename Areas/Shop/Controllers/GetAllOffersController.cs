@@ -26,6 +26,8 @@ namespace API.Areas.Shop.Controllers
         {
             try
             {
+                User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+                if (!user.open) return BadRequest(new { error = "YoureBanned" });
                 List<OfferShop> offersToShow = new List<OfferShop>();
 
                 _context.ShopOffers.ToList().ForEach(offer =>

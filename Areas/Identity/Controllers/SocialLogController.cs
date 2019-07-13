@@ -75,6 +75,10 @@ namespace API.Areas.Identity.Controllers
                         //The user is trying to reSignUp again
                         return BadRequest(new { error = "EmailAlreadyExistsError" });
                     }
+                    if (!user.open)
+                    {
+                        return BadRequest(new { error = "YoureBanned" });
+                    }
 
                     //Here the user already exists and doesn't send a password, so is
                     // trying to do a normal logIn

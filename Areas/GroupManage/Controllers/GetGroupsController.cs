@@ -26,7 +26,8 @@ namespace API.Areas.GroupManage.Controllers
         [ActionName("GetAllGroups")]
         public List<GroupInfo> getAllGroups()
         {
-            List<GroupInfo> groupRet = new List<GroupInfo>();
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return new List<GroupInfo>();
 
             return addGroupsToList(_context.Group.ToList());
         }
@@ -37,6 +38,9 @@ namespace API.Areas.GroupManage.Controllers
         [ActionName("SearchGroup")]
         public List<GroupInfo> searchGroupByName(string name)
         {
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return new List<GroupInfo>();
+
             //The request name is empty
             if (name == null || name.Length == 0)
             {
@@ -58,6 +62,7 @@ namespace API.Areas.GroupManage.Controllers
         public List<UserGroups> reloadUserGroups()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            if (!user.open) return new List<UserGroups>();
             List<UserGroups> groupsInfo = new List<UserGroups>();
             _context.Entry(user).Collection("groups").Load();
             

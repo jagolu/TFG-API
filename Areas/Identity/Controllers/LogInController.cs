@@ -29,9 +29,12 @@ namespace API.Areas.Identity.Controllers
             if( userExist.Count() != 1 || !PasswordHasher.areEquals(user.password, userExist.First().password)) { 
                 return BadRequest(new { error = "WrongEmailOrPassword" });
             }
-
             if ((userExist.First().tokenValidation != null)) {
                 return BadRequest(new { error = "NotValidatedYet" });
+            }
+            if(!userExist.First().open)
+            {
+                return BadRequest(new { error = "YoureBanned" });
             }
 
             UserSession session = MakeUserSession.getUserSession(_context, userExist.First(), user.provider);
