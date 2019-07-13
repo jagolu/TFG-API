@@ -83,6 +83,7 @@ namespace API.Areas.Admin.Controllers
 
                 usersRet.Add(new UserSearchInfo
                 {
+                    publicUserId = user.publicId,
                     email = user.email,
                     username = user.nickname,
                     open = user.open,

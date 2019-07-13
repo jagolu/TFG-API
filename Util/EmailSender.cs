@@ -39,6 +39,18 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        public static void sendBanNotification(string email, string name, bool ban)
+        {
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress(_configuration["Email:username"] + "@gmail.com");
+            msg.To.Add(email);
+            msg.Body = ban ? getBodySendBanNotification(name) : getBodySendUnBanNotification(name);
+            msg.IsBodyHtml = true;
+            msg.Subject = ban ? "!Has sido baneado de VirtualBet!" : "Tu cuenta de VirtualBet ha sido desbloqueada!";
+
+            _client.Send(msg);
+        }
+
         private static void initializeClient()
         {
             _client = new SmtpClient("smtp.gmail.com");
@@ -68,6 +80,27 @@ namespace API.Util
             body += "<p>If you really forgot the password click on the following link: </p>";
             body += _configuration["URL"]+ "/changePassword/" + tokenPassword;
             body += "<br><p>If you did't ask for this don't follow the link. </p>";
+            body += "</body></html>";
+            return body;
+        }
+
+        private static String getBodySendBanNotification(string name)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Los administradores de la plataforma te han baneado</p>";
+            body += "<p>No podrás volver a iniciar sesión hasta que te la desbloqueen.</p>";
+            body += "<p>No hay tiempo exacto para que desbloqueen la cuenta.</p>";
+            body += "<p>Si crees que esto es un error escribe un correo electrónico a la direccion "+ _configuration["EmailIssues:username"] + "@gmail.com</p>";
+            body += "</body></html>";
+            return body;
+        }
+        private static String getBodySendUnBanNotification(string name)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Los administradores de la plataforma han desbloqueado tu cuenta</p>";
+            body += "<p>Puedes volver a acceder a todas sus funcionalidades con normalidad.</p>";
             body += "</body></html>";
             return body;
         }
