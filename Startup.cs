@@ -12,6 +12,7 @@ using System.Text;
 using API.Util;
 using API.ScheduledTasks.VirtualBets;
 using Microsoft.Extensions.Logging;
+using API.ScheduledTasks.Groups;
 
 namespace API
 {
@@ -74,6 +75,7 @@ namespace API
 
             //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
             //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
+            services.AddHostedService<WeeklyGroupHostedService>(); 
 
             _logger.LogInformation("Added services");
         }
