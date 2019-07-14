@@ -27,7 +27,6 @@ namespace API.Areas.GroupManage.Util
 
                 GroupPage page = new GroupPage();
                 page.name = group.name;
-                page.type = group.type;
                 page.dateJoin = callerInGroup.dateJoin;
                 page.dateRole = callerInGroup.dateRole;
                 page.actualCapacity = group.users.ToList().Count();
@@ -48,7 +47,6 @@ namespace API.Areas.GroupManage.Util
             {
                 return new GroupPage{
                     name = "",
-                    type = false,
                     bets = new List<GroupBet>(),
                     members = new List<GroupMember>(),
                     actualCapacity = 0,
@@ -142,10 +140,9 @@ namespace API.Areas.GroupManage.Util
                 dateRole = ug.dateRole,
                 img = ug.User.profileImg,
                 blocked = ug.blocked,
-                blockedBy = ug.blockedBy != null ? ug.blockedBy.name : ""
+                blockedBy = ug.blockedBy != null ? ug.blockedBy.name : "",
+                coins = ug.coins
             };
-
-            if (!ug.Group.type) ret.coins = ug.coins;
 
             return ret;
         }

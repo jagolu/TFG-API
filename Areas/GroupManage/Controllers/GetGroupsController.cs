@@ -64,22 +64,18 @@ namespace API.Areas.GroupManage.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("ReloadUserGroups")]
-        public List<UserGroups> reloadUserGroups()
+        public List<string> reloadUserGroups()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-            if (!user.open) return new List<UserGroups>();
-            List<UserGroups> groupsInfo = new List<UserGroups>();
+            if (!user.open) return new List<string>();
+            List<string> groupsInfo = new List<string>();
             _context.Entry(user).Collection("groups").Load();
             
             user.groups.Where(g => !g.blocked).ToList().ForEach(group =>
             {
                 _context.Entry(group).Reference("Group").Load();
 
-                groupsInfo.Add(new UserGroups
-                {
-                    name = group.Group.name,
-                    type = group.Group.type
-                });
+                groupsInfo.Add( group.Group.name );
             });
 
             return groupsInfo;
@@ -96,7 +92,6 @@ namespace API.Areas.GroupManage.Controllers
                 groupRet.Add(new GroupInfo
                 {
                     name = group.name,
-                    type = group.type,
                     open = group.open,
                     password = group.password != null,
                     placesOcupped = group.users.Count(),

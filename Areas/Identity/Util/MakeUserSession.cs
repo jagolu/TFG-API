@@ -19,7 +19,7 @@ namespace API.Areas.Identity.Util
 
                 if(session != null)
                 {
-                    List<UserGroups> groups = getUserGroups(user, context);
+                    List<string> groups = getUserGroups(user, context);
                     session.groups = groups;
                     context.SaveChanges();
                     return session;
@@ -49,9 +49,9 @@ namespace API.Areas.Identity.Util
             return session;
         }
 
-        private static List<UserGroups> getUserGroups(User u, ApplicationDBContext _context)
+        private static List<string> getUserGroups(User u, ApplicationDBContext _context)
         {
-            List<UserGroups> userGroups = new List<UserGroups>();
+            List<string> userGroups = new List<string>();
             List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userId == u.id && !ug.blocked).ToList();
 
             groups.ForEach(g =>
@@ -59,11 +59,7 @@ namespace API.Areas.Identity.Util
                 _context.Entry(g).Reference("Group").Load();
                 if (g.Group.open)
                 {
-                    userGroups.Add(new UserGroups
-                    {
-                        name = g.Group.name,
-                        type = g.Group.type
-                    });
+                    userGroups.Add( g.Group.name );
                 }
             });
 

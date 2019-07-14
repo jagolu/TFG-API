@@ -1,7 +1,6 @@
 ﻿using API.Data;
 using API.Data.Models;
 using API.Util;
-using System.Linq;
 
 namespace API.Areas.GroupManage.Util
 {
@@ -81,10 +80,6 @@ namespace API.Areas.GroupManage.Util
 
 
             if (ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
-            {
-                return false;
-            }
-            if(group.type != false)
             {
                 return false;
             }

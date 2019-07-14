@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Areas.GroupManage.Models;
 using API.Data;
@@ -28,17 +29,17 @@ namespace API.Areas.GroupManage.Controllers
          * @return 401 LimitationCreateGroup The user can't create more groups of the specificated type
          * @return 200 The group has been created sucesfully
          */ 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [ActionName("CreateGroup")]
-        public IActionResult createGroup([FromBody] CreateGroup group )
+        public IActionResult createGroup([Required][MaxLength(20)][MinLength(4)] string groupName )
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
             if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
             //Group with the same name
-            var dbGroup = _context.Group.Where(g => g.name == group.name);
+            var dbGroup = _context.Group.Where(g => g.name == groupName);
 
             if (dbGroup.Count() > 0) //If already exists a group with the same name
             {
@@ -50,14 +51,14 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest(new { error = "LimitationCreateGroup" });
             }
 
-            if(!canCreateAnewSpecificGroup(group.type, user)) //The user cant create more groups
+            if(!canCreateAnewSpecificGroup(user)) //The user cant create more groups
             {
                 return BadRequest(new { error = "LimitationSpecificCreateGroup" });
             }
 
             try
             {
-                Group newGroup = new Group { name = group.name, type = group.type };
+                Group newGroup = new Group { name = groupName };
                 
                 UserGroup userG = new UserGroup{
                     User = user,
@@ -88,24 +89,16 @@ namespace API.Areas.GroupManage.Controllers
          * @user The user trying to create the new group
          * @return true if the user can create the new group, false otherwise
          */
-        private bool canCreateAnewSpecificGroup(bool type, User user)
+        private bool canCreateAnewSpecificGroup(User user)
         {
             int userGroups = 0;
             int limitationGroups = 0;
 
             userGroups = _context.UserGroup.Where(ug =>
                 ug.userId == user.id &&
-                ug.Group.type == type &&
                 ug.role.name == "GROUP_MAKER").Count();
 
-            if (type) //Official group //Max groups that the user can create
-            {
-                limitationGroups = user.createOfficialGroup;
-            }
-            else //Virtual group //Max groups that the user can create
-            {
-                limitationGroups = user.createVirtualGroup;
-            }
+            limitationGroups = user.createGroup;
 
             return userGroups < limitationGroups; //The user cant create a new group of the specificated type
         }
