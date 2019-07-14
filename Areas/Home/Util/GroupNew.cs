@@ -25,6 +25,7 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.CREATE_GROUP_GROUP) whatsGoingOn = createGroup_group(user, group);
             else if (type == TypeGroupNew.MAKE_MAKER_GROUP) whatsGoingOn = makeMaker_group(user, group, makeUnmake);
             else if (type == TypeGroupNew.MAKE_MAKER_USER) whatsGoingOn = makeMaker_user(user, group, makeUnmake);
+            else if (type == TypeGroupNew.BAN_GROUP) whatsGoingOn = ban_group(user, group, makeUnmake);
 
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group);
@@ -249,6 +250,23 @@ namespace API.Areas.Home.Util
             string title = "Se te ha elegido como creador de un grupo!!";
             string message = "Debido a que el creador del grupo \"" + group.name + "\" " + bitM +
                             ", se te ha elegido automáticamente como nuevo creador del mismo.";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New ban_group(User user, Group group, bool ban)
+        {
+            string title = ban ? "Un grupo ha sido bloqueado" : "Un grupo ha sido desbloqueado!";
+            string message = ban ? "Uno de los administradores de la plataforma ha bloqueado el grupo \""+group.name+"\". "+
+                              "No podrás acceder al grupo hasta que no haya sido desbloqueado" :
+                            "El grupo \"" + group.name + "\" ha sido desbloqueado. Puedes volver a acceder al mismo";
 
             New n = new New
             {

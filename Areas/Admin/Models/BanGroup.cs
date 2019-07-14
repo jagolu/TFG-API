@@ -2,10 +2,10 @@
 
 namespace API.Areas.Admin.Models
 {
-    public class BanUser
+    public class BanGroup
     {
         [Required]
-        public string publicUserId { get; set; }
+        public string groupName { get; set; }
 
         [Required]
         public bool ban { get; set; }

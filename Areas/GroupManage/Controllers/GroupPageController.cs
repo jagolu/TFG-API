@@ -43,6 +43,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest();
             }
+            if (!group.open) return BadRequest(new { error = "GroupBanned" });
 
             return Ok(GroupPageManager.GetPage(user, group, _context));
         }

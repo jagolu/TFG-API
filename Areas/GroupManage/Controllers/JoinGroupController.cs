@@ -44,6 +44,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest(new { error = "IncorrectPasswordJoiningGroup" });
             }
+            if (!group.open) return BadRequest(new { error = "GroupBanned" });
 
             try
             {
