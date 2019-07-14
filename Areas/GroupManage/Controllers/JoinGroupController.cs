@@ -53,7 +53,8 @@ namespace API.Areas.GroupManage.Controllers
                     User = user,
                     Group = group,
                     role = RoleManager.getGroupNormal(_context),
-                    dateRole = DateTime.Today
+                    dateRole = DateTime.Today,
+                    coins = group.weeklyPay
                 };
 
                 _context.UserGroup.Add(newUser);
