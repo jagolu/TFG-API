@@ -32,6 +32,10 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group);
             else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group);
 
+
+            else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
+            else if (type == TypeGroupNew.PAID_PLAYERS_GROUPS) whatsGoingOn = pay_players_group(group);
+
             try
             {
                 context.Add(whatsGoingOn);
@@ -329,6 +333,36 @@ namespace API.Areas.Home.Util
         {
             string title = "Se han pagado los resultados de las apuestas";
             string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\"";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New pay_players_group(Group group)
+        {
+            string title = "Se os ha pagado las monedas semanales";
+            string message = "Habeis cobrado las "+group.weeklyPay+ " monedas semanales.";
+
+            New n = new New
+            {
+                Group = group,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New pay_players_user(User user, Group group)
+        {
+            string title = "Has cobrado las monedas semanales";
+            string message = "Has cobrado las "+group.weeklyPay+ " monedas semanales del grupo \""+group.name+"\".";
 
             New n = new New
             {
