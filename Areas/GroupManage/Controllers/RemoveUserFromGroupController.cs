@@ -39,6 +39,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest();
             }
+            if (!group.open) return BadRequest(new { error = "GroupBanned" });
 
             try
             {

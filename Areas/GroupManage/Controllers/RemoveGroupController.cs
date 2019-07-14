@@ -37,6 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest(new { error = "IncorrectOldPassword" });
             }
+            if (!group.open) return BadRequest(new { error = "GroupBanned" });
             try
             {
                 RemoveGroup.Remove(group, _context);

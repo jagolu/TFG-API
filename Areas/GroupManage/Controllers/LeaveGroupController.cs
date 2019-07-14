@@ -37,6 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest();
             }
+            if (!group.open) return BadRequest(new { error = "GroupBanned" });
             if (!QuitUserFromGroup.quitUser(ugCaller, _context))
             {
                 return StatusCode(500);
