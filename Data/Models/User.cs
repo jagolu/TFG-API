@@ -47,10 +47,7 @@ namespace API.Data.Models
         public Role role { get; set; }
 
         [Required]
-        public int createOfficialGroup { get; set; } = 1;
-
-        [Required]
-        public int createVirtualGroup { get; set; } = 1;
+        public int createGroup { get; set; } = 1;
 
         [Required]
         public int maxGroupJoins { get; set; } = 2;

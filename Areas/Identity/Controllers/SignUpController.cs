@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using API.Areas.Identity.Models;
 using API.Data;
 using API.Data.Models;

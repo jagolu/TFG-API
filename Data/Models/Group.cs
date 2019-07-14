@@ -15,9 +15,6 @@ namespace API.Data.Models
         [MaxLength(20)]
         public string name { get; set; }
 
-        [Required] //1-->Apuestas oficiales 0-->Apuestas virtuales
-        public Boolean type { get; set; }
-
         [MaxLength]
         public string password { get; set; } = null;
 

@@ -34,10 +34,6 @@ namespace API.Areas.Bet.Util
             {
                 return false;
             }
-            if (group.type)
-            {
-                return false;
-            }
 
             fb = fbs.First();
             return true;

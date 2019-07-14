@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Areas.Identity.Models;
-using API.Areas.Identity.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;

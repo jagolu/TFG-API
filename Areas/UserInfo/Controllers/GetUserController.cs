@@ -61,7 +61,6 @@ namespace API.Areas.UserInfo.Controllers
                     roleGroups.Add(new RoleGroup
                     {
                         name = group.Group.name,
-                        type = group.Group.type,
                         role = group.role.name
                     });
                 }
