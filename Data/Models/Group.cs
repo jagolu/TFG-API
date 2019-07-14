@@ -33,6 +33,9 @@ namespace API.Data.Models
         [Required]
         public DateTime dateCreated { get; set; } = DateTime.Today;
 
+        [Required]
+        public int weeklyPay { get; set; } = 500;
+
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();
         public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
         public ICollection<GroupChatMessage> chatMessages { get; set; } = new HashSet<GroupChatMessage>();
