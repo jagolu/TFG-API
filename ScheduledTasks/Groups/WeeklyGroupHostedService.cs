@@ -58,6 +58,7 @@ namespace API.ScheduledTasks.Groups
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
 
                     RemoveSessionTokens.remove(dbContext);
+                    PayGroups.pay(dbContext);
                 }
             }
             catch (Exception)
