@@ -1,4 +1,5 @@
 ﻿using API.Areas.Bet.Models;
+using API.Areas.Bet.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
@@ -133,7 +134,7 @@ namespace API.Areas.Bet.Controllers
                 {
                     return false;
                 }
-                if(typeB.First().name.Contains("WINNER") && typeP.First().name.Contains("CLOSER"))
+                if(CheckBetType.typeIsWinner(typeB.First()) && CheckBetType.typeIsCloser(typeB.First()))
                 {
                     return false;
                 }

@@ -22,7 +22,7 @@ namespace API.Areas.Bet.Models
             this.maxBet = bet.maxBet;
             this.matchdayDate = bet.MatchDay.date;
             this.lastBetTime = bet.dateLastBet;
-            if (bet.typePay.name.Contains("JACKPOT"))
+            if (Util.CheckBetType.isJackpot(bet, _context))
             {
                 this.usersJoined = bet.usersJoined;
             }

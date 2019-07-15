@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using API.Areas.GroupManage.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -43,7 +42,7 @@ namespace API.Areas.GroupManage.Controllers
 
             if (dbGroup.Count() > 0) //If already exists a group with the same name
             {
-                return StatusCode(500);
+                return BadRequest();
             }
 
             if (!canCreateANewGroup(user))

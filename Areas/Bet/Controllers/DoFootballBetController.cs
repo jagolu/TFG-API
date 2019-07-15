@@ -87,8 +87,7 @@ namespace API.Areas.Bet.Controllers
 
         private bool checkBet(int userBet, int userCoins, FootballBet fb)
         {
-            _context.Entry(fb).Reference("typePay").Load();
-            bool typeJackpot = fb.typePay.name.Contains("JACKPOT");
+            bool typeJackpot = CheckBetType.isJackpot(fb, _context);
 
             if(userBet > userCoins)
             {
@@ -108,8 +107,7 @@ namespace API.Areas.Bet.Controllers
 
         private bool checkTypePriceWithBet(FootballBet fb, int ? homeGoals, int ? awayGoals, int? winner)
         {
-            _context.Entry(fb).Reference("type").Load();
-            bool type_winner = fb.type.name.Contains("WINNER");
+            bool type_winner = CheckBetType.isWinner(fb, _context);
 
             if(type_winner && ( winner==null ||winner>2 || winner < 0))
             {

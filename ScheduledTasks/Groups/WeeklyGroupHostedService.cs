@@ -49,7 +49,7 @@ namespace API.ScheduledTasks.Groups
         /**
          * Initialize the database for virtual bets
          */
-        private async void DoWork(object state)
+        private void DoWork(object state)
         {
             try
             { 

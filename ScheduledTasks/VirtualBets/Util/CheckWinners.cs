@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using API.Areas.Bet.Util;
+using API.Data;
 using API.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -19,19 +20,19 @@ namespace API.ScheduledTasks.VirtualBets.Util
             Group group = footballBet.Group;
             List<List<Guid>> winners;
 
-            winners = footballBet.type.name.Contains("WINNER") ? 
+            winners = CheckBetType.isWinner(footballBet, _context) ? 
                       calculateResult(footballBet, time, _context) :
                       calculateTypeScore(footballBet, time, _context);
 
-            if (footballBet.typePay.name.Contains("JACKPOT_EXACT_BET"))
+            if (CheckBetType.isJackpotExact(footballBet, _context))
             {
                 payJackpot(footballBet, winners.First(), group, _context);
             }
-            else if (footballBet.typePay.name.Contains("JACKPOT_CLOSER_BET"))
+            else if (CheckBetType.isJackpotCloser(footballBet, _context))
             {
                 payJackpotCloser(footballBet, winners, group, _context);
             }
-            else if (footballBet.typePay.name.Contains("SOLO_EXACT_BET"))
+            else if (CheckBetType.isSoloExact(footballBet, _context))
             {
                 paySoloBet(footballBet, winners.First(), group, _context);
             }
@@ -147,12 +148,11 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _context.Entry(fb).Reference("typePay").Load();
             _context.Entry(fb).Collection("userBets").Load();
             _context.Entry(group).Collection("users").Load();
-            double winRate = fb.type.winRate + fb.typePay.winRate;
 
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
-                double coinsWin = userBet.bet * winRate;
+                double coinsWin = userBet.bet * fb.winRate;
                 u.coins += (int)coinsWin;
                 userBet.earnings = (int)coinsWin;
                 _context.Update(u);

@@ -1,4 +1,5 @@
-﻿using API.Data.Models;
+﻿using API.Areas.Bet.Util;
+using API.Data.Models;
 using API.Util;
 using System;
 using System.Collections.Generic;
@@ -46,11 +47,11 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="JACKPOT_EXACT_BET", winRate=0, winLoseCancel=100,
+                new TypePay{name=CheckBetType.getJackpotExact(), winRate=0, winLoseCancel=100,
                     description ="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
-                new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, winLoseCancel=100,
+                new TypePay{name=CheckBetType.getJackpotCloser(), winRate=0, winLoseCancel=100,
                     description ="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
-                new TypePay{name="SOLO_EXACT_BET", winRate=1.5, winLoseCancel=0.3,
+                new TypePay{name=CheckBetType.getSoloExact(), winRate=1.5, winLoseCancel=0.3,
                     description ="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lose his coins."},
             };
 
@@ -119,7 +120,7 @@ namespace API.Data
             createDevelopmentUser(context); //Test users & admin user
             context.SaveChanges();
 
-            //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
+            aumentarFechaParapruebas(context);//Para pruebas, se borra despues
         }
 
 
@@ -130,9 +131,9 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                //md.date = md.date.AddMonths(5);
+                md.date = md.date.AddDays(-(3*7));
                 //md.status = "SCHEDULED";
-                md.status = "FINISHED";
+                //md.status = "FINISHED";
                 context.SaveChanges();
             });
 
