@@ -164,14 +164,20 @@ namespace API.ScheduledTasks.VirtualBets.Util
         {
             _context.Entry(fb).Reference("Group").Load();
             Group group = fb.Group;
+            List<User> newGroups = new List<User>();
 
             Areas.Home.Util.GroupNew.launch(null, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_GROUP, false, _context);
 
             _context.Entry(fb).Collection("userBets").Load();
-            fb.userBets.ToList().ForEach(u =>
+            fb.userBets.ToList().ForEach(u => 
+            {
+                if (newGroups.All(uu => uu.id != u.userId)) newGroups.Add(u.User);
+            });
+
+            newGroups.ForEach(u =>
             {
                 _context.Entry(u).Reference("User").Load();
-                Areas.Home.Util.GroupNew.launch(u.User, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
+                Areas.Home.Util.GroupNew.launch(u, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
             });
         }
     }
