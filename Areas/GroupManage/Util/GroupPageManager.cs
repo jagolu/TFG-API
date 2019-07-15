@@ -169,7 +169,8 @@ namespace API.Areas.GroupManage.Util
                     ended = b.ended,
                     dateEnd = b.dateEnded,
                     dateCancelled = b.dateCancelled,
-                    cancelled = b.cancelled
+                    cancelled = b.cancelled,
+                    betId = b.id.ToString()
                 });
             });
 
