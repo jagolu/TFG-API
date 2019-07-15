@@ -7,7 +7,7 @@ namespace API.Areas.Home.Util
 {
     public static class GroupNew
     {
-        public static void launch(User user, Group group, TypeGroupNew type, bool makeUnmake, ApplicationDBContext context)
+        public static void launch(User user, Group group, FootballBet fb, TypeGroupNew type, bool makeUnmake, ApplicationDBContext context)
         {
             New whatsGoingOn = new New();
 
@@ -27,10 +27,10 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.MAKE_MAKER_USER) whatsGoingOn = makeMaker_user(user, group, makeUnmake);
             else if (type == TypeGroupNew.BAN_GROUP) whatsGoingOn = ban_group(user, group, makeUnmake);
 
-            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, makeUnmake);
-            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group);
-            else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group);
-            else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group);
+            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_USER) whatsGoingOn = launchFootballBet_user(user, group, fb, makeUnmake, context);
+            else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group, fb, context);
+            else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group, fb, context);
+            else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group, fb, context);
 
 
             else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
@@ -282,12 +282,14 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New launchFootballBet_user(User user, Group group, bool isLauncher)
+        private static New launchFootballBet_user(User user, Group group, FootballBet fb, bool isLauncher, ApplicationDBContext _context)
         {
+
             string title = !isLauncher ? "Se ha lanzado una nueva apuesta en uno de tus grupos" :
                             "Has lanzado una apuesta";
-            string message = !isLauncher ? "Se ha lanzado una nueva apuesta en el grupo \"" + group.name + "\"":
-                                "Has lanzado una nueva apuesta en el grupo \"" + group.name + "\"";
+            string message = !isLauncher ? "Se ha lanzado una nueva apuesta en el grupo \"" + group.name + "\". ":
+                                "Has lanzado una nueva apuesta en el grupo \"" + group.name + "\". ";
+            message += "El partido es el " + getMatchTitle(fb, _context);
 
             New n = new New
             {
@@ -299,10 +301,10 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New launchFootballBet_group(Group group)
+        private static New launchFootballBet_group(Group group, FootballBet fb, ApplicationDBContext _context)
         {
             string title = "Se ha lanzado una nueva apuesta!";
-            string message = "";
+            string message = "Hay una nueva apuesta asociada al partido "+ getMatchTitle(fb, _context);
 
             New n = new New
             {
@@ -314,10 +316,10 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New pay_bets_group(Group group)
+        private static New pay_bets_group(Group group, FootballBet fb, ApplicationDBContext _context)
         {
             string title = "Se han pagado los resultados de las apuestas!!";
-            string message = "";
+            string message = "Se han pagado las apuestas asociadas al partido "+getMatchTitle(fb, _context);
 
             New n = new New
             {
@@ -329,10 +331,10 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New pay_bets_user(User user, Group group)
+        private static New pay_bets_user(User user, Group group, FootballBet fb, ApplicationDBContext _context)
         {
             string title = "Se han pagado los resultados de las apuestas";
-            string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\"";
+            string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\" asociadas al partido " + getMatchTitle(fb, _context);
 
             New n = new New
             {
@@ -372,6 +374,16 @@ namespace API.Areas.Home.Util
             };
 
             return n;
+        }
+
+        private static string getMatchTitle(FootballBet fb, ApplicationDBContext _context)
+        {
+            _context.Entry(fb).Reference("MatchDay").Load();
+            MatchDay md = fb.MatchDay;
+            _context.Entry(md).Reference("HomeTeam").Load();
+            _context.Entry(md).Reference("AwayTeam").Load();
+
+            return md.HomeTeam.name + " vs " + md.AwayTeam.name;
         }
     }
 }

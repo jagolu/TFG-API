@@ -72,8 +72,8 @@ namespace API.Areas.GroupManage.Controllers
 
                 _context.SaveChanges();
 
-                Home.Util.GroupNew.launch(user, newGroup, Home.Models.TypeGroupNew.CREATE_GROUP_GROUP, false, _context);
-                Home.Util.GroupNew.launch(user, newGroup, Home.Models.TypeGroupNew.CREATE_GROUP_USER, false, _context);
+                Home.Util.GroupNew.launch(user, newGroup, null, Home.Models.TypeGroupNew.CREATE_GROUP_GROUP, false, _context);
+                Home.Util.GroupNew.launch(user, newGroup, null, Home.Models.TypeGroupNew.CREATE_GROUP_USER, false, _context);
 
                 return Ok(new { success = "SuccesfullCreatedGroup" });
             }

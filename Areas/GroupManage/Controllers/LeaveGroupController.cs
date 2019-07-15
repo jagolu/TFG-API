@@ -48,8 +48,8 @@ namespace API.Areas.GroupManage.Controllers
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                 var groupE = dbContext.Group.Where(g => g.name == groupName);
 
-                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_GROUP, false, _context);
-                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, Home.Models.TypeGroupNew.JOIN_LEFT_USER, false, _context);
+                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, null, Home.Models.TypeGroupNew.JOIN_LEFT_GROUP, false, _context);
+                if(groupE.Count() == 1)  Home.Util.GroupNew.launch(user, group, null, Home.Models.TypeGroupNew.JOIN_LEFT_USER, false, _context);
             }
 
             return Ok(new { success="SuccesfullGroupLeave"});

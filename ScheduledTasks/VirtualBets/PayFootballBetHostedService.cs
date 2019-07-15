@@ -74,20 +74,6 @@ namespace API.ScheduledTasks.VirtualBets
                             if (!groupsNews.Any(g => g.id == bet.groupId)) groupsNews.Add(bet.Group);
                         }
                     });
-
-                    //Launch the news
-                    groupsNews.ForEach(g =>
-                    {
-                        Areas.Home.Util.GroupNew.launch(null, g, Areas.Home.Models.TypeGroupNew.PAID_BETS_GROUP, false, dbContext);
-
-                        dbContext.Entry(g).Collection("users").Load();
-                        g.users.ToList().ForEach(u =>
-                        {
-                            dbContext.Entry(u).Reference("User").Load();
-                            Areas.Home.Util.GroupNew.launch(u.User, g, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, dbContext);
-                        });
-                    });
-
                 }
 
                 //Set cron next day

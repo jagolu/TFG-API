@@ -39,6 +39,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             else throw new Exception();
 
             _context.Update(group);
+            launchNews(footballBet, _context);
         }
 
         private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time, ApplicationDBContext _context)
@@ -156,6 +157,21 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 u.coins += (int)coinsWin;
                 userBet.earnings = (int)coinsWin;
                 _context.Update(u);
+            });
+        }
+
+        private static void launchNews(FootballBet fb, ApplicationDBContext _context)
+        {
+            _context.Entry(fb).Reference("Group").Load();
+            Group group = fb.Group;
+
+            Areas.Home.Util.GroupNew.launch(null, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_GROUP, false, _context);
+
+            _context.Entry(fb).Collection("userBets").Load();
+            fb.userBets.ToList().ForEach(u =>
+            {
+                _context.Entry(u).Reference("User").Load();
+                Areas.Home.Util.GroupNew.launch(u.User, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
             });
         }
     }

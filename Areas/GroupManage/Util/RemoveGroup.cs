@@ -23,7 +23,7 @@ namespace API.Areas.GroupManage.Util
             {
                 _context.Entry(us).Reference("User").Load();
                 _context.Entry(us).Reference("role").Load();
-                if (!us.blocked) Home.Util.GroupNew.launch(us.User, group, Home.Models.TypeGroupNew.REMOVE_GROUP, us.role == maker, _context);
+                if (!us.blocked) Home.Util.GroupNew.launch(us.User, group, null, Home.Models.TypeGroupNew.REMOVE_GROUP, us.role == maker, _context);
             });
 
             _context.RemoveRange(group.bets);
