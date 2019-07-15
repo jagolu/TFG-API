@@ -58,7 +58,7 @@ namespace API.Areas.Bet.Controllers
             }
             try
             {
-                ugCaller.coins += returnMoney(footballBet, userFootballBet.bet);
+                ugCaller.coins += CheckBetType.calculateCancelRate(footballBet, userFootballBet.bet, _context);
                 userFootballBet.valid = false;
                 userFootballBet.dateInvalid = DateTime.Now;
 
@@ -88,21 +88,6 @@ namespace API.Areas.Bet.Controllers
 
             userFB = bet.First();
             return true;
-        }
-
-        private int returnMoney(FootballBet footballBet, int coinsBet)
-        {
-            _context.Entry(footballBet).Reference("type").Load();
-            _context.Entry(footballBet).Reference("typePay").Load();
-            double less1 = footballBet.type.winLoseCancel;
-            double less2 = footballBet.typePay.winLoseCancel;
-
-            //The player dont get back any coin (fuck cowards)
-            if (less2 == 100) return 0;
-
-            double ret_coins= coinsBet * (less1 + less2);
-
-            return (int)Math.Round(ret_coins, MidpointRounding.AwayFromZero);
         }
     }
 }

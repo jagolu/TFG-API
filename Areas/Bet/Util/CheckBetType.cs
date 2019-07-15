@@ -73,5 +73,19 @@ namespace API.Areas.Bet.Util
         {
             return _SOLOEXACT;
         }
+
+        public static int calculateCancelRate(FootballBet fb, int coinsBet, ApplicationDBContext _context)
+        {
+            _context.Entry(fb).Reference(__typeBet).Load();
+            _context.Entry(fb).Reference(__typePay).Load();
+            double less1 = fb.type.winLoseCancel;
+            double less2 = fb.typePay.winLoseCancel;
+
+            if (less2 == 100) return 0;
+
+            double retCoins = coinsBet * (less1 + less2);
+
+            return (int)System.Math.Round(retCoins, System.MidpointRounding.AwayFromZero);
+        }
     }
 }
