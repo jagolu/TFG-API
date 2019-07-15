@@ -1,5 +1,6 @@
 ﻿using API.Data.Models;
 using API.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -88,6 +89,22 @@ namespace API.Data
             if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
         }
 
+        private static void createNews(ApplicationDBContext context)
+        {
+            string title = "Aviso de los administradores!";
+            var news = new New[]
+            {
+                new New
+                {
+                    Group = null, User = null, groupId = null, userId = null,
+                    title = title,
+                    message = "Beta de la aplicación lanzada!!",
+                    date = new DateTime(2019, 07, 14)
+                }
+            };
+
+            news.Where(nn => context.News.All(n => n.message != nn.message)).ToList().ForEach(nws => context.Add(nws));
+        }
 
         public static void Initialize(ApplicationDBContext context)
         {
@@ -96,6 +113,7 @@ namespace API.Data
             InitializeRoles(context);
             InitializeTypeFootballBet(context);
             InitializeTypePay(context);
+            createNews(context);
             context.SaveChanges();
 
             createDevelopmentUser(context); //Test users & admin user
