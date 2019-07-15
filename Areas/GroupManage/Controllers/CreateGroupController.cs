@@ -63,7 +63,8 @@ namespace API.Areas.GroupManage.Controllers
                     User = user,
                     Group = newGroup,
                     role = RoleManager.getGroupMaker(_context),
-                    dateRole = DateTime.Today
+                    dateRole = DateTime.Today,
+                    coins = newGroup.weeklyPay
                 };
 
                 _context.Add(newGroup);
