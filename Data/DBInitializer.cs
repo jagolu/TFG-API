@@ -120,7 +120,7 @@ namespace API.Data
             createDevelopmentUser(context); //Test users & admin user
             context.SaveChanges();
 
-            aumentarFechaParapruebas(context);//Para pruebas, se borra despues
+            //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
         }
 
 
@@ -131,7 +131,7 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                md.date = md.date.AddDays(-(3*7));
+                md.date = md.date.AddDays(+(3*7));
                 //md.status = "SCHEDULED";
                 //md.status = "FINISHED";
                 context.SaveChanges();
