@@ -6,7 +6,7 @@ namespace API.Areas.Bet.Util
     public static class CheckBetType
     {
         private static string __typeBet = "type";
-        private static string __typePay = "typepay";
+        private static string __typePay = "typePay";
         private static string _jackpot = "JACKPOT";
         private static string _winner = "WINNER";
         private static string _closer = "CLOSER";
