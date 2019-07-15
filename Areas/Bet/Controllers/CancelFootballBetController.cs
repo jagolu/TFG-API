@@ -56,7 +56,8 @@ namespace API.Areas.Bet.Controllers
 
             try
             {
-                getMoneyBack(bet, group);
+                Home.Util.GroupNew.launch(null, group, bet, Home.Models.TypeGroupNew.FOOTBALLBET_CANCELLED_GROUP, false, _context);
+                getMoneyBackAndLaunchNews(bet, group);
 
                 bet.cancelled = true;
                 bet.dateCancelled = DateTime.Now;
@@ -102,10 +103,11 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
-        private void getMoneyBack(FootballBet bet, Group group)
+        private void getMoneyBackAndLaunchNews(FootballBet bet, Group group)
         {
             _context.Entry(bet).Collection("userBets").Load();
             _context.Entry(group).Collection("users").Load();
+            List<UserGroup> newUsers = new List<UserGroup>();
             bool isJackpot = CheckBetType.isJackpot(bet, _context);
 
             bet.userBets.ToList().ForEach(ub =>
@@ -125,10 +127,19 @@ namespace API.Areas.Bet.Controllers
                 }
                 _context.UserGroup.Update(userg);
                 _context.SaveChanges();
+
+                _context.Entry(userg).Reference("User").Load();
+                if (newUsers.All(u => u.userId != userg.userId)) newUsers.Add(userg);
             });
 
             _context.UserFootballBet.RemoveRange(bet.userBets.ToList());
             _context.SaveChanges();
+
+            newUsers.ForEach(u =>
+            {
+                _context.Entry(u).Reference("role").Load();
+                Home.Util.GroupNew.launch(u.User, group, bet, Home.Models.TypeGroupNew.FOOTBALLBET_CANCELLED_USER, u.role == RoleManager.getGroupMaker(_context), _context);
+            });
         }
     }
 }

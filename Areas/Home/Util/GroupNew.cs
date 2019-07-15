@@ -31,6 +31,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group, fb, context);
             else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group, fb, context);
             else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group, fb, context);
+            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_GROUP) whatsGoingOn = cancellFootballBet_group(group, fb, context);
+            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_USER) whatsGoingOn = cancellFootballBet_user(user, group, fb, makeUnmake, context);
 
 
             else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
@@ -339,6 +341,40 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New cancellFootballBet_user(User user, Group group, FootballBet fb, bool isLauncher, ApplicationDBContext _context)
+        {
+
+            string title = !isLauncher ? "Se ha cancelado una apuesta en uno de tus grupos" :
+                            "Has cancelado una apuesta";
+            string message = !isLauncher ? "Se ha cancelado una apuesta en el grupo \"" + group.name + "\". " :
+                                "Has cancelado una apuesta en el grupo \"" + group.name + "\". ";
+            message += "El partido asociado a la apuesta era el " + getMatchTitle(fb, _context);
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New cancellFootballBet_group(Group group, FootballBet fb, ApplicationDBContext _context)
+        {
+            string title = "Se ha cancelado una apuesta!";
+            string message = "Se ha cancelado la apuesta asociada al partido " + getMatchTitle(fb, _context);
+
+            New n = new New
+            {
+                Group = group,
                 title = title,
                 message = message
             };
