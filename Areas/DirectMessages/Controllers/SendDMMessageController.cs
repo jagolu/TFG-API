@@ -61,7 +61,7 @@ namespace API.Areas.DirectMessages.Controllers
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     DirectMessageTitle dbTitle = dbContext.DirectMessagesTitle.Where(t => t.id == title.id).First();
-                    return Ok(LoadMessages.load(dbTitle, _context));
+                    return Ok(LoadMessages.load(dbTitle, dbContext));
                 }
             }
             catch (Exception)
@@ -72,9 +72,10 @@ namespace API.Areas.DirectMessages.Controllers
 
         private bool checkOrder(ref DirectMessageTitle title, string dmId, User user)
         {
-            _context.Entry(user).Collection("").Load();
+            _context.Entry(user).Collection("directMessages").Load();
             List<DirectMessageTitle> dms = user.directMessages.Where(dm => dm.id.ToString() == dmId).ToList();
-            if(dms.Count() != 1)
+            dms.AddRange(_context.DirectMessagesTitle.Where(dm => dm.id.ToString() == dmId && dm.Receiver == user).ToList());
+            if (dms.Count() != 1)
             {
                 return false;
             }
