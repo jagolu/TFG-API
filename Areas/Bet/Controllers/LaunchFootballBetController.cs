@@ -1,4 +1,5 @@
 ﻿using API.Areas.Bet.Models;
+using API.Areas.Bet.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
@@ -60,21 +61,22 @@ namespace API.Areas.Bet.Controllers
             }
             try
             {
-                _context.Add(new FootballBet
+                FootballBet fb = new FootballBet
                 {
-                    MatchDay=match,
-                    Group=group,
-                    type=typeBet,
-                    typePay=typePay,
-                    minBet=order.minBet,
-                    maxBet=order.maxBet,
-                    winRate=typeBet.winRate+typePay.winRate,
-                    dateLastBet=order.lastBetTime,
+                    MatchDay = match,
+                    Group = group,
+                    type = typeBet,
+                    typePay = typePay,
+                    minBet = order.minBet,
+                    maxBet = order.maxBet,
+                    winRate = typeBet.winRate + typePay.winRate,
+                    dateLastBet = order.lastBetTime,
                     dateEnded = match.date.AddDays(1)
-                });
+                };
+                _context.Add(fb);
                 _context.SaveChanges();
 
-                launchNews(caller, group);
+                launchNews(caller, group, fb);
 
                 return Ok(GroupPageManager.GetPage(caller, group, _context));
             }
@@ -133,7 +135,7 @@ namespace API.Areas.Bet.Controllers
                 {
                     return false;
                 }
-                if(typeB.First().name.Contains("WINNER") && typeP.First().name.Contains("CLOSER"))
+                if(CheckBetType.typeIsWinner(typeB.First()) && CheckBetType.typeIsCloser(typeB.First()))
                 {
                     return false;
                 }
@@ -158,17 +160,17 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
-        private void launchNews(User u, Group group)
+        private void launchNews(User u, Group group, FootballBet fb)
         {
             _context.Entry(group).Collection("users").Load();
-            Home.Util.GroupNew.launch(null, group, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP, false, _context);
+            Home.Util.GroupNew.launch(null, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP, false, _context);
 
             group.users.Where(g => !g.blocked).ToList().ForEach(ug =>
             {
                 _context.Entry(ug).Reference("User").Load();
                 bool isLauncher = ug.userId == u.id;
 
-                Home.Util.GroupNew.launch(ug.User, group, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);
+                Home.Util.GroupNew.launch(ug.User, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);
             });
         }
     }

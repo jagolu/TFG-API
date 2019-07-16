@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using API.Areas.GroupManage.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -43,7 +42,7 @@ namespace API.Areas.GroupManage.Controllers
 
             if (dbGroup.Count() > 0) //If already exists a group with the same name
             {
-                return StatusCode(500);
+                return BadRequest();
             }
 
             if (!canCreateANewGroup(user))
@@ -64,7 +63,8 @@ namespace API.Areas.GroupManage.Controllers
                     User = user,
                     Group = newGroup,
                     role = RoleManager.getGroupMaker(_context),
-                    dateRole = DateTime.Today
+                    dateRole = DateTime.Today,
+                    coins = newGroup.weeklyPay
                 };
 
                 _context.Add(newGroup);
@@ -72,8 +72,8 @@ namespace API.Areas.GroupManage.Controllers
 
                 _context.SaveChanges();
 
-                Home.Util.GroupNew.launch(user, newGroup, Home.Models.TypeGroupNew.CREATE_GROUP_GROUP, false, _context);
-                Home.Util.GroupNew.launch(user, newGroup, Home.Models.TypeGroupNew.CREATE_GROUP_USER, false, _context);
+                Home.Util.GroupNew.launch(user, newGroup, null, Home.Models.TypeGroupNew.CREATE_GROUP_GROUP, false, _context);
+                Home.Util.GroupNew.launch(user, newGroup, null, Home.Models.TypeGroupNew.CREATE_GROUP_USER, false, _context);
 
                 return Ok(new { success = "SuccesfullCreatedGroup" });
             }

@@ -78,8 +78,8 @@ namespace API.Areas.GroupManage.Util
 
             _context.Entry(newMaster).Reference("User").Load();
             _context.Entry(newMaster).Reference("Group").Load();
-            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, Home.Models.TypeGroupNew.MAKE_MAKER_GROUP, leave, _context);
-            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, Home.Models.TypeGroupNew.MAKE_MAKER_USER, leave, _context);
+            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, null, Home.Models.TypeGroupNew.MAKE_MAKER_GROUP, leave, _context);
+            Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, null, Home.Models.TypeGroupNew.MAKE_MAKER_USER, leave, _context);
         }
 
         private static void removeBets(UserGroup ug, ApplicationDBContext context)

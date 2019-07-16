@@ -4,6 +4,7 @@ namespace API.Areas.Bet.Models
 {
     public class BetsManager
     {
+        public string betId { get; set; }
         public GroupBet bet { get; set; }
         public DateTime dateLaunch { get; set; }
         public DateTime dateEnd { get; set; }

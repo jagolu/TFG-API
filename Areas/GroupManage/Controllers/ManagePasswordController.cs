@@ -43,7 +43,7 @@ namespace API.Areas.GroupManage.Controllers
             _context.Update(group);
             _context.SaveChanges();
 
-            Home.Util.GroupNew.launch(null, group, Home.Models.TypeGroupNew.MAKE_PRIVATE, group.password != null, _context);
+            Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.MAKE_PRIVATE, group.password != null, _context);
             
             return Ok(GroupPageManager.GetPage(user, group, _context));
         }

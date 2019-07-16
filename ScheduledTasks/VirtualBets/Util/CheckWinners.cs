@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using API.Areas.Bet.Util;
+using API.Data;
 using API.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -19,25 +20,26 @@ namespace API.ScheduledTasks.VirtualBets.Util
             Group group = footballBet.Group;
             List<List<Guid>> winners;
 
-            winners = footballBet.type.name.Contains("WINNER") ? 
+            winners = CheckBetType.isWinner(footballBet, _context) ? 
                       calculateResult(footballBet, time, _context) :
                       calculateTypeScore(footballBet, time, _context);
 
-            if (footballBet.typePay.name.Contains("JACKPOT_EXACT_BET"))
+            if (CheckBetType.isJackpotExact(footballBet, _context))
             {
                 payJackpot(footballBet, winners.First(), group, _context);
             }
-            else if (footballBet.typePay.name.Contains("JACKPOT_CLOSER_BET"))
+            else if (CheckBetType.isJackpotCloser(footballBet, _context))
             {
                 payJackpotCloser(footballBet, winners, group, _context);
             }
-            else if (footballBet.typePay.name.Contains("SOLO_EXACT_BET"))
+            else if (CheckBetType.isSoloExact(footballBet, _context))
             {
                 paySoloBet(footballBet, winners.First(), group, _context);
             }
             else throw new Exception();
 
             _context.Update(group);
+            launchNews(footballBet, _context);
         }
 
         private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time, ApplicationDBContext _context)
@@ -147,15 +149,35 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _context.Entry(fb).Reference("typePay").Load();
             _context.Entry(fb).Collection("userBets").Load();
             _context.Entry(group).Collection("users").Load();
-            double winRate = fb.type.winRate + fb.typePay.winRate;
 
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
-                double coinsWin = userBet.bet * winRate;
+                double coinsWin = userBet.bet * fb.winRate;
                 u.coins += (int)coinsWin;
                 userBet.earnings = (int)coinsWin;
                 _context.Update(u);
+            });
+        }
+
+        private static void launchNews(FootballBet fb, ApplicationDBContext _context)
+        {
+            _context.Entry(fb).Reference("Group").Load();
+            Group group = fb.Group;
+            List<User> newGroups = new List<User>();
+
+            Areas.Home.Util.GroupNew.launch(null, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_GROUP, false, _context);
+
+            _context.Entry(fb).Collection("userBets").Load();
+            fb.userBets.ToList().ForEach(u => 
+            {
+                if (newGroups.All(uu => uu.id != u.userId)) newGroups.Add(u.User);
+            });
+
+            newGroups.ForEach(u =>
+            {
+                _context.Entry(u).Reference("User").Load();
+                Areas.Home.Util.GroupNew.launch(u, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
             });
         }
     }

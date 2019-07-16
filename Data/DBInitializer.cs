@@ -1,5 +1,7 @@
-﻿using API.Data.Models;
+﻿using API.Areas.Bet.Util;
+using API.Data.Models;
 using API.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,11 +47,11 @@ namespace API.Data
         {
             var types = new TypePay[]
             {
-                new TypePay{name="JACKPOT_EXACT_BET", winRate=0, winLoseCancel=100,
+                new TypePay{name=CheckBetType.getJackpotExact(), winRate=0, winLoseCancel=100,
                     description ="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
-                new TypePay{name="JACKPOT_CLOSER_BET", winRate=0, winLoseCancel=100,
+                new TypePay{name=CheckBetType.getJackpotCloser(), winRate=0, winLoseCancel=100,
                     description ="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
-                new TypePay{name="SOLO_EXACT_BET", winRate=1.5, winLoseCancel=0.3,
+                new TypePay{name=CheckBetType.getSoloExact(), winRate=1.5, winLoseCancel=0.3,
                     description ="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lose his coins."},
             };
 
@@ -88,6 +90,22 @@ namespace API.Data
             if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
         }
 
+        private static void createNews(ApplicationDBContext context)
+        {
+            string title = "Aviso de los administradores!";
+            var news = new New[]
+            {
+                new New
+                {
+                    Group = null, User = null, groupId = null, userId = null,
+                    title = title,
+                    message = "Beta de la aplicación lanzada!!",
+                    date = new DateTime(2019, 07, 14)
+                }
+            };
+
+            news.Where(nn => context.News.All(n => n.message != nn.message)).ToList().ForEach(nws => context.Add(nws));
+        }
 
         public static void Initialize(ApplicationDBContext context)
         {
@@ -96,6 +114,7 @@ namespace API.Data
             InitializeRoles(context);
             InitializeTypeFootballBet(context);
             InitializeTypePay(context);
+            createNews(context);
             context.SaveChanges();
 
             createDevelopmentUser(context); //Test users & admin user
@@ -112,9 +131,9 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                //md.date = md.date.AddMonths(5);
+                md.date = md.date.AddDays(+(3*7));
                 //md.status = "SCHEDULED";
-                md.status = "FINISHED";
+                //md.status = "FINISHED";
                 context.SaveChanges();
             });
 

@@ -83,7 +83,7 @@ namespace API.Areas.Admin.Controllers
             group.users.ToList().ForEach(u =>
             {
                 _context.Entry(u).Reference("User").Load();
-                Home.Util.GroupNew.launch(u.User, group, Home.Models.TypeGroupNew.BAN_GROUP, ban, _context);
+                Home.Util.GroupNew.launch(u.User, group, null, Home.Models.TypeGroupNew.BAN_GROUP, ban, _context);
             });
         }
     }

@@ -51,7 +51,7 @@ namespace API.Areas.Home.Controllers
         {
             try
             {
-                List<New> news = _context.News.Where(n => n.userId == null).OrderByDescending(nn => nn.date).ToList();
+                List<New> news = _context.News.Where(n => n.userId == null && n.groupId == null).OrderByDescending(nn => nn.date).ToList();
                 List<NewMessage> retMessage = addNews(news);
 
                 return Ok(retMessage);
