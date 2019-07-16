@@ -32,5 +32,7 @@ namespace API.Data.Models
 
         [Required]
         public int unreadMessagesForAdmin { get; set; } = 0;
+
+        public ICollection<DirectMessageMessages> messages { get; set; } = new HashSet<DirectMessageMessages>();
     }
 }

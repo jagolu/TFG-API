@@ -24,6 +24,7 @@ namespace API.Data
         public DbSet<UserFootballBet> UserFootballBet { get; set; }
         public DbSet<New> News { get; set; }
         public DbSet<DirectMessageTitle> DirectMessagesTitle { get; set; }
+        public DbSet<DirectMessageMessages> DirectMessagesMessages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -38,6 +39,7 @@ namespace API.Data
             onCreateChatGroup(mb);
             onCreateNew(mb);
             onCreateDirectMessagesTitle(mb);
+            onCreateDirectMessagesMessages(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -194,6 +196,15 @@ namespace API.Data
                 .WithMany(u => u.directMessages)
                 .HasForeignKey(dm => dm.senderId)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateDirectMessagesMessages(ModelBuilder mb)
+        {
+            mb.Entity<DirectMessageMessages>()
+                .HasOne(dm => dm.DirectMessageTitle)
+                .WithMany(u => u.messages)
+                .HasForeignKey(dm => dm.directMessageTitleid)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
