@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using API.Data;
+using API.Data.Models;
+using API.Util;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Areas.DirectMessages.Controllers
+{
+    [Route("DirectMessages/[action]")]
+    [ApiController]
+    public class LoadDMMessagesController : ControllerBase
+    {
+        private ApplicationDBContext _context;
+
+        public LoadDMMessagesController(ApplicationDBContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        [Authorize]
+        [ActionName("LoadDMMessages")]
+        public IActionResult sendMsg(string dmId)
+        {
+            User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+            DirectMessageTitle title = new DirectMessageTitle();
+            if (!user.open) return BadRequest(new { error = "YoureBanned" });
+
+            if(!getDMTitle(ref title, dmId, user))
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                return Ok(Util.LoadMessages.load(title, _context));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        private bool getDMTitle(ref DirectMessageTitle title, string dmId, User user)
+        {
+            _context.Entry(user).Collection("directMessages").Load();
+            List<DirectMessageTitle> dms = user.directMessages.Where(dm => dm.id.ToString() == dmId).ToList();
+            if (dms.Count() != 1)
+            {
+                return false;
+            }
+
+            title = dms.First();
+
+            return true;
+        }
+    }
+}
