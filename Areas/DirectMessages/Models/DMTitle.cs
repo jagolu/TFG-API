@@ -2,15 +2,14 @@
 
 namespace API.Areas.DirectMessages.Models
 {
-    public class DMTitles
+    public class DMTitle
     {
-        public DMTitles(Data.Models.DirectMessageTitle dm, Data.Models.User caller, Data.ApplicationDBContext _context)
+        public DMTitle(Data.Models.DirectMessageTitle dm, Guid userId, bool isAdmin, Data.ApplicationDBContext _context)
         {
             _context.Entry(dm).Reference("Receiver").Load();
             _context.Entry(dm).Reference("Sender").Load();
             Data.Models.User recv = dm.Receiver;
-            Data.Models.User load = caller == recv ? dm.Sender : recv;
-            bool isAdmin = API.Util.AdminPolicy.isAdmin(caller, _context);
+            Data.Models.User load = userId == recv.id ? dm.Sender : recv;
 
             this.id = dm.id.ToString();
             this.receiver = load.nickname;
