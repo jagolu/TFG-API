@@ -48,6 +48,7 @@ namespace API.Areas.DirectMessages.Controllers
                     DirectMessageTitle = title
                 };
 
+                addUnreadMessages(title, isAdmin);
                 _context.Add(msg);
                 _context.SaveChanges();
 
@@ -89,6 +90,18 @@ namespace API.Areas.DirectMessages.Controllers
             }
 
             return true;
+        }
+
+        private void addUnreadMessages(DirectMessageTitle title, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                title.unreadMessagesForUser++;
+            }
+            else
+            {
+                title.unreadMessagesForAdmin++;
+            }
         }
     }
 }

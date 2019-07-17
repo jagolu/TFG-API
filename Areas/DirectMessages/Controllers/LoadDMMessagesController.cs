@@ -23,7 +23,7 @@ namespace API.Areas.DirectMessages.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("LoadDMMessages")]
-        public IActionResult sendMsg(string dmId)
+        public IActionResult load(string dmId)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             DirectMessageTitle title = new DirectMessageTitle();
@@ -36,6 +36,8 @@ namespace API.Areas.DirectMessages.Controllers
 
             try
             {
+                readMessages(title, AdminPolicy.isAdmin(user, _context));
+                _context.SaveChanges();
                 Models.DMRoom room = new Models.DMRoom(title, user, _context);
                 return Ok(room);
             }
@@ -58,6 +60,18 @@ namespace API.Areas.DirectMessages.Controllers
             title = dms.First();
 
             return true;
+        }
+
+        private void readMessages(DirectMessageTitle title, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                title.unreadMessagesForAdmin = 0;
+            }
+            else
+            {
+                title.unreadMessagesForUser = 0;
+            }
         }
     }
 }
