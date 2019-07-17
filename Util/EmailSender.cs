@@ -51,6 +51,30 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        public static void sendDMNotification(string email, string name, string dmTitle)
+        {
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress(_configuration["Email:username"] + "@gmail.com");
+            msg.To.Add(email);
+            msg.Body = getBodySendDMNotification(name, dmTitle);
+            msg.IsBodyHtml = true;
+            msg.Subject = "Un administrador ha respondido en tu conversación";
+
+            _client.Send(msg);
+        }
+
+        public static void sendOpenCloseDMNotification(string email, string name, string dmTitle, bool open)
+        {
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress(_configuration["Email:username"] + "@gmail.com");
+            msg.To.Add(email);
+            msg.Body = open ? getBodySendOpenDMNotification(name, dmTitle) : getBodySendCloseDMNotification(name, dmTitle);
+            msg.IsBodyHtml = true;
+            msg.Subject = open ? "Un administrador ha abierto de nuevo una conversación" : "Un administrador ha cerrado una conversación";
+
+            _client.Send(msg);
+        }
+
         private static void initializeClient()
         {
             _client = new SmtpClient("smtp.gmail.com");
@@ -95,12 +119,44 @@ namespace API.Util
             body += "</body></html>";
             return body;
         }
+
         private static String getBodySendUnBanNotification(string name)
         {
             string body = "<html><head></head><body>";
             body += "<h1>Hola "+name+"</h1><br>";
             body += "<p>Los administradores de la plataforma han desbloqueado tu cuenta</p>";
             body += "<p>Puedes volver a acceder a todas sus funcionalidades con normalidad.</p>";
+            body += "</body></html>";
+            return body;
+        }
+
+        private static String getBodySendDMNotification(string name, string dmTitle)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Uno de los administradores de la plataforma te ha contestado en la ";
+            body += "conversación sobre el tema " + dmTitle + "</p>";
+            body += "</body></html>";
+            return body;
+        }
+
+        private static String getBodySendOpenDMNotification(string name, string dmTitle)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Uno de los administradores de la plataforma ha abierto de nuevo la ";
+            body += "conversación sobre el tema " + dmTitle + "</p>";
+            body += "</body></html>";
+            return body;
+        }
+
+        private static String getBodySendCloseDMNotification(string name, string dmTitle)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Uno de los administradores de la plataforma ha cerrado la ";
+            body += "conversación sobre el tema " + dmTitle + "</p>";
+            body += "<p>Si tienes otro problema no dudes en abrir otra conversación.</p>";
             body += "</body></html>";
             return body;
         }

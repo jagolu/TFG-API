@@ -48,7 +48,8 @@ namespace API.Areas.Admin.Controllers
 
                 sendNews(targetGroup, order.ban);
 
-                return Ok();
+                string retMessage = order.ban ? "SuccessfullGroupBan" : "SuccessfullGroupUnban";
+                return Ok(new { success = retMessage });
             }
             catch (Exception)
             {
