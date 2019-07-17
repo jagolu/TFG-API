@@ -14,11 +14,41 @@ namespace API.Areas.DirectMessages.Util
 
             _context.Entry(u).Collection("directMessages").Load();
             bool isAdmin = API.Util.AdminPolicy.isAdmin(u, _context);
+            List<DirectMessageTitle> all = new List<DirectMessageTitle>();
 
-            u.directMessages.ToList().ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));
-            _context.DirectMessagesTitle.Where(dm => dm.Receiver == u).ToList().ForEach(mm => retList.Add(new DMTitle(mm, u.id, isAdmin, _context)));
+            all.AddRange(u.directMessages);
+            all.AddRange(_context.DirectMessagesTitle.Where(dm => dm.Receiver == u).ToList());
 
-            return retList.OrderByDescending(dm => dm.openDate).ToList();
+            unreadTitles(all, isAdmin).ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));
+            unclosedTitles(all, isAdmin).ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));
+            closedTitles(all).ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));
+
+            return retList;
+        }
+
+        public static List<DirectMessageTitle> unreadTitles(List<DirectMessageTitle> msgs, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return msgs.Where(dm => dm.unreadMessagesForAdmin > 0 && !dm.closed).OrderByDescending(dm=> dm.lastUpdate).ToList();
+            }
+
+            return msgs.Where(dm => dm.unreadMessagesForUser > 0 && !dm.closed).OrderByDescending(dm => dm.lastUpdate).ToList();
+        }
+
+        public static List<DirectMessageTitle> unclosedTitles(List<DirectMessageTitle> msgs, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return msgs.Where(dm => dm.unreadMessagesForAdmin == 0 && !dm.closed).OrderByDescending(dm => dm.lastUpdate).ToList();
+            }
+
+            return msgs.Where(dm => dm.unreadMessagesForUser == 0 && !dm.closed).OrderByDescending(dm => dm.lastUpdate).ToList();
+        }
+
+        public static List<DirectMessageTitle> closedTitles(List<DirectMessageTitle> msgs)
+        {
+            return msgs.Where(dm => dm.closed).OrderByDescending(dm => dm.lastUpdate).ToList();
         }
     }
 }
