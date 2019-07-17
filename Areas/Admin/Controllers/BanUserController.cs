@@ -49,7 +49,8 @@ namespace API.Areas.Admin.Controllers
 
                 EmailSender.sendBanNotification(targetUser.email, targetUser.nickname, order.ban);
 
-                return Ok();
+                string retMessage = order.ban ? "SuccessfullUserBan" : "SuccessfullUserUnban";
+                return Ok(new { success = retMessage });
             }
             catch (Exception)
             {
