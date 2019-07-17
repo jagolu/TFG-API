@@ -25,6 +25,7 @@ namespace API.Data
         public DbSet<New> News { get; set; }
         public DbSet<DirectMessageTitle> DirectMessagesTitle { get; set; }
         public DbSet<DirectMessageMessages> DirectMessagesMessages { get; set; }
+        public DbSet<Notifications> Notifications { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -40,6 +41,7 @@ namespace API.Data
             onCreateNew(mb);
             onCreateDirectMessagesTitle(mb);
             onCreateDirectMessagesMessages(mb);
+            onCreateNotifications(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -204,6 +206,15 @@ namespace API.Data
                 .HasOne(dm => dm.DirectMessageTitle)
                 .WithMany(u => u.messages)
                 .HasForeignKey(dm => dm.directMessageTitleid)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        private void onCreateNotifications(ModelBuilder mb)
+        {
+            mb.Entity<Notifications>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.notifications)
+                .HasForeignKey(n => n.Userid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

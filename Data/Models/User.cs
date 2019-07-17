@@ -57,5 +57,6 @@ namespace API.Data.Models
         public ICollection<UserFootballBet> footballBets { get; set; } = new HashSet<UserFootballBet>();
         public ICollection<New> news { get; set; } = new HashSet<New>();
         public ICollection<DirectMessageTitle> directMessages { get; set; } = new HashSet<DirectMessageTitle>();
+        public ICollection<Notifications> notifications { get; set; } = new HashSet<Notifications>();
     }
 }
