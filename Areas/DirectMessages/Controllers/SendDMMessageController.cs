@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using API.Areas.DirectMessages.Models;
-using API.Areas.DirectMessages.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -61,7 +60,10 @@ namespace API.Areas.DirectMessages.Controllers
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     DirectMessageTitle dbTitle = dbContext.DirectMessagesTitle.Where(t => t.id == title.id).First();
-                    return Ok(LoadMessages.load(dbTitle, dbContext));
+                    User dbuser = dbContext.User.Where(u => u.id == user.id).First();
+
+                    DMRoom room = new DMRoom(dbTitle, dbuser, dbContext);
+                    return Ok(room);
                 }
             }
             catch (Exception)

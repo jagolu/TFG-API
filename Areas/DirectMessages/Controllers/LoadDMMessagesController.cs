@@ -36,7 +36,8 @@ namespace API.Areas.DirectMessages.Controllers
 
             try
             {
-                return Ok(Util.LoadMessages.load(title, _context));
+                Models.DMRoom room = new Models.DMRoom(title, user, _context);
+                return Ok(room);
             }
             catch (Exception)
             {
