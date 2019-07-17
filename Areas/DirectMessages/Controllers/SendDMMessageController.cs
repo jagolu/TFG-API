@@ -102,6 +102,7 @@ namespace API.Areas.DirectMessages.Controllers
             {
                 title.unreadMessagesForAdmin++;
             }
+            title.lastUpdate = DateTime.Now;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace API.Data.Models
         public string title { get; set; }
 
         [Required]
-        public DateTime openDate { get; set; } = DateTime.Now;
+        public DateTime lastUpdate { get; set; } = DateTime.Now;
 
         [Required]
         public bool closed { get; set; } = false;

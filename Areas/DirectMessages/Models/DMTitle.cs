@@ -14,7 +14,7 @@ namespace API.Areas.DirectMessages.Models
             this.id = dm.id.ToString();
             this.receiver = load.nickname;
             this.emailReceiver = isAdmin ? load.email : null;
-            this.openDate = dm.openDate;
+            this.lastUpdate = dm.lastUpdate;
             this.closed = dm.closed;
             this.unreadMessages = isAdmin ? dm.unreadMessagesForAdmin : dm.unreadMessagesForUser;
             this.title = dm.title;
@@ -23,7 +23,7 @@ namespace API.Areas.DirectMessages.Models
         public string id { get; set; }
         public string receiver { get; set; }
         public String emailReceiver { get; set; }
-        public DateTime openDate { get; set; }
+        public DateTime lastUpdate { get; set; }
         public bool closed { get; set; }
         public string title { get; set; }
         public int unreadMessages { get; set; }
