@@ -51,11 +51,7 @@ namespace API.Areas.DirectMessages.Controllers
                 addUnreadMessages(title, isAdmin);
                 _context.Add(msg);
                 _context.SaveChanges();
-
-                if (isAdmin)
-                {
-                    //TODO  send email al usuario avisandole
-                }
+                sendMail(title, user);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
@@ -103,6 +99,22 @@ namespace API.Areas.DirectMessages.Controllers
                 title.unreadMessagesForAdmin++;
             }
             title.lastUpdate = DateTime.Now;
+        }
+
+        private void sendMail(DirectMessageTitle title, User caller)
+        {
+            //If the sender is a normal user return
+            if (caller.role != RoleManager.getAdmin(_context)) return;
+            //If the recv has more than 1 unread messages doesn't need another email
+            if (title.unreadMessagesForUser > 1) return;
+
+            _context.Entry(title).Reference("Sender").Load();
+            _context.Entry(title).Reference("Receiver").Load();
+            User theUser = new User();
+            if (title.Sender.id == caller.id) theUser = title.Sender;
+            else theUser = title.Receiver;
+
+            EmailSender.sendDMNotification(theUser.email, theUser.nickname, title.title);
         }
     }
 }
