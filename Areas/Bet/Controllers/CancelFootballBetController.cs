@@ -72,7 +72,7 @@ namespace API.Areas.Bet.Controllers
                     return Ok(GroupPageManager.GetPage(dbUser, dbgroup, dbContext));
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(500);
             }
