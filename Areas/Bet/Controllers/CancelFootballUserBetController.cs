@@ -16,7 +16,7 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class CancelFootballUserBetController : ControllerBase
     {
-        public ApplicationDBContext _context;
+        private ApplicationDBContext _context;
 
         public CancelFootballUserBetController(ApplicationDBContext context)
         {

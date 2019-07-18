@@ -29,7 +29,7 @@ namespace API.Areas.GroupManage.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("LeaveGroup")]
-        public IActionResult leaveGroup(string groupName)
+        public async System.Threading.Tasks.Task<IActionResult> leaveGroup(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to leave the group
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -42,7 +42,7 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest();
             }
             if (!group.open) return BadRequest(new { error = "GroupBanned" });
-            if (!QuitUserFromGroup.quitUser(ugCaller, _context, _hub))
+            if (!await QuitUserFromGroup.quitUser(ugCaller, _context, _hub))
             {
                 return StatusCode(500);
             }

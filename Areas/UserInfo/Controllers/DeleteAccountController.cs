@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using API.Areas.Alive.Util;
 using API.Areas.GroupManage.Util;
 using API.Areas.UserInfo.Models;
@@ -29,7 +30,7 @@ namespace API.Areas.UserInfo.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("DeleteAccount")]
-        public IActionResult deleteAccount([FromBody] DeleteUser userDelete)
+        public async Task<IActionResult> deleteAccount([FromBody] DeleteUser userDelete)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -41,7 +42,7 @@ namespace API.Areas.UserInfo.Controllers
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
-            if(!deleteAccountBeingNormal(user)) {
+            if(!await deleteAccountBeingNormal(user)) {
                 return BadRequest(new { error = "CantDeleteAccount" });
             }
 
@@ -56,21 +57,21 @@ namespace API.Areas.UserInfo.Controllers
             return Ok();
         }
 
-        private bool deleteAccountBeingNormal(User u)
+        private async Task<bool> deleteAccountBeingNormal(User u)
         {
             _context.Entry(u).Reference("role").Load();
             if(u.role != RoleManager.getNormalUser(_context)) {
                 return false;
             }
 
-            if (!removeGroups(u)){
+            if (!await removeGroups(u)){
                 return false;
             }
 
             return true;
         }
 
-        private bool removeGroups(User user)
+        private async Task<bool> removeGroups(User user)
         {
             _context.Entry(user).Collection("groups").Load();
 
@@ -79,7 +80,7 @@ namespace API.Areas.UserInfo.Controllers
 
             for(int i = 0; i < groups.Count(); i++)
             {
-                if (!QuitUserFromGroup.quitUser(groups.ElementAt(i), _context, _hub))
+                if (!await QuitUserFromGroup.quitUser(groups.ElementAt(i), _context, _hub))
                 {
                     return false;
                 }
