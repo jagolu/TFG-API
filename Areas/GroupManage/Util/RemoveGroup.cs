@@ -49,7 +49,7 @@ namespace API.Areas.GroupManage.Util
             {
                 await SendNotification.send(hub, group.name, target.User, NotificationType.GROUP_REMOVED, _context);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return;
             }

@@ -88,7 +88,7 @@ namespace API.Areas.Admin.Controllers
             Role maker = RoleManager.getGroupMaker(_context);
             Role admin = RoleManager.getGroupAdmin(_context);
             Role normal = RoleManager.getGroupNormal(_context);
-            user.groups.ToList().ForEach(g =>
+            user.groups.ToList().ForEach(async g =>
             {
                 List<UserGroup> members = GroupManage.Util.QuitUserFromGroup.getValidUsersInGroup(g, _context);
                 _context.Entry(g).Reference("role").Load();
@@ -97,7 +97,7 @@ namespace API.Areas.Admin.Controllers
                 {
                     if(g.role == maker)
                     {
-                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context);
+                        await GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context, _hub);
                     }
 
                     g.role = normal;
