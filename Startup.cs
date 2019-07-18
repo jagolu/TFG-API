@@ -19,12 +19,10 @@ namespace API
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private readonly ILogger _logger;
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _logger = logger;
         }
 
         
@@ -76,8 +74,6 @@ namespace API
             //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
             //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
             services.AddHostedService<WeeklyGroupHostedService>(); 
-
-            _logger.LogInformation("Added services");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
