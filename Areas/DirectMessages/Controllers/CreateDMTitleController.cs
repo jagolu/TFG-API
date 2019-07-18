@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using API.Areas.Alive.Models;
+using API.Areas.Alive.Util;
 using API.Areas.DirectMessages.Models;
 using API.Areas.DirectMessages.Util;
 using API.Data;
@@ -8,6 +11,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.DirectMessages.Controllers
@@ -28,7 +32,7 @@ namespace API.Areas.DirectMessages.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("CreateDMTitle")]
-        public IActionResult createTitle([FromBody] CreateDMTitle order)
+        public async Task<IActionResult> createTitle([FromBody] CreateDMTitle order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             User receiver = new User();
@@ -56,7 +60,11 @@ namespace API.Areas.DirectMessages.Controllers
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                    var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
                     User dbUser = dbContext.User.Where(u => u.id == user.id).First();
+
+                    await sendNotification(dbUser, receiver.id, dbContext, hub);
+
                     return Ok(LoadTitles.load(dbUser, dbContext));
                 }
             }
@@ -108,6 +116,18 @@ namespace API.Areas.DirectMessages.Controllers
             receiver = recv;
 
             return true;
+        }
+
+        private async Task sendNotification(User user, Guid recvId, ApplicationDBContext dbContext, IHubContext<NotificationHub> hub)
+        {
+            dbContext.Entry(user).Reference("role").Load();
+            User recv = dbContext.User.Where(u => u.id == recvId).First();
+            bool isAdmin = user.role == RoleManager.getAdmin(dbContext);
+
+            NotificationType type = isAdmin ? NotificationType.OPEN_DM_FROM_ADMIN : NotificationType.OPEN_DM_FROM_USER;
+            String recvName = isAdmin ? "" : recv.nickname;
+
+            await SendNotification.send(hub, recvName, recv, type, dbContext);
         }
     }
 }

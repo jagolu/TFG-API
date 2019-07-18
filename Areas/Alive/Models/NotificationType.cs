@@ -16,6 +16,10 @@
         NEW_FOOTBALLBET = 110,
         CANCELLED_FOOTBALLBET = 111,
         PAID_BETS = 120,
-        PAID_GROUPS = 130
+        PAID_GROUPS = 130,
+
+
+        OPEN_DM_FROM_USER = 210,
+        OPEN_DM_FROM_ADMIN = 211,
     }
 }

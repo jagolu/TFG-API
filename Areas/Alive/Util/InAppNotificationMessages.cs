@@ -49,6 +49,12 @@ namespace API.Areas.Alive.Util
                 case NotificationType.PAID_GROUPS:
                     message = "Dinero semanal pagado en el grupo " + target;
                     break;
+                case NotificationType.OPEN_DM_FROM_USER:
+                    message = target+" ha abierto una conversación contigo.";
+                    break;
+                case NotificationType.OPEN_DM_FROM_ADMIN:
+                    message = "Un administrador ha abierto una conversación contigo.";
+                    break;
                 default:
                     message = "";
                     break;
