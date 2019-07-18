@@ -1,6 +1,8 @@
-﻿using API.Data;
+﻿using API.Areas.Alive.Util;
+using API.Data;
 using API.Data.Models;
 using API.Util;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class QuitUserFromGroup
     {
-        public static bool quitUser(UserGroup userGroup, ApplicationDBContext _context)
+        public static bool quitUser(UserGroup userGroup, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             List<UserGroup> members = getValidUsersInGroup(userGroup, _context);
 
@@ -20,7 +22,7 @@ namespace API.Areas.GroupManage.Util
                 if (members.Count() == 1) // The user in the group is the only member in
                 {
                     _context.Entry(userGroup).Reference("Group").Load();
-                    RemoveGroup.Remove(userGroup.Group, _context);
+                    RemoveGroup.Remove(userGroup.Group, _context, hub);
                 }
                 else
                 {

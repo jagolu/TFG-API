@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.Areas.Alive.Util;
 using API.Areas.GroupManage.Util;
 using API.Areas.UserInfo.Models;
 using API.Data;
@@ -8,6 +9,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Areas.UserInfo.Controllers
 {
@@ -16,10 +18,12 @@ namespace API.Areas.UserInfo.Controllers
     public class DeleteAccountController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private IHubContext<NotificationHub> _hub;
 
-        public DeleteAccountController(ApplicationDBContext context)
+        public DeleteAccountController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -75,7 +79,7 @@ namespace API.Areas.UserInfo.Controllers
 
             for(int i = 0; i < groups.Count(); i++)
             {
-                if (!QuitUserFromGroup.quitUser(groups.ElementAt(i), _context))
+                if (!QuitUserFromGroup.quitUser(groups.ElementAt(i), _context, _hub))
                 {
                     return false;
                 }

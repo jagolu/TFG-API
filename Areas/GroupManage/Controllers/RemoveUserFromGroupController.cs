@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using API.Areas.Alive.Util;
 using API.Areas.GroupManage.Models;
 using API.Areas.GroupManage.Util;
 using API.Data;
@@ -7,6 +8,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.GroupManage.Controllers
@@ -17,11 +19,13 @@ namespace API.Areas.GroupManage.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
             scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -45,7 +49,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 _context.Entry(targetUser).Reference("User").Load();
                 User sendNew = targetUser.User;
-                QuitUserFromGroup.quitUser(targetUser, _context);
+                QuitUserFromGroup.quitUser(targetUser, _context, _hub);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
