@@ -1,5 +1,7 @@
-﻿using API.Data;
+﻿using API.Areas.Alive.Util;
+using API.Data;
 using API.ScheduledTasks.Groups.Util;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -56,9 +58,10 @@ namespace API.ScheduledTasks.Groups
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                    var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
 
                     RemoveSessionTokens.remove(dbContext);
-                    PayGroups.pay(dbContext);
+                    PayGroups.pay(dbContext, hub);
                 }
             }
             catch (Exception)
