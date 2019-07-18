@@ -16,5 +16,8 @@ namespace API.Data.Models
         [Required]
         [MaxLength(64)]
         public string message { get; set; }
+
+        [Required]
+        public DateTime time { get; set; } = DateTime.Now;
     }
 }
