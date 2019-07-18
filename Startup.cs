@@ -13,6 +13,7 @@ using API.Util;
 using API.ScheduledTasks.VirtualBets;
 using Microsoft.Extensions.Logging;
 using API.ScheduledTasks.Groups;
+using API.Areas.Alive.Util;
 
 namespace API
 {
@@ -95,7 +96,8 @@ namespace API
             app.UseAuthentication();
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Areas.Alive.Util.ChatHub>("/chatter");
+                routes.MapHub<ChatHub>("/chatter");
+                routes.MapHub<NotificationHub>("/notificatter");
             });
             app.UseMvc(routes => {
                 routes.MapRoute(
@@ -107,6 +109,7 @@ namespace API
             EmailSender.Initialize(Configuration);
             TokenGenerator.Initialize(Configuration);
             PasswordHasher.Initialize(Configuration);
+            SendNotification.Initialize(Configuration);
             
             DBInitializer.Initialize(context);
             ShopInitializer.Initialize(context);
