@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using API.Areas.Alive.Util;
 using API.Areas.DirectMessages.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.DirectMessages.Controllers
@@ -17,17 +20,19 @@ namespace API.Areas.DirectMessages.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public SendDMMessageController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public SendDMMessageController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
             scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpPost]
         [Authorize]
         [ActionName("SendDMMessage")]
-        public IActionResult sendMsg([FromBody] SendDMMessage order)
+        public async Task<IActionResult> sendMsg([FromBody] SendDMMessage order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             DirectMessageTitle title = new DirectMessageTitle();
@@ -51,7 +56,7 @@ namespace API.Areas.DirectMessages.Controllers
                 addUnreadMessages(title, isAdmin);
                 _context.Add(msg);
                 _context.SaveChanges();
-                sendMail(title, user);
+                await sendMailAndSendNotification(title, user);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
@@ -101,20 +106,26 @@ namespace API.Areas.DirectMessages.Controllers
             title.lastUpdate = DateTime.Now;
         }
 
-        private void sendMail(DirectMessageTitle title, User caller)
+        private async Task sendMailAndSendNotification(DirectMessageTitle title, User caller)
         {
-            //If the sender is a normal user return
-            if (caller.role != RoleManager.getAdmin(_context)) return;
             //If the recv has more than 1 unread messages doesn't need another email
-            if (title.unreadMessagesForUser > 1) return;
+            _context.Entry(caller).Reference("role").Load();
+            bool callerIsAdmin = caller.role == RoleManager.getAdmin(_context);
+            if (title.unreadMessagesForUser > 1 && callerIsAdmin) return;
+            if (title.unreadMessagesForAdmin> 1 && !callerIsAdmin) return;
 
             _context.Entry(title).Reference("Sender").Load();
             _context.Entry(title).Reference("Receiver").Load();
-            User theUser = new User();
-            if (title.Sender.id == caller.id) theUser = title.Sender;
-            else theUser = title.Receiver;
+            User theUser = title.Sender.id == caller.id ? title.Sender : title.Receiver;
+            User notificationReceiver = title.Sender.id == caller.id ? title.Receiver : title.Sender;
 
-            EmailSender.sendDMNotification(theUser.email, theUser.nickname, title.title);
+            if (callerIsAdmin) EmailSender.sendDMNotification(theUser.email, theUser.nickname, title.title);
+            await sendNotification(notificationReceiver);
+        }
+
+        private async Task sendNotification(User recv)
+        {
+            await SendNotification.send(_hub, "", recv, Alive.Models.NotificationType.RECEIVED_DM, _context);
         }
     }
 }

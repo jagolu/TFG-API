@@ -23,5 +23,6 @@
         OPEN_DM_FROM_ADMIN = 211,
         CLOSE_DM = 220,
         REOPEN_DM = 221,
+        RECEIVED_DM = 230
     }
 }

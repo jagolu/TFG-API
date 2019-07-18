@@ -61,6 +61,9 @@ namespace API.Areas.Alive.Util
                 case NotificationType.REOPEN_DM:
                     message = "Un administrador ha abierto de nuevo una conversación contigo.";
                     break;
+                case NotificationType.RECEIVED_DM:
+                    message = "Has recibido un mensaje en una conversación directa.";
+                    break;
                 default:
                     message = "";
                     break;
