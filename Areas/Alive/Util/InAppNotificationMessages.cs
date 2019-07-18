@@ -55,6 +55,12 @@ namespace API.Areas.Alive.Util
                 case NotificationType.OPEN_DM_FROM_ADMIN:
                     message = "Un administrador ha abierto una conversación contigo.";
                     break;
+                case NotificationType.CLOSE_DM:
+                    message = "Un administrador ha cerrado una conversación contigo";
+                    break;
+                case NotificationType.REOPEN_DM:
+                    message = "Un administrador ha abierto de nuevo una conversación contigo.";
+                    break;
                 default:
                     message = "";
                     break;
