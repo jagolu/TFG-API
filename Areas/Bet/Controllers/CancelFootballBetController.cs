@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using API.Areas.Alive.Util;
 using API.Areas.Bet.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
@@ -9,6 +10,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.Bet.Controllers
@@ -19,11 +21,13 @@ namespace API.Areas.Bet.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public CancelFootballBetController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public CancelFootballBetController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
             scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpGet]
@@ -135,10 +139,14 @@ namespace API.Areas.Bet.Controllers
             _context.UserFootballBet.RemoveRange(bet.userBets.ToList());
             _context.SaveChanges();
 
-            newUsers.ForEach(u =>
+            newUsers.ForEach(async u =>
             {
                 _context.Entry(u).Reference("role").Load();
-                Home.Util.GroupNew.launch(u.User, group, bet, Home.Models.TypeGroupNew.FOOTBALLBET_CANCELLED_USER, u.role == RoleManager.getGroupMaker(_context), _context);
+                _context.Entry(u).Reference("User").Load();
+                User recv = u.User;
+
+                Home.Util.GroupNew.launch(recv, group, bet, Home.Models.TypeGroupNew.FOOTBALLBET_CANCELLED_USER, u.role == RoleManager.getGroupMaker(_context), _context);
+                await SendNotification.send(_hub, group.name, recv, Alive.Models.NotificationType.CANCELLED_FOOTBALLBET, _context);
             });
         }
     }
