@@ -39,7 +39,7 @@ namespace API.Areas.Alive.Controllers
                     notifications.Add(new NotificationMessage { id = n.id.ToString(), message = n.message });
                 });
 
-                return Ok(notifications);
+                return Ok(new LoginNotifications { publicUserid= user.publicId.ToString(), messages=notifications});
             }
             catch (Exception)
             {
