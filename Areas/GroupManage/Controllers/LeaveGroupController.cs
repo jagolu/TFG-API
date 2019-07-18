@@ -1,9 +1,11 @@
-﻿using API.Areas.GroupManage.Util;
+﻿using API.Areas.Alive.Util;
+using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
@@ -15,17 +17,19 @@ namespace API.Areas.GroupManage.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public LeaveGroupController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public LeaveGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
             scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpGet]
         [Authorize]
         [ActionName("LeaveGroup")]
-        public IActionResult leaveGroup(string groupName)
+        public async System.Threading.Tasks.Task<IActionResult> leaveGroup(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to leave the group
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -38,7 +42,7 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest();
             }
             if (!group.open) return BadRequest(new { error = "GroupBanned" });
-            if (!QuitUserFromGroup.quitUser(ugCaller, _context))
+            if (!await QuitUserFromGroup.quitUser(ugCaller, _context, _hub))
             {
                 return StatusCode(500);
             }

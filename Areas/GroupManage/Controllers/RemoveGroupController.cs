@@ -1,10 +1,12 @@
 ﻿using System;
+using API.Areas.Alive.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Areas.GroupManage.Controllers
 {
@@ -13,10 +15,12 @@ namespace API.Areas.GroupManage.Controllers
     public class RemoveGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private IHubContext<NotificationHub> _hub;
 
-        public RemoveGroupController(ApplicationDBContext context)
+        public RemoveGroupController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -40,7 +44,7 @@ namespace API.Areas.GroupManage.Controllers
             if (!group.open) return BadRequest(new { error = "GroupBanned" });
             try
             {
-                RemoveGroup.Remove(group, _context);
+                RemoveGroup.Remove(group, _context, _hub);
 
                 return Ok(new { success = "SuccesfullGroupRemoved" });
             }

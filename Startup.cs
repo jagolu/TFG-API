@@ -13,18 +13,17 @@ using API.Util;
 using API.ScheduledTasks.VirtualBets;
 using Microsoft.Extensions.Logging;
 using API.ScheduledTasks.Groups;
+using API.Areas.Alive.Util;
 
 namespace API
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        private readonly ILogger _logger;
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _logger = logger;
         }
 
         
@@ -76,8 +75,6 @@ namespace API
             //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
             //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
             services.AddHostedService<WeeklyGroupHostedService>(); 
-
-            _logger.LogInformation("Added services");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,7 +96,8 @@ namespace API
             app.UseAuthentication();
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Areas.Alive.Util.ChatHub>("/chatter");
+                routes.MapHub<ChatHub>("/chatter");
+                routes.MapHub<NotificationHub>("/notificatter");
             });
             app.UseMvc(routes => {
                 routes.MapRoute(
@@ -111,6 +109,7 @@ namespace API
             EmailSender.Initialize(Configuration);
             TokenGenerator.Initialize(Configuration);
             PasswordHasher.Initialize(Configuration);
+            SendNotification.Initialize(Configuration);
             
             DBInitializer.Initialize(context);
             ShopInitializer.Initialize(context);

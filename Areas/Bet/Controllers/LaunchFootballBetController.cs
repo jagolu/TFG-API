@@ -1,4 +1,5 @@
-﻿using API.Areas.Bet.Models;
+﻿using API.Areas.Alive.Util;
+using API.Areas.Bet.Models;
 using API.Areas.Bet.Util;
 using API.Areas.GroupManage.Util;
 using API.Data;
@@ -6,6 +7,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,13 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class LaunchFootballBetController : ControllerBase
     {
-        public ApplicationDBContext _context;
+        private ApplicationDBContext _context;
+        private IHubContext<NotificationHub> _hub;
 
-        public LaunchFootballBetController(ApplicationDBContext context)
+        public LaunchFootballBetController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -165,12 +169,14 @@ namespace API.Areas.Bet.Controllers
             _context.Entry(group).Collection("users").Load();
             Home.Util.GroupNew.launch(null, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP, false, _context);
 
-            group.users.Where(g => !g.blocked).ToList().ForEach(ug =>
+            group.users.Where(g => !g.blocked).ToList().ForEach(async ug =>
             {
                 _context.Entry(ug).Reference("User").Load();
                 bool isLauncher = ug.userId == u.id;
+                User recv = ug.User;
 
-                Home.Util.GroupNew.launch(ug.User, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);
+                Home.Util.GroupNew.launch(recv, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);
+                await SendNotification.send(_hub, group.name, recv, Alive.Models.NotificationType.NEW_FOOTBALLBET, _context);
             });
         }
     }

@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using API.Areas.Alive.Models;
+using API.Areas.Alive.Util;
 using API.Areas.DirectMessages.Models;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.DirectMessages.Controllers
@@ -17,17 +21,19 @@ namespace API.Areas.DirectMessages.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public OpenCloseDMController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public OpenCloseDMController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
             scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpGet]
         [Authorize]
         [ActionName("CloseDM")]
-        public IActionResult close(string id, string openOrder)
+        public async Task<IActionResult> close(string id, string openOrder)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             DirectMessageTitle title = new DirectMessageTitle();
@@ -49,7 +55,7 @@ namespace API.Areas.DirectMessages.Controllers
                 sendClosedMessage(title, open);
                 title.closed = !open;
                 _context.SaveChanges();
-                sendMail(title, user, open);
+                await sendMailAndNotification(title, user, open);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
@@ -106,15 +112,24 @@ namespace API.Areas.DirectMessages.Controllers
             title.lastUpdate = DateTime.Now;
         }
 
-        private void sendMail(DirectMessageTitle title, User caller, bool open)
+        private async Task sendMailAndNotification(DirectMessageTitle title, User caller, bool open)
         {
             _context.Entry(title).Reference("Sender").Load();
             _context.Entry(title).Reference("Receiver").Load();
-            User theUser = new User();
-            if (title.Sender.id == caller.id) theUser = title.Sender;
-            else theUser = title.Receiver;
+            User theUser = title.Sender.id == caller.id ? title.Sender : title.Receiver;
+            User notificationReceiver = title.Sender.id == caller.id ? title.Receiver : title.Sender;
 
             EmailSender.sendOpenCloseDMNotification(theUser.email, theUser.nickname, title.title, open);
+
+            await sendNotification(notificationReceiver, open);
+        }
+
+        private async Task sendNotification(User recv, bool open)
+        {
+
+            NotificationType type = open ? NotificationType.REOPEN_DM : NotificationType.CLOSE_DM;
+
+            await SendNotification.send(_hub, "", recv, type, _context);
         }
     }
 }

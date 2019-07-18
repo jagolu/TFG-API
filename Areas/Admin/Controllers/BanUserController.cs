@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Admin.Models;
+using API.Areas.Alive.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Areas.Admin.Controllers
 {
@@ -15,10 +17,12 @@ namespace API.Areas.Admin.Controllers
     public class BanUserController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private IHubContext<NotificationHub> _hub;
 
-        public BanUserController(ApplicationDBContext context)
+        public BanUserController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -84,7 +88,7 @@ namespace API.Areas.Admin.Controllers
             Role maker = RoleManager.getGroupMaker(_context);
             Role admin = RoleManager.getGroupAdmin(_context);
             Role normal = RoleManager.getGroupNormal(_context);
-            user.groups.ToList().ForEach(g =>
+            user.groups.ToList().ForEach(async g =>
             {
                 List<UserGroup> members = GroupManage.Util.QuitUserFromGroup.getValidUsersInGroup(g, _context);
                 _context.Entry(g).Reference("role").Load();
@@ -93,7 +97,7 @@ namespace API.Areas.Admin.Controllers
                 {
                     if(g.role == maker)
                     {
-                        GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context);
+                        await GroupManage.Util.QuitUserFromGroup.manageQuitMaker(members, maker, admin, normal, false, _context, _hub);
                     }
 
                     g.role = normal;
@@ -103,7 +107,7 @@ namespace API.Areas.Admin.Controllers
                 else
                 {
                     _context.Entry(g).Reference("Group").Load();
-                    GroupManage.Util.RemoveGroup.Remove(g.Group, _context);
+                    GroupManage.Util.RemoveGroup.Remove(g.Group, _context, _hub);
                 }
             });
         }

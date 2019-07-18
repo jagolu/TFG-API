@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using API.Areas.Admin.Models;
+using API.Areas.Alive.Models;
+using API.Areas.Alive.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Areas.Admin.Controllers
 {
@@ -15,10 +18,12 @@ namespace API.Areas.Admin.Controllers
     public class BanGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
+        private IHubContext<NotificationHub> _hub;
 
-        public BanGroupController(ApplicationDBContext context)
+        public BanGroupController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
+            _hub = hub;
         }
 
 
@@ -81,10 +86,14 @@ namespace API.Areas.Admin.Controllers
         {
             _context.Entry(group).Collection("users").Load();
 
-            group.users.ToList().ForEach(u =>
+            group.users.ToList().ForEach(async u =>
             {
                 _context.Entry(u).Reference("User").Load();
-                Home.Util.GroupNew.launch(u.User, group, null, Home.Models.TypeGroupNew.BAN_GROUP, ban, _context);
+                User recv = u.User;
+                Home.Util.GroupNew.launch(recv, group, null, Home.Models.TypeGroupNew.BAN_GROUP, ban, _context);
+
+                NotificationType type = ban ? NotificationType.BAN_GROUP : NotificationType.UNBAN_GROUP;
+                await SendNotification.send(_hub, group.name, recv, type, _context);
             });
         }
     }

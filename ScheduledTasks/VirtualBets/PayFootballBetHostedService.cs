@@ -1,5 +1,7 @@
-﻿using API.Data;
+﻿using API.Areas.Alive.Util;
+using API.Data;
 using API.ScheduledTasks.VirtualBets.Util;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -58,6 +60,7 @@ namespace API.ScheduledTasks.VirtualBets
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                    var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
                     List<Data.Models.Group> groupsNews = new List<Data.Models.Group>();
 
                     dbContext.FootballBets.Where(fb => !fb.ended && !fb.cancelled).ToList().ForEach(bet =>
@@ -65,7 +68,7 @@ namespace API.ScheduledTasks.VirtualBets
                         dbContext.Entry(bet).Reference("MatchDay").Load();
                         if (bet.MatchDay.status == "FINISHED")
                         {
-                            CheckWinners.checkWinner(bet, dbContext);
+                            CheckWinners.checkWinner(bet, dbContext, hub);
                             bet.ended = true;
                             dbContext.SaveChanges();
 

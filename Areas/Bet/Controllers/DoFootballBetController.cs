@@ -15,7 +15,7 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class DoFootballBetController : ControllerBase
     {
-        public ApplicationDBContext _context;
+        private ApplicationDBContext _context;
 
         public DoFootballBetController(ApplicationDBContext context)
         {

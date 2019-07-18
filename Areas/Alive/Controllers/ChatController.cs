@@ -32,8 +32,9 @@ namespace API.Areas.Alive.Controllers
             _groupChatSocketId = configuration["socket:chatRoom"];
         }
 
-        [ActionName("ChatLogin")]
+        [HttpGet]
         [Authorize]
+        [ActionName("ChatLogin")]
         public async System.Threading.Tasks.Task<IActionResult> LoginChatAsync([Required]string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);

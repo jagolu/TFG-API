@@ -1,15 +1,18 @@
-﻿using API.Data;
+﻿using API.Areas.Alive.Util;
+using API.Data;
 using API.Data.Models;
 using API.Util;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Areas.GroupManage.Util
 {
     public static class QuitUserFromGroup
     {
-        public static bool quitUser(UserGroup userGroup, ApplicationDBContext _context)
+        public static async Task<bool> quitUser(UserGroup userGroup, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             List<UserGroup> members = getValidUsersInGroup(userGroup, _context);
 
@@ -20,7 +23,7 @@ namespace API.Areas.GroupManage.Util
                 if (members.Count() == 1) // The user in the group is the only member in
                 {
                     _context.Entry(userGroup).Reference("Group").Load();
-                    RemoveGroup.Remove(userGroup.Group, _context);
+                    RemoveGroup.Remove(userGroup.Group, _context, hub);
                 }
                 else
                 {
@@ -31,7 +34,7 @@ namespace API.Areas.GroupManage.Util
                     //The user is a normal user or an admin in the group, the UserGroup entry is just deleted
                     if (userGroup.role == role_groupMaker)
                     {
-                        manageQuitMaker(members, role_groupMaker, role_groupAdmin, role_groupNormal, true, _context);
+                        await manageQuitMaker(members, role_groupMaker, role_groupAdmin, role_groupNormal, true, _context, hub);
                     }
 
                     _context.Remove(userGroup);
@@ -55,7 +58,7 @@ namespace API.Areas.GroupManage.Util
                     ).ToList();
         }
 
-        public static void manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, bool leave, ApplicationDBContext _context)
+        public static async Task manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, bool leave, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             List<UserGroup> adminMembers = members.Where(m => m.role == admin).OrderBy(d => d.dateRole).ToList();
             List<UserGroup> normalMembers = members.Where(m => m.role == normal).OrderBy(d => d.dateJoin).ToList();
@@ -80,6 +83,7 @@ namespace API.Areas.GroupManage.Util
             _context.Entry(newMaster).Reference("Group").Load();
             Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, null, Home.Models.TypeGroupNew.MAKE_MAKER_GROUP, leave, _context);
             Home.Util.GroupNew.launch(newMaster.User, newMaster.Group, null, Home.Models.TypeGroupNew.MAKE_MAKER_USER, leave, _context);
+            await SendNotification.send(hub, newMaster.Group.name, newMaster.User, Alive.Models.NotificationType.MAKE_MAKER, _context);
         }
 
         private static void removeBets(UserGroup ug, ApplicationDBContext context)

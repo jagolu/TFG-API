@@ -1,6 +1,8 @@
-﻿using API.Areas.Bet.Util;
+﻿using API.Areas.Alive.Util;
+using API.Areas.Bet.Util;
 using API.Data;
 using API.Data.Models;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 {
     public static class CheckWinners
     {
-        public static void checkWinner(FootballBet footballBet, ApplicationDBContext _context)
+        public static void checkWinner(FootballBet footballBet, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             _context.Entry(footballBet).Reference("type").Load();
             _context.Entry(footballBet).Reference("typePay").Load();
@@ -39,7 +41,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             else throw new Exception();
 
             _context.Update(group);
-            launchNews(footballBet, _context);
+            launchNews(footballBet, _context, hub);
         }
 
         private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time, ApplicationDBContext _context)
@@ -160,7 +162,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             });
         }
 
-        private static void launchNews(FootballBet fb, ApplicationDBContext _context)
+        private static void launchNews(FootballBet fb, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             _context.Entry(fb).Reference("Group").Load();
             Group group = fb.Group;
@@ -174,10 +176,11 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 if (newGroups.All(uu => uu.id != u.userId)) newGroups.Add(u.User);
             });
 
-            newGroups.ForEach(u =>
+            newGroups.ForEach(async u =>
             {
                 _context.Entry(u).Reference("User").Load();
                 Areas.Home.Util.GroupNew.launch(u, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
+                await SendNotification.send(hub, group.name, u, Areas.Alive.Models.NotificationType.PAID_BETS, _context);
             });
         }
     }
