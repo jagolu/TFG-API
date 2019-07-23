@@ -47,7 +47,7 @@ namespace API.Areas.UserInfo.Controllers
             }
 
             try {
-                _context.User.Remove(user);
+                user.dateDeleted = DateTime.Now;
                 _context.SaveChanges();
 
             } catch (Exception){

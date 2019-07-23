@@ -25,9 +25,14 @@ namespace API.Areas.Identity.Controllers
         [ActionName("SignUp")]
         public IActionResult signUp([FromBody] UserSignUp user)
         {
-            var userExists = _context.User.Where(u => u.email == user.email).Count() != 0;
+            var userExists = _context.User.Where(u => u.email == user.email);
 
-            if (userExists) {
+            if (userExists.Count() != 0) {
+                if(userExists.First().dateDeleted != null)
+                {
+                    return BadRequest(new { error = "DeleteRequested" });
+                }
+
                 return BadRequest(new { error = "EmailAlreadyExistsError" });
             }
 
@@ -44,6 +49,7 @@ namespace API.Areas.Identity.Controllers
                 _context.User.Add(newUser);
                 _context.SaveChanges();
 
+                Home.Util.GroupNew.launch(newUser, null, null, Home.Models.TypeGroupNew.WELCOME, false, _context);
                 EmailSender.sendVerificationToken(newUser.email, newUser.nickname, newUser.tokenValidation);
 
             } catch (Exception) {

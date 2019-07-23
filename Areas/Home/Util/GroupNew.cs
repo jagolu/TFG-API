@@ -38,6 +38,9 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
             else if (type == TypeGroupNew.PAID_PLAYERS_GROUPS) whatsGoingOn = pay_players_group(group);
 
+            else if (type == TypeGroupNew.WELCOME) whatsGoingOn = getWelcomeMessage(user);
+            else if (type == TypeGroupNew.WELCOMEBACK) whatsGoingOn = getWelcomeBackMessage(user);
+
             try
             {
                 context.Add(whatsGoingOn);
@@ -45,6 +48,8 @@ namespace API.Areas.Home.Util
             }
             catch (Exception){}
         }
+
+
 
         private static New blockUser_group(User user, Group group, bool makeUnmake)
         {
@@ -411,6 +416,38 @@ namespace API.Areas.Home.Util
 
             return n;
         }
+
+        private static New getWelcomeMessage(User u)
+        {
+            string title = "¡Bienvenido a Virtual Bet!";
+            string message = "Te has registrado correctamente en VirtualBet, si tienes alguna duda del funcionamiento " +
+                "visita la pestaña de ayuda.";
+
+            New n = new New
+            {
+                User = u,
+                title = title,
+                message = message
+            };
+            
+            return n;
+        }
+
+        private static New getWelcomeBackMessage(User u)
+        {
+            string title = "¡Bienvenido otra vez a Virtual Bet!";
+            string message = "Te fuiste.., pero lo importante es que has vuelto!!";
+
+            New n = new New
+            {
+                User = u,
+                title = title,
+                message = message
+            };
+            
+            return n;
+        }
+
 
         private static string getMatchTitle(FootballBet fb, ApplicationDBContext _context)
         {
