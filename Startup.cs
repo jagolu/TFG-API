@@ -11,8 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Util;
 using API.ScheduledTasks.VirtualBets;
-using Microsoft.Extensions.Logging;
-using API.ScheduledTasks.Groups;
+using API.ScheduledTasks.Weekly;
 using API.Areas.Alive.Util;
 
 namespace API

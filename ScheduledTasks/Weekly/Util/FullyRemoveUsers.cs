@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace API.ScheduledTasks.Groups.Util
+namespace API.ScheduledTasks.Weekly.Util
 {
     public static class FullyRemoveUsers
     {
