@@ -1,5 +1,7 @@
 ﻿using API.Data;
+using API.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace API.ScheduledTasks.Groups.Util
@@ -8,10 +10,10 @@ namespace API.ScheduledTasks.Groups.Util
     {
         public static void remove(ApplicationDBContext _context)
         {
-            _context.UserToken.RemoveRange(
-                _context.UserToken.Where(t => t.expirationTime < DateTime.Now).ToList()
-            );
+            DateTime now = DateTime.Now;
+            List<UserToken> delete = _context.UserToken.Where(t => t.expirationTime < now).ToList();
 
+            _context.UserToken.RemoveRange(delete);
             _context.SaveChanges();
         }
     }

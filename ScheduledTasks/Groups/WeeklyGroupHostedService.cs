@@ -62,6 +62,7 @@ namespace API.ScheduledTasks.Groups
 
                     RemoveSessionTokens.remove(dbContext);
                     PayGroups.pay(dbContext, hub);
+                    FullyRemoveUsers.remove(dbContext);
                 }
             }
             catch (Exception)
