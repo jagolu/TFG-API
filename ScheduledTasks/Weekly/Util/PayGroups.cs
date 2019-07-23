@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Linq;
 
-namespace API.ScheduledTasks.Groups.Util
+namespace API.ScheduledTasks.Weekly.Util
 {
     public static class PayGroups
     {

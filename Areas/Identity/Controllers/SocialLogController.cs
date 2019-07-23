@@ -66,18 +66,29 @@ namespace API.Areas.Identity.Controllers
                     }
                     //The new user doesn't exist and his password is correct and != null
                     user = addSocialUser(socialUser);
+                    Home.Util.GroupNew.launch(user, null, null, Home.Models.TypeGroupNew.WELCOME, false, _context);
                 }
                 else //The new user already exists
                 {
                     //The new user already exists but he has sent a new password (wtf?)
                     if (PasswordHasher.validPassword(socialUser.password) || socialUser.password != null)
                     {
+                        if (user.dateDeleted != null)
+                        {
+                            return BadRequest(new { error = "DeleteRequested" });
+                        }
                         //The user is trying to reSignUp again
                         return BadRequest(new { error = "EmailAlreadyExistsError" });
                     }
                     if (!user.open)
                     {
                         return BadRequest(new { error = "YoureBanned" });
+                    }
+                    if (user.dateDeleted != null)
+                    {
+                        //The user asked for delete the account, but he has log in to reset the delete request
+                        ResetDelete.reset(user, _context);
+                        Home.Util.GroupNew.launch(user, null, null, Home.Models.TypeGroupNew.WELCOMEBACK, false, _context);
                     }
 
                     //Here the user already exists and doesn't send a password, so is
@@ -139,13 +150,10 @@ namespace API.Areas.Identity.Controllers
         private async Task<Boolean> verifyFacebookToken(string token, string userId)
         {
             string facebookId = _configuration["Social:facebookSecret"];
-
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                "https://graph.facebook.com/debug_token?" +
-                "input_token=" + token + "&access_token=" + facebookId);
+            var request = new HttpRequestMessage(HttpMethod.Get, 
+                "https://graph.facebook.com/debug_token?" + "input_token=" + token + "&access_token=" + facebookId);
 
             var client = _http.CreateClient();
-
             var response = await client.SendAsync(request);
 
             if (!response.IsSuccessStatusCode) return false;

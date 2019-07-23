@@ -1,6 +1,6 @@
 ﻿using API.Areas.Alive.Util;
 using API.Data;
-using API.ScheduledTasks.Groups.Util;
+using API.ScheduledTasks.Weekly.Util;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,7 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace API.ScheduledTasks.Groups
+namespace API.ScheduledTasks.Weekly
 {
     public class WeeklyGroupHostedService : IHostedService, IDisposable
     {
@@ -62,6 +62,7 @@ namespace API.ScheduledTasks.Groups
 
                     RemoveSessionTokens.remove(dbContext);
                     PayGroups.pay(dbContext, hub);
+                    FullyRemoveUsers.remove(dbContext);
                 }
             }
             catch (Exception)

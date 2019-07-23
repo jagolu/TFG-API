@@ -52,6 +52,8 @@ namespace API.Data.Models
         [Required]
         public int maxGroupJoins { get; set; } = 2;
 
+        public DateTime? dateDeleted { get; set; }
+
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
         public ICollection<UserFootballBet> footballBets { get; set; } = new HashSet<UserFootballBet>();
