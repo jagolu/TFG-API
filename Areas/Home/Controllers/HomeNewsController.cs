@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using API.Areas.Home.Models;
+using API.Areas.Home.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -33,8 +33,7 @@ namespace API.Areas.Home.Controllers
 
             try
             {
-                List<New> news = _context.News.Where(n => n.userId == user.id || n.userId == null).OrderByDescending(nn => nn.date).ToList();
-                List<NewMessage> retMessage = addNews(news);
+                List<NewMessage> retMessage = GetNews.getAuthNews(user.id, _context);
 
                 return Ok(retMessage);
             }
@@ -51,8 +50,7 @@ namespace API.Areas.Home.Controllers
         {
             try
             {
-                List<New> news = _context.News.Where(n => n.userId == null && n.groupId == null).OrderByDescending(nn => nn.date).ToList();
-                List<NewMessage> retMessage = addNews(news);
+                List<NewMessage> retMessage = GetNews.getStandNews(_context);
 
                 return Ok(retMessage);
             }
@@ -60,16 +58,6 @@ namespace API.Areas.Home.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-
-
-        private List<NewMessage> addNews(List<New> news)
-        {
-            List<NewMessage> retMessage = new List<NewMessage>();
-            news.ForEach(n => retMessage.Add(new NewMessage(n)));
-
-            return retMessage;
         }
     }
 }
