@@ -30,8 +30,8 @@ namespace API.Areas.GroupManage.Controllers
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return new List<GroupInfo>();
             bool isAdmin = AdminPolicy.isAdmin(user, _context);
-            List<Group> groups = !isAdmin ? _context.Group.Where(g => g.open).ToList()
-                                          : _context.Group.ToList();
+            List<Group> groups = !isAdmin ? _context.Group.Where(g => g.open).Take(25).ToList()
+                                          : _context.Group.Take(25).ToList();
 
             return addGroupsToList(groups, AdminPolicy.isAdmin(user, _context));
         }

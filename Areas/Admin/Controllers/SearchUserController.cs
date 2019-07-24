@@ -30,7 +30,7 @@ namespace API.Areas.Admin.Controllers
             if (!AdminPolicy.isAdmin(user, _context)) return new List<UserSearchInfo>();
             List<UserSearchInfo> groupRet = new List<UserSearchInfo>();
 
-            return addUsersToList(_context.User.ToList());
+            return addUsersToList(_context.User.Take(25).ToList());
         }
 
 
