@@ -67,7 +67,7 @@ namespace API.Areas.Admin.Controllers
                 _context.Entry(user).Collection("groups").Load();
                 List<UserInGroup> uGroups = new List<UserInGroup>();
 
-                user.groups.ToList().ForEach(g =>
+                _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
                 {
                     _context.Entry(g).Reference("Group").Load();
                     _context.Entry(g).Reference("role").Load();
