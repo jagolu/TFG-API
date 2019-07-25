@@ -44,7 +44,7 @@ namespace API.Areas.DirectMessages.Controllers
             }
             if(!getReceiver(ref receiver, order.emailReceiver))
             {
-                return BadRequest();
+                return BadRequest(new { error = "recvNotExist" });
             }
             try
             {
