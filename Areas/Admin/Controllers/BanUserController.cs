@@ -77,9 +77,15 @@ namespace API.Areas.Admin.Controllers
 
         private bool validOrder(User user, bool order)
         {
-            bool userBlock = user.open;
+            _context.Entry(user).Reference("role").Load();
+            Role admin = RoleManager.getAdmin(_context);
 
-            return userBlock != order;
+            if(user.role == admin)
+            {
+                return false;
+            }
+
+            return user.open != order;
         }
 
         private void manageGroups(User user)
