@@ -84,10 +84,20 @@ namespace API.Data
                 role = RoleManager.getAdmin(context)
             };
 
+            User admin2 = new User
+            {
+                email = "a2@gmail.com",
+                nickname = "a2_ADMIN",
+                password = hashedPassword,
+                tokenValidation = null,
+                role = RoleManager.getAdmin(context)
+            };
+
 
             test_users.Where(u => context.User.All(dbUser => dbUser.email != u.email)).ToList().ForEach(newU => context.Add(newU));
 
             if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
+            if (context.User.Where(u => u.email == "a2@gmail.com").Count() == 0) context.Add(admin2);
         }
 
         private static void createNews(ApplicationDBContext context)
