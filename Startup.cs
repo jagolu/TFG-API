@@ -79,20 +79,13 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDBContext context)
         {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-                app.UseCors("_myAllowSpecificOrigins");
-            }
-            else {
-                app.UseHsts();
-            }
-
+            app.UseCors("_myAllowSpecificOrigins");
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
-
             app.UseHttpsRedirection();
             app.UseAuthentication();
+
+
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chatter");
@@ -109,7 +102,6 @@ namespace API
             TokenGenerator.Initialize(Configuration);
             PasswordHasher.Initialize(Configuration);
             SendNotification.Initialize(Configuration);
-            
             DBInitializer.Initialize(context);
             ShopInitializer.Initialize(context);
 
