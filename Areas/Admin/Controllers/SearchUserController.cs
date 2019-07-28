@@ -65,31 +65,36 @@ namespace API.Areas.Admin.Controllers
             users.ForEach(user =>
             {
                 _context.Entry(user).Collection("groups").Load();
+                _context.Entry(user).Reference("role").Load();
                 List<UserInGroup> uGroups = new List<UserInGroup>();
+                Role admin = RoleManager.getAdmin(_context);
 
-                _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
+                if (user.role != admin)
                 {
-                    _context.Entry(g).Reference("Group").Load();
-                    _context.Entry(g).Reference("role").Load();
-                    uGroups.Add(new UserInGroup
+                    _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
                     {
-                        groupName = g.Group.name,
-                        role = g.role.name,
-                        blocked = g.blocked,
-                        joinTime = g.dateJoin,
-                        roleTime = g.dateRole
+                        _context.Entry(g).Reference("Group").Load();
+                        _context.Entry(g).Reference("role").Load();
+                        uGroups.Add(new UserInGroup
+                        {
+                            groupName = g.Group.name,
+                            role = g.role.name,
+                            blocked = g.blocked,
+                            joinTime = g.dateJoin,
+                            roleTime = g.dateRole
+                        });
                     });
-                });
 
-                usersRet.Add(new UserSearchInfo
-                {
-                    publicUserId = user.publicId,
-                    email = user.email,
-                    username = user.nickname,
-                    open = user.open,
-                    dateSignUp = user.dateSignUp,
-                    groups = uGroups
-                });
+                    usersRet.Add(new UserSearchInfo
+                    {
+                        publicUserId = user.publicId,
+                        email = user.email,
+                        username = user.nickname,
+                        open = user.open,
+                        dateSignUp = user.dateSignUp,
+                        groups = uGroups
+                    });
+                }
             });
 
             return usersRet;
