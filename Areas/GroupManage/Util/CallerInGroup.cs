@@ -27,6 +27,9 @@ namespace API.Areas.GroupManage.Util
                 case TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET:
                     can = hasPermissionsStartCreateFootballBet(ugCaller, group, _context);
                     break;
+                case TypeCheckCapabilites.MANAGEWEEKPAY:
+                    can = hasPermissionsManageWeeklyPay(ugCaller, _context);
+                    break;
                 default:
                     can = false;
                     break;
@@ -85,6 +88,20 @@ namespace API.Areas.GroupManage.Util
 
             return true;
         }
+
+        private static bool hasPermissionsManageWeeklyPay(UserGroup ugCaller, ApplicationDBContext _context)
+        {
+            Role groupMaker_role = RoleManager.getGroupMaker(_context);
+
+            return isMaker(ugCaller, groupMaker_role, _context);
+        }
+
+        private static bool isMaker(UserGroup ugCaller, Role maker, ApplicationDBContext _context)
+        {
+            _context.Entry(ugCaller).Reference("role").Load();
+
+            return ugCaller.role == maker;
+        }
     }
 
 
@@ -96,6 +113,7 @@ namespace API.Areas.GroupManage.Util
     {
         MANAGE_PASSWORD = 1,
         REMOVE_GROUP = 2,
-        STARTCREATE_FOOTBALL_BET = 3
+        STARTCREATE_FOOTBALL_BET = 3,
+        MANAGEWEEKPAY = 4
     }
 }

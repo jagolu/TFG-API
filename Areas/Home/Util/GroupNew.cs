@@ -38,6 +38,11 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
             else if (type == TypeGroupNew.PAID_PLAYERS_GROUPS) whatsGoingOn = pay_players_group(group);
 
+
+            else if (type == TypeGroupNew.CHANGE_WEEKLYPAY_USER) whatsGoingOn = change_weeklyPay_user(user, group, makeUnmake);
+            else if (type == TypeGroupNew.CHANGE_WEEKLYPAY_GROUP) whatsGoingOn = change_weeklyPay_group(group);
+
+
             else if (type == TypeGroupNew.WELCOME) whatsGoingOn = getWelcomeMessage(user);
             else if (type == TypeGroupNew.WELCOMEBACK) whatsGoingOn = getWelcomeBackMessage(user);
 
@@ -410,6 +415,36 @@ namespace API.Areas.Home.Util
             New n = new New
             {
                 User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New change_weeklyPay_user(User user, Group group, bool isLauncher)
+        {
+            string title = isLauncher ? "Has cambiado el pago semanal en un grupo" : "El creador de un grupo ha cambiado el pago semanal";
+            string message = "El grupo \""+group.name+"\" ha cambiado el pago semanal a "+group.weeklyPay+ " monedas.";
+
+            New n = new New
+            {
+                User = user,
+                title = title,
+                message = message
+            };
+
+            return n;
+        }
+
+        private static New change_weeklyPay_group(Group group)
+        {
+            string title = "Se ha cambiado el pago semanal";
+            string message = "El creador ha cambiado el pago semanal a "+group.weeklyPay+ " monedas.";
+
+            New n = new New
+            {
+                Group = group,
                 title = title,
                 message = message
             };
