@@ -5,6 +5,7 @@ using API.Data.Models;
 using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace API.Areas.GroupManage.Controllers
 {
@@ -39,13 +40,20 @@ namespace API.Areas.GroupManage.Controllers
             }
             if (!group.open) return BadRequest(new { error = "GroupBanned" });
 
-            group.password = order.newPassword == null ? null : PasswordHasher.hashPassword(order.newPassword);
-            _context.Update(group);
-            _context.SaveChanges();
+            try
+            {
+                group.password = order.newPassword == null ? null : PasswordHasher.hashPassword(order.newPassword);
+                _context.Update(group);
+                _context.SaveChanges();
 
-            Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.MAKE_PRIVATE, group.password != null, _context);
-            
-            return Ok(GroupPageManager.GetPage(user, group, _context));
+                Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.MAKE_PRIVATE, group.password != null, _context);
+
+                return Ok(GroupPageManager.GetPage(user, group, _context));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
