@@ -81,9 +81,9 @@ namespace API.Areas.Shop.Controllers
 
             try
             {
-                if (group.canPutPassword) return false; //The group already can put a password on it
+               // if (group.canPutPassword) return false; //The group already can put a password on it
 
-                group.canPutPassword = true;
+//                group.canPutPassword = true;
                 _context.Group.Update(group);
                 _context.SaveChanges();
 

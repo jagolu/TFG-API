@@ -30,7 +30,6 @@ namespace API.Areas.GroupManage.Util
                 page.dateJoin = callerInGroup.dateJoin;
                 page.dateRole = callerInGroup.dateRole;
                 page.actualCapacity = group.users.ToList().Count();
-                page.canPutPassword = group.canPutPassword;
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
                 page.maxCapacity = group.capacity;
@@ -50,7 +49,6 @@ namespace API.Areas.GroupManage.Util
                     bets = new List<GroupBet>(),
                     members = new List<GroupMember>(),
                     actualCapacity = 0,
-                    canPutPassword = false,
                     createDate = new DateTime(),
                     hasPassword = false,
                     maxCapacity = 0,

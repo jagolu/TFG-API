@@ -9,7 +9,6 @@ namespace API.Areas.GroupManage.Models
         public string name { get; set; }
         public DateTime dateJoin { get; set; }
         public DateTime dateRole { get; set; }
-        public bool canPutPassword { get; set; }
         public bool hasPassword { get; set; }
         public int maxCapacity { get; set; }
         public int actualCapacity { get; set; }

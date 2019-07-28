@@ -19,9 +19,6 @@ namespace API.Data.Models
         public string password { get; set; } = null;
 
         [Required]
-        public bool canPutPassword { get; set; } = false;
-
-        [Required]
         public Boolean open { get; set; } = true;
 
         [Required]

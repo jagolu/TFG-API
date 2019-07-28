@@ -41,10 +41,9 @@ namespace API.Areas.GroupManage.Util
             bool role = ugCaller.role == role_groupMaker;
             bool newPass = newPassword != null && newPassword.Length > 0 && PasswordHasher.validPassword(newPassword);
             bool oldPass = oldPassword != null && oldPassword.Length > 0;
-            bool canPutPass = group.canPutPassword;
             bool hasPassword = group.password != null;
 
-            if (!role || !canPutPass)
+            if (!role)
             {
                 return false;
             }
