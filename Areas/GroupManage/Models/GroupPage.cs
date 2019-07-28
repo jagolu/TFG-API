@@ -13,6 +13,7 @@ namespace API.Areas.GroupManage.Models
         public int maxCapacity { get; set; }
         public int actualCapacity { get; set; }
         public DateTime createDate { get; set; }
+        public int weeklyPay { get; set; }
         public List<GroupBet> bets { get; set; }
         public List<BetsManager> manageBets { get; set; }
         public List<EndedFootballBet> myBets { get; set; }

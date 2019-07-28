@@ -32,6 +32,7 @@ namespace API.Areas.GroupManage.Util
                 page.actualCapacity = group.users.ToList().Count();
                 page.createDate = group.dateCreated;
                 page.hasPassword = group.password != null;
+                page.weeklyPay = group.weeklyPay;
                 page.maxCapacity = group.capacity;
                 page.bets = getBets(caller, group, _context);
                 page.manageBets = getManageBets(caller, group, _context);
@@ -44,7 +45,7 @@ namespace API.Areas.GroupManage.Util
             }
             catch (Exception)
             {
-                return new GroupPage{
+                return new GroupPage {
                     name = "",
                     bets = new List<GroupBet>(),
                     members = new List<GroupMember>(),
@@ -52,6 +53,7 @@ namespace API.Areas.GroupManage.Util
                     createDate = new DateTime(),
                     hasPassword = false,
                     maxCapacity = 0,
+                    weeklyPay = 0,
                     dateJoin = new DateTime(),
                     dateRole = new DateTime(),
                     manageBets = new List<BetsManager>(),
