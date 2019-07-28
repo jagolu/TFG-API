@@ -32,7 +32,7 @@ namespace API.ScheduledTasks.VirtualBets
                 DoWork,
                 null,
                //TimeSpan.Zero, 
-               TimeSpan.FromHours(5), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
+               CalculateInitalNextTime(), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
                 CalculateInitalNextTime() //tomorrow
             );
 
