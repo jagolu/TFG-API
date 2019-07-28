@@ -51,13 +51,14 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Entry(targetUser).Reference("User").Load();
                 User sendNew = targetUser.User;
                 Guid targetUserid = targetUser.User.id; 
-                QuitUserFromGroup.quitUser(targetUser, _context, _hub);
+                await QuitUserFromGroup.quitUser(targetUser, _context, _hub);
 
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     group = dbContext.Group.Where(g => g.name == order.groupName).First();
                     User recv = dbContext.User.Where(u => u.id == targetUserid).First();
+                    user = dbContext.User.Where(u => u.id == user.id).First();
 
                     Home.Util.GroupNew.launch(sendNew, group, null, Home.Models.TypeGroupNew.KICK_USER_USER, false, dbContext);
                     Home.Util.GroupNew.launch(sendNew, group, null, Home.Models.TypeGroupNew.KICK_USER_GROUP, false, dbContext);
