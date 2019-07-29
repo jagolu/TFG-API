@@ -91,16 +91,17 @@ namespace API.Areas.GroupManage.Controllers
          */
         private bool canCreateAnewSpecificGroup(User user)
         {
-            int userGroups = 0;
-            int limitationGroups = 0;
+            //int userGroups = 0;
+            //int limitationGroups = 0;
 
-            userGroups = _context.UserGroup.Where(ug =>
-                ug.userId == user.id &&
-                ug.role.name == "GROUP_MAKER").Count();
+            //userGroups = _context.UserGroup.Where(ug =>
+            //    ug.userId == user.id &&
+            //    ug.role.name == "GROUP_MAKER").Count();
 
-            limitationGroups = user.createGroup;
+            //limitationGroups = user.createGroup;
 
-            return userGroups < limitationGroups; //The user cant create a new group of the specificated type
+            //return userGroups < limitationGroups; //The user cant create a new group of the specificated type
+            return true;
         }
 
         /**
