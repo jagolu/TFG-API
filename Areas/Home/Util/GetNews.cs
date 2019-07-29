@@ -25,6 +25,14 @@ namespace API.Areas.Home.Util
             return retMessage;
         }
 
+        public static List<NewMessage> getGroupNews(Guid groupid, ApplicationDBContext dbContext)
+        {
+            List<New> news = dbContext.News.Where(n => n.groupId == groupid).OrderByDescending(nn => nn.date).ToList();
+            List<NewMessage> retMessage = addNews(news);
+
+            return retMessage;
+        }
+
 
         private static List<NewMessage> addNews(List<New> news)
         {
