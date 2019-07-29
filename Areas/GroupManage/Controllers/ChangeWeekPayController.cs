@@ -67,9 +67,11 @@ namespace API.Areas.GroupManage.Controllers
             Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.CHANGE_WEEKLYPAY_GROUP, false, _context);
             group.users.ToList().ForEach(u =>
             {
+                _context.Entry(u).Reference("User").Load();
                 bool isMaker = u.userId == callerId;
                 u.coins -= minus;
-                Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.CHANGE_WEEKLYPAY_USER, isMaker, _context);
+                
+                Home.Util.GroupNew.launch(u.User, group, null, Home.Models.TypeGroupNew.CHANGE_WEEKLYPAY_USER, isMaker, _context);
             });
         }
     }
