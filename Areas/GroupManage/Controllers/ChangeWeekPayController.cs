@@ -43,11 +43,13 @@ namespace API.Areas.GroupManage.Controllers
 
             try
             {
+                int oldPay = group.weeklyPay;
                 group.weeklyPay = order.weeklyPay;
                 _context.Update(group);
                 _context.SaveChanges();
 
-                launchNews(group, user.id);
+                launchNews_changeUserCoins(group, oldPay, order.weeklyPay, user.id);
+                _context.SaveChanges();
 
                 return Ok(GroupPageManager.GetPage(user, group, _context));
             }
@@ -57,14 +59,16 @@ namespace API.Areas.GroupManage.Controllers
             }
         }
 
-        private void launchNews(Group group, Guid callerId)
+        private void launchNews_changeUserCoins(Group group, int oldPay, int newPay, Guid callerId)
         {
             _context.Entry(group).Collection("users").Load();
+            int minus = oldPay - newPay;
 
             Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.CHANGE_WEEKLYPAY_GROUP, false, _context);
             group.users.ToList().ForEach(u =>
             {
                 bool isMaker = u.userId == callerId;
+                u.coins -= minus;
                 Home.Util.GroupNew.launch(null, group, null, Home.Models.TypeGroupNew.CHANGE_WEEKLYPAY_USER, isMaker, _context);
             });
         }
