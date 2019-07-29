@@ -173,12 +173,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _context.Entry(fb).Collection("userBets").Load();
             fb.userBets.ToList().ForEach(u => 
             {
+                _context.Entry(u).Reference("User").Load();
                 if (newGroups.All(uu => uu.id != u.userId)) newGroups.Add(u.User);
             });
 
             newGroups.ForEach(async u =>
             {
-                _context.Entry(u).Reference("User").Load();
                 Areas.Home.Util.GroupNew.launch(u, group, fb, Areas.Home.Models.TypeGroupNew.PAID_BETS_USER, false, _context);
                 await SendNotification.send(hub, group.name, u, Areas.Alive.Models.NotificationType.PAID_BETS, _context);
             });
