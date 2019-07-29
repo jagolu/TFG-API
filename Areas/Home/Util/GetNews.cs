@@ -11,7 +11,7 @@ namespace API.Areas.Home.Util
     {
         public static List<NewMessage> getAuthNews(Guid userid, ApplicationDBContext dbContext)
         {
-            List<New> news = dbContext.News.Where(n => n.groupId == null).OrderByDescending(nn => nn.date).ToList();
+            List<New> news = dbContext.News.Where(n => n.groupId == null && (n.userId==null ||  n.userId == userid)).OrderByDescending(nn => nn.date).ToList();
             List<NewMessage> retMessage = addNews(news);
 
             return retMessage;
