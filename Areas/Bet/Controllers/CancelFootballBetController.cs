@@ -111,7 +111,6 @@ namespace API.Areas.Bet.Controllers
         {
             _context.Entry(bet).Collection("userBets").Load();
             _context.Entry(group).Collection("users").Load();
-            List<UserGroup> newUsers = new List<UserGroup>();
             bool isJackpot = CheckBetType.isJackpot(bet, _context);
 
             bet.userBets.ToList().ForEach(ub =>
@@ -133,13 +132,13 @@ namespace API.Areas.Bet.Controllers
                 _context.SaveChanges();
 
                 _context.Entry(userg).Reference("User").Load();
-                if (newUsers.All(u => u.userId != userg.userId)) newUsers.Add(userg);
             });
 
             _context.UserFootballBet.RemoveRange(bet.userBets.ToList());
             _context.SaveChanges();
 
-            newUsers.ForEach(async u =>
+            _context.Entry(group).Collection("users");
+            group.users.ToList().ForEach(async u =>
             {
                 _context.Entry(u).Reference("role").Load();
                 _context.Entry(u).Reference("User").Load();
