@@ -65,7 +65,7 @@ namespace API.Areas.DirectMessages.Controllers
 
                     await sendNotification(dbUser, receiver.id, dbContext, hub);
 
-                    return Ok(LoadTitles.load(dbUser, dbContext));
+                    return Ok(dm.id.ToString());
                 }
             }
             catch (Exception)
