@@ -6,6 +6,5 @@ namespace API.Areas.Bet.Models
     {
         public string competition { get; set; }
         public List<FootBallMatch> matches { get; set; }
-        public List<NameWinRate> allowedTypePays { get; set; }
     }
 }

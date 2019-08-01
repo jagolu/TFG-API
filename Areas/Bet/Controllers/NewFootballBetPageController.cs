@@ -38,20 +38,18 @@ namespace API.Areas.Bet.Controllers
             }
             if (!checkMaxBetAllowed(group))
             {
-                List<AvailableBet> badRet = new List<AvailableBet>();
-                badRet.Add(new AvailableBet
-                {
-                    competition = "MaximunWeekBetsReached",
-                    matches = new List<FootBallMatch>(),
-                    allowedTypePays = new List<NameWinRate>()
-                });
-                return Ok(badRet);
+                return BadRequest(new { error = "MaximunWeekBetsReached" });
             }
 
             try
             {
                 List<FootBallMatch> availableMatches =  getAvailableMatchDays(group);
-                return Ok(getAvailableBets(availableMatches));
+                LaunchFootballBetManager response = new LaunchFootballBetManager();
+                response.typeBets = loadTypeFootballBet();
+                response.typePays = loadTypePays();
+                response.competitionMatches = getAvailableBets(availableMatches);
+
+                return Ok(response);
             }
             catch (Exception)
             {
@@ -84,6 +82,7 @@ namespace API.Areas.Bet.Controllers
 
         private List<FootBallMatch> getAvailableMatchDays(Group group)
         {
+            _context.Entry(group).Collection("bets").Load();
             DateTime now = DateTime.Now;
             DateTime aWeek = DateTime.Now.AddDays(8);
             List<TypeFootballBet> allTypes = _context.TypeFootballBet.ToList();
@@ -92,29 +91,22 @@ namespace API.Areas.Bet.Controllers
             List<MatchDay> availableMatchs = _context.MatchDays.Where(
                 md => md.date > now && md.date < aWeek && md.status == "SCHEDULED").ToList(); //matchdays from now to a week
 
-            availableMatchs.ForEach(md =>
+            availableMatchs.ForEach(md => 
             {
-                var sameBet = doneBets.Where(db => db.matchdayId == md.id);
+                List<FootballBet> betsOnTheMatch = doneBets.Where(db => db.matchdayId == md.id).ToList(); //Bets done on the matchday
                 List<TypeFootballBet> allowedTypes = allTypes;
-                if (sameBet.Count() != 0)
+
+                if(betsOnTheMatch.Count() != 0)
                 {
-                    allowedTypes = availableTypeBets(sameBet.First());
+                    allowedTypes = availableTypeBets(betsOnTheMatch, allTypes);
                 }
-                if(allowedTypes.Count() != 0)
-                {
-                    addFootBallMatch(retmatchs, md, allowedTypes);
-                }
+
+                addFootBallMatch(retmatchs, md, allowedTypes);
             });
 
             return retmatchs;
         }
 
-        private List<TypeFootballBet> availableTypeBets(FootballBet bet)
-        {
-            List<TypeFootballBet> alltypes = _context.TypeFootballBet.ToList();
-            _context.Entry(bet).Reference("type").Load();
-            return _context.TypeFootballBet.Where(t => !alltypes.Contains(bet.type)).ToList();
-        }
 
         private void addFootBallMatch(List<FootBallMatch> mainArray, MatchDay md, List<TypeFootballBet> allowedTypes)
         {
@@ -133,20 +125,10 @@ namespace API.Areas.Bet.Controllers
                 match_name = md.HomeTeam.name+" vs "+md.AwayTeam.name,
                 matchday = md.id.ToString(),
                 date = md.date,
-                allowedTypeBets = convertTypeToString(allowedTypes),
+                allowedTypeBets = getIdsFromTypeBets(allowedTypes),
             });
         }
 
-        private List<NameWinRate> convertTypeToString(List<TypeFootballBet> types)
-        {
-            List<NameWinRate> ret = new List<NameWinRate>();
-            types.ForEach(t =>
-            {
-                ret.Add(new NameWinRate(t));
-            });
-
-            return ret;
-        }
 
         private List<AvailableBet> getAvailableBets(List<FootBallMatch> matchs)
         {
@@ -159,25 +141,56 @@ namespace API.Areas.Bet.Controllers
                     availableBets.Add(new AvailableBet
                     {
                         competition = competition.name,
-                        matches = mtchs_comp,
-                        allowedTypePays = getTypePays()
+                        matches = mtchs_comp
                     });
                 }
-
             });
 
             return availableBets;
         }
 
-        private List<NameWinRate> getTypePays()
+
+        private List<string> getIdsFromTypeBets(List<TypeFootballBet> types)
         {
-            List<NameWinRate> tp = new List<NameWinRate>();
-            _context.TypePay.ToList().ForEach(type =>
+            List<string> typesRet = new List<string>();
+            types.ForEach(t => typesRet.Add(t.id.ToString()));
+
+            return typesRet;
+        }
+
+        private List<TypeFootballBet> availableTypeBets(List<FootballBet> bets, List<TypeFootballBet> alltypes)
+        {
+            List<TypeFootballBet> alltypesBk = new List<TypeFootballBet>(alltypes);
+
+            bets.ForEach(bet =>
             {
-                tp.Add(new NameWinRate(type));
+                _context.Entry(bet).Reference("type").Load();
+                List<TypeFootballBet> exists = alltypes.Where(t => t.id == bet.type.id).ToList();
+
+                if (exists.Count() != 0)
+                {
+                    alltypesBk.Remove(exists.First());
+                }
             });
 
-            return tp;
+
+            return alltypesBk;
+        }
+
+        private List<NameWinRate> loadTypeFootballBet()
+        {
+            List<NameWinRate> ret = new List<NameWinRate>();
+            _context.TypeFootballBet.ToList().ForEach(t => ret.Add(new NameWinRate(t)));
+
+            return ret;
+        }
+
+        private List<NameWinRate> loadTypePays()
+        {
+            List<NameWinRate> ret = new List<NameWinRate>();
+            _context.TypePay.ToList().ForEach(t => ret.Add(new NameWinRate(t)));
+
+            return ret;
         }
     }
 }

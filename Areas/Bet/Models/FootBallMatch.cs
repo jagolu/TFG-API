@@ -9,6 +9,6 @@ namespace API.Areas.Bet.Models
         public string match_name { get; set; }
         public DateTime date { get; set; }
         public string matchday { get; set; }
-        public List<NameWinRate> allowedTypeBets { get; set; }
+        public List<string> allowedTypeBets { get; set; }
     }
 }
