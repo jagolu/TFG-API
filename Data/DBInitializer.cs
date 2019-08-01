@@ -27,17 +27,17 @@ namespace API.Data
             var types = new TypeFootballBet[]
             {
                 new TypeFootballBet{name="FULLTIME_SCORE", winRate=0.55, winLoseCancel=0.1,
-                    description ="The players must guess the exact result of the match."},
+                    description ="Los participantes deberán acertar el resultado exacto al final del partido."},
                 new TypeFootballBet{name="FIRSTHALF_SCORE", winRate=0.6, winLoseCancel=0.12,
-                    description ="The players must guess the exact result of the first half of the match."},
+                    description ="Los participantes deberán acertar el resultado exacto del parcial de la primera parte."},
                 new TypeFootballBet{name="SECONDHALF_SCORE", winRate=0.6, winLoseCancel=0.12,
-                    description ="The players must guess the exact result of the second half of the match."},
+                    description ="Los participantes deberán acertar el resultado exacto del parcial de la segunda parte."},
                 new TypeFootballBet{name="FULLTIME_WINNER", winRate=0.35, winLoseCancel=0.13,
-                    description ="The players must guess the winner of the match."},
+                    description ="Los participantes deberán acertar el ganador al final del partido."},
                 new TypeFootballBet{name="FIRSTHALF_WINNER", winRate=0.4, winLoseCancel=0.15,
-                    description ="The players must guess the winner of the first half of the match."},
+                    description ="Los participantes deberán acertar el ganador del parcial de la primera parte."},
                 new TypeFootballBet{name="SECONDHALF_WINNER", winRate=0.4, winLoseCancel=0.15,
-                    description ="The players must guess the winner of the second half of the match."}
+                    description ="Los participantes deberán acertar el ganador del parcial de la segunda parte."}
             };
 
             types.Where(t => context.TypeFootballBet.All(type => type.name != t.name)).ToList().ForEach(tfb => context.Add(tfb));
@@ -48,11 +48,11 @@ namespace API.Data
             var types = new TypePay[]
             {
                 new TypePay{name=CheckBetType.getJackpotExact(), winRate=0, winLoseCancel=100,
-                    description ="It has a jackpot. The jackpot will be for the player who hits the exact result. If nobody wins, everybody will lose their coins."},
+                    description ="Tiene bote. El bote sera para el participante que acierte el resultado exacto. Si nadie acierta el resultado, todos perderán las monedas apostadas."},
                 new TypePay{name=CheckBetType.getJackpotCloser(), winRate=0, winLoseCancel=100,
-                    description ="It has a jackpot. The jackpot will be for the player or players who come closest to the exact result."},
+                    description ="Tiene bote. El bote será para el participante que se acerque más al resultado exacto."},
                 new TypePay{name=CheckBetType.getSoloExact(), winRate=1.5, winLoseCancel=0.3,
-                    description ="Every player bets alone and win a prize by a winrate, if the player does not win, the player will lose his coins."},
+                    description ="Cada participante participa el solo. Las apuestas tienen una cuota. Si el participante no gana perderá sus monedas."},
             };
 
             types.Where(t => context.TypePay.All(type => type.name != t.name)).ToList().ForEach(tp => context.Add(tp));
