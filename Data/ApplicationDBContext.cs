@@ -143,9 +143,6 @@ namespace API.Data
         private void onCreateFootballBet(ModelBuilder mb)
         {
             mb.Entity<FootballBet>()
-                .HasAlternateKey(fb => new { fb.matchdayId, fb.groupId });
-
-            mb.Entity<FootballBet>()
                 .HasOne(fb => fb.MatchDay)
                 .WithMany(md => md.bets)
                 .HasForeignKey(fb => fb.matchdayId)
