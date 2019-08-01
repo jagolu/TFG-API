@@ -168,9 +168,9 @@ namespace API.Areas.Home.Util
 
         private static New removeGroup(User user, Group group, bool isMaker)
         {
-            string title = isMaker ? "Has eliminado un grupo" : "El creado del grupo lo ha eliminado!";
+            string title = isMaker ? "Has eliminado un grupo" : "El creador del grupo lo ha eliminado!";
             string message = isMaker ? "Has eliminado el grupo  \"" + group.name + "\". Todos los miembros han salido del mismo y sus datos han sido borrados." :
-                "El creador del grupo \"" + group.name + "\" lo ha eliminado. Por lo tanto se te ha echado y se han eliminado todos los datos relacionados con él..";
+                "El creador del grupo \"" + group.name + "\" lo ha eliminado. Por lo tanto se te ha echado y se han eliminado todos los datos relacionados con él.";
 
             New n = new New
             {
