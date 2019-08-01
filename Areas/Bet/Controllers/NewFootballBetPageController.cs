@@ -36,9 +36,9 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest();
             }
-            if (!checkMaxBetAllowed(group))
+            if(!checkMaxBetAllowed(group))
             {
-                return BadRequest(new { error = "MaximunWeekBetsReached" });
+                return Ok(getMaxReachResponse());
             }
 
             try
@@ -191,6 +191,21 @@ namespace API.Areas.Bet.Controllers
             _context.TypePay.ToList().ForEach(t => ret.Add(new NameWinRate(t)));
 
             return ret;
+        }
+
+        private LaunchFootballBetManager getMaxReachResponse()
+        {
+            LaunchFootballBetManager res = new LaunchFootballBetManager();
+            res.typeBets = new List<NameWinRate>();
+            res.typePays = new List<NameWinRate>();
+            res.competitionMatches = new List<AvailableBet>();
+            res.competitionMatches.Add(new AvailableBet
+            {
+                matches = new List<FootBallMatch>(),
+                competition = "MaximunWeekBetsReached"
+            });
+
+            return res;
         }
     }
 }
