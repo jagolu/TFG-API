@@ -141,14 +141,14 @@ namespace API.Data
         {
             context.MatchDays.ToList().ForEach(md =>
             {
-                //md.date = md.date.AddDays(-(4*7));
-                md.status = "SCHEDULED";
-                //Random rnd = new Random();
+                md.date = md.date.AddDays(+(2 * 7));
+                //md.status = "SCHEDULED";
+                Random rnd = new Random();
                 //md.status = "FINISHED";
-                //md.firstHalfHomeGoals = rnd.Next(3);
-                //md.fullTimeHomeGoals = rnd.Next(3);
-                //md.fullTimeAwayGoals = rnd.Next(3);
-                //md.firstHalfAwayGoals = rnd.Next(3);
+                md.firstHalfHomeGoals = rnd.Next(3);
+                md.fullTimeHomeGoals = rnd.Next(3);
+                md.fullTimeAwayGoals = rnd.Next(3);
+                md.firstHalfAwayGoals = rnd.Next(3);
                 //context.SaveChanges();
             });
             context.SaveChanges();
