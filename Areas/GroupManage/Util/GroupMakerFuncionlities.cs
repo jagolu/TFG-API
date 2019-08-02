@@ -10,7 +10,7 @@ namespace API.Areas.GroupManage.Util
         {
             UserGroup ugCaller = new UserGroup();
 
-            if (!UserInGroup.checkUserInGroup(caller.id, ref group, groupName, ref ugCaller, _context))
+            if (!UserFromGroup.isOnIt(caller.id, ref group, groupName, ref ugCaller, _context))
             {
                 return false;
             }

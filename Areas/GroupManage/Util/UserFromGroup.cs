@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace API.Areas.GroupManage.Util
 {
-    public static class UserInGroup
+    public static class UserFromGroup
     {
-        public static bool checkUserInGroup(Guid callerId, ref Group group, string groupName, ref UserGroup ugCaller, ApplicationDBContext context, bool matterBlock = true)
+        public static bool isOnIt(Guid callerId, ref Group group, string groupName, ref UserGroup ugCaller, ApplicationDBContext context, bool matterBlock = true)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace API.Areas.GroupManage.Util
                 {
                     return false;
                 }
-                ugCaller = callerInGroup.First();
+                ugCaller = callerInGroup.First(); //The member on the group
 
                 return true;
             }

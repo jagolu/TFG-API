@@ -14,7 +14,7 @@ namespace API.Areas.GroupManage.Util
             {
                 UserGroup ugCaller = new UserGroup();
                 //The caller or the group doesnt exist, or the user is not a member of the group
-                if (!UserInGroup.checkUserInGroup(caller.id, ref group, groupName, ref ugCaller, context)) 
+                if (!UserFromGroup.isOnIt(caller.id, ref group, groupName, ref ugCaller, context)) 
                 {
                     return false;
                 }
@@ -26,7 +26,7 @@ namespace API.Areas.GroupManage.Util
 
                 var targetUsers = context.User.Where(u => u.publicId == publicUserId); //The target user
 
-                if(targetUsers.Count() != 1 || !UserInGroup.checkUserInGroup(targetUsers.First().id, ref group, groupName, ref ugTarget, context, false))
+                if(targetUsers.Count() != 1 || !UserFromGroup.isOnIt(targetUsers.First().id, ref group, groupName, ref ugTarget, context, false))
                 {
                     return false;
                 }

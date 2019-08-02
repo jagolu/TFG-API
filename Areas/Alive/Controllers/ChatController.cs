@@ -43,7 +43,7 @@ namespace API.Areas.Alive.Controllers
             Group group = new Group();
             UserGroup ugCaller = new UserGroup();
 
-            if(!UserInGroup.checkUserInGroup(user.id, ref group, groupName, ref ugCaller, _context))
+            if(!UserFromGroup.isOnIt(user.id, ref group, groupName, ref ugCaller, _context))
             {
                 return BadRequest();
             }

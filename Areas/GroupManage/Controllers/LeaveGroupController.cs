@@ -37,7 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             UserGroup ugCaller = new UserGroup();
             Group group = new Group();
 
-            if(!UserInGroup.checkUserInGroup(user.id, ref group, groupName, ref ugCaller, _context))
+            if(!UserFromGroup.isOnIt(user.id, ref group, groupName, ref ugCaller, _context))
             {
                 return BadRequest();
             }

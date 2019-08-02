@@ -10,7 +10,7 @@ namespace API.Areas.Bet.Util
     {
         public static bool check(User caller, ref Group group, string groupName, ref UserGroup ugCaller, ref FootballBet footballBet, string footballBetId, ApplicationDBContext _context, bool checkOnlyBet = true)
         {
-            if (!UserInGroup.checkUserInGroup(caller.id, ref group, groupName, ref ugCaller, _context))
+            if (!UserFromGroup.isOnIt(caller.id, ref group, groupName, ref ugCaller, _context))
             {
                 return false;
             }
