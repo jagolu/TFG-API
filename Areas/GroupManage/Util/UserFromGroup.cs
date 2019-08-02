@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.GroupManage.Util
@@ -11,15 +12,13 @@ namespace API.Areas.GroupManage.Util
         {
             try
             {
-                var groups = context.Group.Where(g => g.name == groupName); //The group
-
-                if(groups.Count() != 1)
+                List<Group> possibleGroups = context.Group.Where(g => g.name == groupName).ToList(); //The group
+                if(possibleGroups.Count() != 1)
                 {
                     return false;
                 }
-                group = groups.First();
 
-                var callerInGroup = context.UserGroup.Where(ug => ug.groupId == groups.First().id && ug.userId == callerId);
+                List<UserGroup> callerInGroup = context.UserGroup.Where(ug => ug.groupId == possibleGroups.First().id && ug.userId == callerId).ToList();
                 if(callerInGroup.Count() != 1)
                 {
                     return false;
@@ -28,7 +27,9 @@ namespace API.Areas.GroupManage.Util
                 {
                     return false;
                 }
+
                 ugCaller = callerInGroup.First(); //The member on the group
+                group = possibleGroups.First();
 
                 return true;
             }

@@ -19,16 +19,16 @@ namespace API.Areas.GroupManage.Util
             switch (type)
             {
                 case GroupMakerFuncionlity.MANAGE_PASSWORD:
-                    can = hasPermissionsManagePassword(ugCaller, group, newPassword, oldPassword, _context);
+                    can = justCheckMaker(ugCaller, _context) && hasPermissionsManagePassword(group, newPassword, oldPassword);
                     break;
                 case GroupMakerFuncionlity.REMOVE_GROUP:
-                    can = hasPermissionsRemoveGroup(ugCaller, caller, _context);
+                    can = justCheckMaker(ugCaller, _context);
                     break;
                 case GroupMakerFuncionlity.STARTCREATE_FOOTBALL_BET:
-                    can = hasPermissionsStartCreateFootballBet(ugCaller, group, _context);
+                    can = justCheckMaker(ugCaller, _context);
                     break;
                 case GroupMakerFuncionlity.MANAGEWEEKPAY:
-                    can = hasPermissionsManageWeeklyPay(ugCaller, _context);
+                    can = justCheckMaker(ugCaller, _context);
                     break;
                 default:
                     can = false;
@@ -38,18 +38,11 @@ namespace API.Areas.GroupManage.Util
             return can;
         }
 
-        private static bool hasPermissionsManagePassword(UserGroup ugCaller, Group group, string newPassword, string oldPassword, ApplicationDBContext _context)
+        private static bool hasPermissionsManagePassword(Group group, string newPassword, string oldPassword)
         {
-            Role role_groupMaker = RoleManager.getGroupMaker(_context);
-            bool role = ugCaller.role == role_groupMaker;
             bool newPass = newPassword != null && newPassword.Length > 0 && PasswordHasher.validPassword(newPassword);
             bool oldPass = oldPassword != null && oldPassword.Length > 0;
             bool hasPassword = group.password != null;
-
-            if (!role)
-            {
-                return false;
-            }
 
             if ((!oldPass || !hasPassword) && (!newPass || oldPass || hasPassword))
             {
@@ -59,41 +52,11 @@ namespace API.Areas.GroupManage.Util
             return true;
         }
 
-        private static bool hasPermissionsRemoveGroup(UserGroup ugCaller, User caller, ApplicationDBContext _context)
+        private static bool justCheckMaker(UserGroup caller, ApplicationDBContext dbContext)
         {
-            _context.Entry(ugCaller).Reference("role").Load();
-            Role role_groupMaker = RoleManager.getGroupMaker(_context);
-            Role caller_role = ugCaller.role;
+            Role groupMaker = RoleManager.getGroupMaker(dbContext);
 
-            if (role_groupMaker != caller_role)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool hasPermissionsStartCreateFootballBet(UserGroup ugCaller, Group group, ApplicationDBContext _context)
-        {
-            _context.Entry(ugCaller).Reference("role").Load();
-
-            Role groupMaker_role = RoleManager.getGroupMaker(_context);
-            Role groupAdmin_role = RoleManager.getGroupAdmin(_context);
-
-
-            if (ugCaller.role != groupMaker_role && ugCaller.role != groupAdmin_role)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool hasPermissionsManageWeeklyPay(UserGroup ugCaller, ApplicationDBContext _context)
-        {
-            Role groupMaker_role = RoleManager.getGroupMaker(_context);
-
-            return isMaker(ugCaller, groupMaker_role, _context);
+            return isMaker(caller, groupMaker, dbContext);
         }
 
         private static bool isMaker(UserGroup ugCaller, Role maker, ApplicationDBContext _context)

@@ -2,6 +2,7 @@
 using API.Data.Models;
 using API.Util;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.GroupManage.Util
@@ -18,15 +19,14 @@ namespace API.Areas.GroupManage.Util
                 {
                     return false;
                 }
-
                 if (ugCaller.blocked)
                 {
                     return false;
                 }
 
-                var targetUsers = context.User.Where(u => u.publicId == publicUserId); //The target user
+                List<User> possibleTargets = context.User.Where(u => u.publicId == publicUserId).ToList(); //The target user
 
-                if(targetUsers.Count() != 1 || !UserFromGroup.isOnIt(targetUsers.First().id, ref group, groupName, ref ugTarget, context, false))
+                if(possibleTargets.Count() != 1 || !UserFromGroup.isOnIt(possibleTargets.First().id, ref group, groupName, ref ugTarget, context, false))
                 {
                     return false;
                 }
@@ -34,20 +34,20 @@ namespace API.Areas.GroupManage.Util
                 context.Entry(ugCaller).Reference("role").Load();
                 context.Entry(ugTarget).Reference("role").Load();
                 context.Entry(ugTarget).Reference("blockedBy").Load();
-                string ugCallerRole = ugCaller.role.name;
-                string targetUserGroupRole = ugTarget.role.name;
+                Role callerRole = ugCaller.role;
+                Role targetRole = ugTarget.role;
 
                 bool can;
                 switch (type)
                 {
                     case GroupAdminFuncionlity.MAKE_ADMIN:
-                        can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, ugTarget.blocked, context);
+                        can = hasPermissionsMakeAdmin(callerRole, targetRole, make_unmake, ugTarget.blocked, context);
                         break;
                     case GroupAdminFuncionlity.REMOVE_USER:
-                        can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, ugTarget.blocked, ugTarget.blocked ? ugTarget.blockedBy.name : "", context);
+                        can = hasPermissionsKickUser(callerRole, targetRole, ugTarget.blocked, ugTarget.blocked ? ugTarget.blockedBy : new Role(), context);
                         break;
                     case GroupAdminFuncionlity.BLOCK_USER:
-                        can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, ugTarget, make_unmake, context);
+                        can = hasPermissionsBlockUser(callerRole, targetRole, ugTarget, make_unmake, context);
                         break;
                     default:
                         can = false;
@@ -62,12 +62,12 @@ namespace API.Areas.GroupManage.Util
             }
         }
 
-        private static bool hasPermissionsMakeAdmin(string callerRole, string targetRole, bool makeAdmin, bool blocked, ApplicationDBContext context)
+        private static bool hasPermissionsMakeAdmin(Role callerRole, Role actualTargetRole, bool makeAdmin, bool blocked, ApplicationDBContext context)
         {
-            string role_groupMaker = RoleManager.getGroupMaker(context).name;
-            string nextRole = makeAdmin ? RoleManager.getGroupNormal(context).name : RoleManager.getGroupAdmin(context).name;
+            Role groupMaker = RoleManager.getGroupMaker(context); 
+            Role nextRole = makeAdmin ? RoleManager.getGroupAdmin(context) : RoleManager.getGroupNormal(context);
 
-            if (targetRole != nextRole || callerRole != role_groupMaker || blocked)
+            if (actualTargetRole == nextRole || callerRole != groupMaker || blocked)
             {
                 return false;
             }
@@ -75,18 +75,18 @@ namespace API.Areas.GroupManage.Util
             return true;
         }
 
-        private static bool hasPermissionsKickUser(string callerRole, string targetRole, bool blocked, string blockedBy, ApplicationDBContext context)
+        private static bool hasPermissionsKickUser(Role callerRole, Role targetRole, bool blocked, Role blockedBy, ApplicationDBContext context)
         {
-            string role_groupMaker = RoleManager.getGroupMaker(context).name;
-            string role_groupAdmin = RoleManager.getGroupAdmin(context).name;
-            string role_normal = RoleManager.getGroupNormal(context).name;
+            Role groupMaker = RoleManager.getGroupMaker(context);
+            Role groupAdmin = RoleManager.getGroupAdmin(context);
+            Role groupNormal = RoleManager.getGroupNormal(context);
 
-            if(blocked && blockedBy == role_groupMaker && callerRole != role_groupMaker)
+            if(blocked && blockedBy == groupMaker && callerRole != groupMaker)
             {
                 return false;
             }
 
-            if (callerRole != role_groupMaker && (callerRole != role_groupAdmin || targetRole != role_normal))
+            if (callerRole != groupMaker && (callerRole != groupAdmin || targetRole != groupNormal))
             {
                 return false;
             }
@@ -94,31 +94,26 @@ namespace API.Areas.GroupManage.Util
             return true;
         }
 
-        private static bool hasPermissionsBlockUser(string callerRole, string targetRole, UserGroup targetUser, bool make_unmake,ApplicationDBContext context)
+        private static bool hasPermissionsBlockUser(Role callerRole, Role targetRole, UserGroup targetUser, bool make_unmake, ApplicationDBContext context)
         {
             context.Entry(targetUser).Reference("blockedBy").Load();
             bool alreadyBlocked = targetUser.blocked;
-            string blockByRole = alreadyBlocked ? targetUser.blockedBy.name : null;
-            string role_groupMaker = RoleManager.getGroupMaker(context).name;
-            string role_normal = RoleManager.getGroupNormal(context).name;
+            Role blockBy = alreadyBlocked ? targetUser.blockedBy : new Role();
+            Role groupMaker = RoleManager.getGroupMaker(context);
+            Role groupNormal = RoleManager.getGroupNormal(context);
 
-            if(callerRole == role_normal) return false;
+            if(callerRole == groupNormal) return false;
 
-            if (!make_unmake)
+            if ((!make_unmake) && (!alreadyBlocked || (blockBy==groupMaker && callerRole != groupMaker)))
             {
-                if (!alreadyBlocked || (blockByRole==role_groupMaker && callerRole != role_groupMaker)) return false;
-
-                return true;
+                return false;
             }
-            else
+            else if (make_unmake && (alreadyBlocked || targetRole == groupMaker || callerRole == targetRole))
             {
-                if (alreadyBlocked || targetRole == role_groupMaker || callerRole == targetRole)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
+
+            return true;
         }
     }
 
