@@ -37,7 +37,7 @@ namespace API.Areas.GroupManage.Controllers
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 
-            if(!GroupUserManager.CheckUserGroup(user, ref group, order.groupName, ref targetUser, order.publicId, _context, TypeCheckGroupUser.MAKE_ADMIN, order.make_unmake))
+            if(!GroupAdminFuncionlities.checkFuncionality(user, ref group, order.groupName, ref targetUser, order.publicId, _context, GroupAdminFuncionlity.MAKE_ADMIN, order.make_unmake))
             {
                 return BadRequest();
             }

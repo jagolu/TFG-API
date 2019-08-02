@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace API.Areas.GroupManage.Util
 {
-    public static class GroupUserManager
+    public static class GroupAdminFuncionlities
     {
-        public static bool CheckUserGroup(User caller, ref Group group, string groupName, ref UserGroup ugTarget, string publicUserId, ApplicationDBContext context, TypeCheckGroupUser type, bool make_unmake)
+        public static bool checkFuncionality(User caller, ref Group group, string groupName, ref UserGroup ugTarget, string publicUserId, ApplicationDBContext context, GroupAdminFuncionlity type, bool make_unmake)
         {
             try
             {
@@ -40,13 +40,13 @@ namespace API.Areas.GroupManage.Util
                 bool can;
                 switch (type)
                 {
-                    case TypeCheckGroupUser.MAKE_ADMIN:
+                    case GroupAdminFuncionlity.MAKE_ADMIN:
                         can = hasPermissionsMakeAdmin(ugCallerRole, targetUserGroupRole, make_unmake, ugTarget.blocked, context);
                         break;
-                    case TypeCheckGroupUser.REMOVE_USER:
+                    case GroupAdminFuncionlity.REMOVE_USER:
                         can = hasPermissionsKickUser(ugCallerRole, targetUserGroupRole, ugTarget.blocked, ugTarget.blocked ? ugTarget.blockedBy.name : "", context);
                         break;
-                    case TypeCheckGroupUser.BLOCK_USER:
+                    case GroupAdminFuncionlity.BLOCK_USER:
                         can = hasPermissionsBlockUser(ugCallerRole, targetUserGroupRole, ugTarget, make_unmake, context);
                         break;
                     default:
@@ -122,7 +122,7 @@ namespace API.Areas.GroupManage.Util
         }
     }
 
-    public enum TypeCheckGroupUser
+    public enum GroupAdminFuncionlity
     {
         MAKE_ADMIN = 1,
         REMOVE_USER = 2,
