@@ -45,8 +45,6 @@ namespace API.Areas.Alive.Util
                     data.role = ugCaller.role.name;
                     data.time = DateTime.Now;
 
-                    this.check200GroupMessages(dbContext, group);
-
                     dbContext.Add(new GroupChatMessage
                     {
                         Group = group,
@@ -64,15 +62,6 @@ namespace API.Areas.Alive.Util
             catch(Exception)
             {
                 return;
-            }
-        }
-
-        private void check200GroupMessages(ApplicationDBContext context, Group group)
-        {
-            if(context.GroupChatMessage.Where(c => c.Group == group).Count() > 199)
-            {
-                GroupChatMessage msgDelete = context.GroupChatMessage.ToList().OrderBy(c => c.time).First();
-                context.Remove(msgDelete);
             }
         }
     }

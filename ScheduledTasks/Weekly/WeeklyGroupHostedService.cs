@@ -63,6 +63,7 @@ namespace API.ScheduledTasks.Weekly
                     RemoveSessionTokens.remove(dbContext);
                     PayGroups.pay(dbContext, hub);
                     FullyRemoveUsers.remove(dbContext);
+                    CleanChats.clean(dbContext);
                 }
             }
             catch (Exception)
