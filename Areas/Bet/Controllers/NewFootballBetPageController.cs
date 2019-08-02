@@ -32,7 +32,7 @@ namespace API.Areas.Bet.Controllers
             if (!caller.open) return BadRequest(new { error = "YoureBanned" });
             if (AdminPolicy.isAdmin(caller, _context)) return BadRequest("notAllowed");
             Group group = new Group();
-            if(!CallerInGroup.CheckUserCapabilities(caller, ref group, groupName, TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET, _context))
+            if(!GroupMakerFuncionlities.checkFuncionlity(caller, ref group, groupName, GroupMakerFuncionlity.STARTCREATE_FOOTBALL_BET, _context))
             {
                 return BadRequest();
             }

@@ -33,7 +33,7 @@ namespace API.Areas.GroupManage.Controllers
             if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             Group group = new Group();
 
-            if (!CallerInGroup.CheckUserCapabilities(user, ref group, order.name, TypeCheckCapabilites.REMOVE_GROUP, _context))
+            if (!GroupMakerFuncionlities.checkFuncionlity(user, ref group, order.name, GroupMakerFuncionlity.REMOVE_GROUP, _context))
             {
                 return BadRequest();
             }

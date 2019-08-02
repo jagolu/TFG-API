@@ -4,9 +4,9 @@ using API.Util;
 
 namespace API.Areas.GroupManage.Util
 {
-    public static class CallerInGroup
+    public static class GroupMakerFuncionlities
     {
-        public static bool CheckUserCapabilities(User caller, ref Group group, string groupName, TypeCheckCapabilites type, ApplicationDBContext _context, string newPassword = null, string oldPassword = null)
+        public static bool checkFuncionlity(User caller, ref Group group, string groupName, GroupMakerFuncionlity type, ApplicationDBContext _context, string newPassword = null, string oldPassword = null)
         {
             UserGroup ugCaller = new UserGroup();
 
@@ -18,16 +18,16 @@ namespace API.Areas.GroupManage.Util
             bool can;
             switch (type)
             {
-                case TypeCheckCapabilites.MANAGE_PASSWORD:
+                case GroupMakerFuncionlity.MANAGE_PASSWORD:
                     can = hasPermissionsManagePassword(ugCaller, group, newPassword, oldPassword, _context);
                     break;
-                case TypeCheckCapabilites.REMOVE_GROUP:
+                case GroupMakerFuncionlity.REMOVE_GROUP:
                     can = hasPermissionsRemoveGroup(ugCaller, caller, _context);
                     break;
-                case TypeCheckCapabilites.STARTCREATE_FOOTBALL_BET:
+                case GroupMakerFuncionlity.STARTCREATE_FOOTBALL_BET:
                     can = hasPermissionsStartCreateFootballBet(ugCaller, group, _context);
                     break;
-                case TypeCheckCapabilites.MANAGEWEEKPAY:
+                case GroupMakerFuncionlity.MANAGEWEEKPAY:
                     can = hasPermissionsManageWeeklyPay(ugCaller, _context);
                     break;
                 default:
@@ -109,7 +109,7 @@ namespace API.Areas.GroupManage.Util
 
 
 
-    public enum TypeCheckCapabilites
+    public enum GroupMakerFuncionlity
     {
         MANAGE_PASSWORD = 1,
         REMOVE_GROUP = 2,
