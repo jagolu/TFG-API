@@ -34,7 +34,7 @@ namespace API.Areas.Alive.Controllers
                 List<Notifications> nots = user.notifications.Where(n => n.id.ToString() == id).ToList();
                 if(nots.Count() != 1)
                 {
-                    return BadRequest();
+                    return Ok();
                 }
                 try
                 {
