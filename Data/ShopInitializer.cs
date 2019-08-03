@@ -1,9 +1,7 @@
-﻿using API.Areas.Shop.Models;
-using API.Data.Models;
+﻿using API.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Data
 {
