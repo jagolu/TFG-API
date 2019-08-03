@@ -2,7 +2,8 @@
 {
     public class CoupleUserConnectionId
     {
-        public string username { get; set; }
+        public string publicUserId { get; set; }
         public string connectionid { get; set; }
+        public string username { get; set; }
     }
 }

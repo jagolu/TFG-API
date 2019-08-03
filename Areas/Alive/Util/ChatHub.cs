@@ -31,16 +31,24 @@ namespace API.Areas.Alive.Util
                     ApplicationDBContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     Group group = new Group();
                     Role roleUser = new Role();
+                    bool isHello = isHelloMessage(data);
+                    
                     
                     if (data.message.Length > 128) return;
-                    if (!checkExist(data.group, data.publicUserId, ref group, ref roleUser, dbContext)) return;
+                    if (!isHello && !checkExist(data.group, data.publicUserId, ref group, ref roleUser, dbContext)) return;
 
-                    updateData(ref data, roleUser);
-                    saveMessage(data, group, roleUser, dbContext);
-                    addId(group.name, data.username);
+                    if(!isHello) updateData(ref data, roleUser);
+                    if (!isHello) saveMessage(data, group, roleUser, dbContext);
+                    //addId(data.group, data.publicUserId, data.username);
 
+                    //IReadOnlyList<string> ids = getNotValidIds(data.group, dbContext);
 
-                    await Clients.All.SendAsync(groupSocketId+data.group, data);
+                    if (isHello) {
+                        data.username = "";
+                        await Clients.Others.SendAsync(groupSocketId + data.group, data);
+                    }
+                    else await Clients.All.SendAsync(groupSocketId + data.group, data);
+                    //else await Clients.AllExcept(ids).SendAsync(groupSocketId + data.group, data);
                 }
             }
             catch(Exception)
@@ -51,7 +59,7 @@ namespace API.Areas.Alive.Util
 
         private bool checkExist(string group, string publicUserId, ref Group groupRet, ref Role roleRet, ApplicationDBContext dbContext)
         {
-            List<UserGroup> uExist = dbContext.UserGroup.Where(ug => ug.Group.name == group && ug.User.publicId == publicUserId).ToList();
+            List<UserGroup> uExist = dbContext.UserGroup.Where(ug => ug.Group.name == group && ug.User.publicId == publicUserId && !ug.blocked).ToList();
 
             if (uExist.Count() != 1)
             {
@@ -88,23 +96,15 @@ namespace API.Areas.Alive.Util
             dbContext.SaveChanges();
         }
 
-        public void addId(string groupName, string username)
+        private void addId(string groupName, string publicUserId, string username)
         {
             List<ChatIdLog> mightLog = logUsers.Where(log => log.groupName == groupName).ToList();
-            string connectionId = "";
-
-            try
-            {
-                connectionId = Context.ConnectionId;
-            }catch(Exception e)
-            {
-                return;
-            }
+            string connectionId = Context.ConnectionId;
 
             if(mightLog.Count() != 1)
             {
                 List<CoupleUserConnectionId> newIds = new List<CoupleUserConnectionId>();
-                newIds.Add(new CoupleUserConnectionId { username = username, connectionid = connectionId});
+                newIds.Add(new CoupleUserConnectionId { publicUserId = publicUserId, connectionid = connectionId, username = username});
 
                 logUsers.Add(new ChatIdLog
                 {
@@ -114,22 +114,57 @@ namespace API.Areas.Alive.Util
             }
             else
             {
+                int firstIndex = logUsers.IndexOf(mightLog.First());
                 ChatIdLog groupLog = mightLog.First();
-                List<CoupleUserConnectionId> posibleUsers = groupLog.users.Where(u => u.username == username).ToList();
+                List<CoupleUserConnectionId> posibleUsers = groupLog.users.Where(u => u.publicUserId == publicUserId).ToList();
 
                 if (posibleUsers.Count() != 1)
                 {
-                    posibleUsers.Add(new CoupleUserConnectionId
+                    logUsers.ElementAt(firstIndex).users.Add(new CoupleUserConnectionId
                     {
                         connectionid = connectionId,
+                        publicUserId = publicUserId,
                         username = username
                     });
                 }
                 else
                 {
-                    posibleUsers.First().connectionid = connectionId;
+                    int secondIndex = posibleUsers.IndexOf(posibleUsers.First());
+                    logUsers.ElementAt(firstIndex).users.ElementAt(secondIndex).connectionid = connectionId;
                 }
             }
+        }
+
+        private List<string> getNotValidIds(string groupname, ApplicationDBContext dbContext)
+        {
+            List<string> users = new List<string>();
+            List<CoupleUserConnectionId> ids = getGroupId(groupname);
+
+
+            ids.ForEach(id =>
+            {
+                bool exist = dbContext.UserGroup.Where(ug => ug.Group.name == groupname && ug.User.publicId == id.publicUserId && !ug.blocked).Count() == 1;
+
+                if (!exist) users.Add(id.connectionid);
+            });
+
+            return users;
+        }
+
+        private List<CoupleUserConnectionId> getGroupId(string groupName)
+        {
+            List<CoupleUserConnectionId> publicIds = new List<CoupleUserConnectionId>();
+            logUsers.Where(l => l.groupName == groupName).First().users.ForEach(u =>
+            {
+                publicIds.Add(u);
+            });
+
+            return publicIds;
+        }
+
+        public bool isHelloMessage(ChatMessage msg)
+        {
+            return msg.role == "Conexión" && msg.message.Contains("está conectado.");
         }
     }
 }
