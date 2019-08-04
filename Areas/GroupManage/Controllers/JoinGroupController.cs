@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using API.Areas.GroupManage.Models;
+using API.Areas.GroupManage.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -44,7 +46,22 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return BadRequest(new { error = "IncorrectPasswordJoiningGroup" });
             }
-            if (!group.open) return BadRequest(new { error = "GroupBanned" });
+            if (!group.open)
+            {
+                return BadRequest(new { error = "GroupBanned" });
+            }
+            interactionType type = checkInteractions(user, group);
+            if(type != interactionType.NONE)
+            {
+                if(type == interactionType.KICKED)
+                {
+                    return BadRequest(new { error = "YouwereKickedGroup" });
+                }
+                else
+                {
+                    return BadRequest(new { error = "YouhasleavedGroup" });
+                }
+            }
 
             try
             {
@@ -102,6 +119,31 @@ namespace API.Areas.GroupManage.Controllers
                 return false;
             }
             return true;
+        }
+
+        private interactionType checkInteractions(User user, Group group)
+        {
+            List<GroupInteraction> interactions = _context.GroupInteractions.Where(ginteraction => ginteraction.userId == user.id && ginteraction.groupId == group.id).ToList();
+
+            if(interactions.Count() == 0)
+            {
+                return interactionType.NONE;
+            }
+
+            GroupInteraction gi = interactions.First();
+            if(gi.dateLeave.AddDays(7) < DateTime.Now)
+            {
+                return interactionType.NONE;
+            }
+
+            if (gi.kicked)
+            {
+                return interactionType.KICKED;
+            }
+            else
+            {
+                return interactionType.LEAVED;
+            }
         }
     }
 }

@@ -50,9 +50,9 @@ namespace API.Areas.GroupManage.Controllers
                 return BadRequest(new { error = "LimitationCreateGroup" });
             }
 
-            if(!canCreateAnewSpecificGroup(user)) //The user cant create more groups
+            if (!canCreateAGroup(user)) //The user cant create more groups right now
             {
-                return BadRequest(new { error = "LimitationSpecificCreateGroup" });
+                return BadRequest(new { error = "LimitationTimeCreateGroup" });
             }
 
             try
@@ -66,6 +66,8 @@ namespace API.Areas.GroupManage.Controllers
                     dateRole = DateTime.Today,
                     coins = newGroup.weeklyPay
                 };
+
+                user.lastTimeCreateGroup = DateTime.Now;
 
                 _context.Add(newGroup);
                 _context.Add(userG);
@@ -83,24 +85,17 @@ namespace API.Areas.GroupManage.Controllers
             }
         }
 
-        /**
-         * Check if an user can create a new specific group
-         * @param {bool} type The type of the new group to create
-         * @user The user trying to create the new group
-         * @return true if the user can create the new group, false otherwise
-         */
-        private bool canCreateAnewSpecificGroup(User user)
+        private bool canCreateAGroup(User user)
         {
-            //int userGroups = 0;
-            //int limitationGroups = 0;
+            if (user.lastTimeCreateGroup == null)
+            {
+                return true;
+            }
+            if (user.lastTimeCreateGroup.Value.AddDays(7) > DateTime.Now)
+            {
+                return false;
+            }
 
-            //userGroups = _context.UserGroup.Where(ug =>
-            //    ug.userId == user.id &&
-            //    ug.role.name == "GROUP_MAKER").Count();
-
-            //limitationGroups = user.createGroup;
-
-            //return userGroups < limitationGroups; //The user cant create a new group of the specificated type
             return true;
         }
 

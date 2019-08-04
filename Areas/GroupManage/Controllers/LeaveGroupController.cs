@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.GroupManage.Controllers
@@ -46,6 +48,7 @@ namespace API.Areas.GroupManage.Controllers
             {
                 return StatusCode(500);
             }
+            InteractionManager.manageInteraction(user, group, interactionType.LEAVED, _context);
 
             using (var scope = scopeFactory.CreateScope())
             {
