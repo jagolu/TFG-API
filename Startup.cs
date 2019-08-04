@@ -104,7 +104,6 @@ namespace API
             SendNotification.Initialize(Configuration);
             KickChatNotification.Initialize(Configuration);
             DBInitializer.Initialize(context);
-            ShopInitializer.Initialize(context);
 
             app.UseSpa(spa => {
                 spa.Options.SourcePath = "webInterface";
