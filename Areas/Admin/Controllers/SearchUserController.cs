@@ -24,13 +24,14 @@ namespace API.Areas.Admin.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("GetAllUsers")]
-        public List<UserSearchInfo> getAllGroups()
+        public List<UserSearchInfo> getAllUsers()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!AdminPolicy.isAdmin(user, _context)) return new List<UserSearchInfo>();
-            List<UserSearchInfo> groupRet = new List<UserSearchInfo>();
+            List<UserSearchInfo> userRet = new List<UserSearchInfo>();
+            Role adminRole = RoleManager.getAdmin(_context);
 
-            return addUsersToList(_context.User.Take(25).ToList());
+            return addUsersToList(_context.User.Where(u => u.role != adminRole).Take(25).ToList());
         }
 
 
@@ -48,9 +49,11 @@ namespace API.Areas.Admin.Controllers
                 return new List<UserSearchInfo>();
             }
 
+            Role adminRole = RoleManager.getAdmin(_context);
             List<User> userWithSameMail = _context.User.Where(u =>
-                u.email.ToLower().Contains(toFind.ToLower().Trim()) ||
-                u.nickname.ToLower().Contains(toFind.ToLower().Trim())
+                (u.email.ToLower().Contains(toFind.ToLower().Trim()) ||
+                u.nickname.ToLower().Contains(toFind.ToLower().Trim())) &&
+                u.role != adminRole
             ).ToList();
 
             return addUsersToList(userWithSameMail);
@@ -65,36 +68,32 @@ namespace API.Areas.Admin.Controllers
             users.ForEach(user =>
             {
                 _context.Entry(user).Collection("groups").Load();
-                _context.Entry(user).Reference("role").Load();
                 List<UserInGroup> uGroups = new List<UserInGroup>();
                 Role admin = RoleManager.getAdmin(_context);
 
-                if (user.role != admin)
+                _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
                 {
-                    _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
+                    _context.Entry(g).Reference("Group").Load();
+                    _context.Entry(g).Reference("role").Load();
+                    uGroups.Add(new UserInGroup
                     {
-                        _context.Entry(g).Reference("Group").Load();
-                        _context.Entry(g).Reference("role").Load();
-                        uGroups.Add(new UserInGroup
-                        {
-                            groupName = g.Group.name,
-                            role = g.role.name,
-                            blocked = g.blocked,
-                            joinTime = g.dateJoin,
-                            roleTime = g.dateRole
-                        });
+                        groupName = g.Group.name,
+                        role = g.role.name,
+                        blocked = g.blocked,
+                        joinTime = g.dateJoin,
+                        roleTime = g.dateRole
                     });
+                });
 
-                    usersRet.Add(new UserSearchInfo
-                    {
-                        publicUserId = user.publicId,
-                        email = user.email,
-                        username = user.nickname,
-                        open = user.open,
-                        dateSignUp = user.dateSignUp,
-                        groups = uGroups
-                    });
-                }
+                usersRet.Add(new UserSearchInfo
+                {
+                    publicUserId = user.publicId,
+                    email = user.email,
+                    username = user.nickname,
+                    open = user.open,
+                    dateSignUp = user.dateSignUp,
+                    groups = uGroups
+                });
             });
 
             return usersRet;

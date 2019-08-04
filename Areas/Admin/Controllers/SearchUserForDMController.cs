@@ -34,9 +34,11 @@ namespace API.Areas.Admin.Controllers
                 return new List<SearchUserDM>();
             }
 
+            Role adminRole = RoleManager.getAdmin(_context);
             List<User> userWithSameMail = _context.User.Where(u =>
-                u.email.ToLower().Contains(findTo.ToLower().Trim()) ||
-                u.nickname.ToLower().Contains(findTo.ToLower().Trim())
+                (u.email.ToLower().Contains(findTo.ToLower().Trim()) ||
+                u.nickname.ToLower().Contains(findTo.ToLower().Trim())) &&
+                u.role != adminRole
             ).ToList();
 
             List<SearchUserDM> usersRet = new List<SearchUserDM>();
