@@ -26,6 +26,7 @@ namespace API.Data
         public DbSet<DirectMessageTitle> DirectMessagesTitle { get; set; }
         public DbSet<DirectMessageMessages> DirectMessagesMessages { get; set; }
         public DbSet<Notifications> Notifications { get; set; }
+        public DbSet<GroupInteraction> GroupInteractions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder mb)
@@ -42,6 +43,7 @@ namespace API.Data
             onCreateDirectMessagesTitle(mb);
             onCreateDirectMessagesMessages(mb);
             onCreateNotifications(mb);
+            onCreateGroupInteraction(mb);
         }
 
         private void onCreateUser(ModelBuilder mb)
@@ -214,5 +216,24 @@ namespace API.Data
                 .HasForeignKey(n => n.Userid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+
+        private void onCreateGroupInteraction(ModelBuilder mb)
+        {
+            mb.Entity<GroupInteraction>()
+                .HasKey(ug => new { ug.userId, ug.groupId });
+
+            mb.Entity<GroupInteraction>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.groupInteractions)
+                .HasForeignKey(ug => ug.userId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            mb.Entity<GroupInteraction>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.userInteractions)
+                .HasForeignKey(ug => ug.groupId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+
     }
 }

@@ -46,16 +46,16 @@ namespace API.Data.Models
         [Required]
         public Role role { get; set; }
 
-        [Required]
-        public int createGroup { get; set; } = 1;
+        public DateTime? lastTimeCreateGroup { get; set; }
 
         [Required]
-        public int maxGroupJoins { get; set; } = 2;
+        public int maxGroupJoins { get; set; } = 10;
 
         public DateTime? dateDeleted { get; set; }
 
         public ICollection<UserToken> tokens { get; set; } = new HashSet<UserToken>();
         public ICollection<UserGroup> groups { get; set; } = new HashSet<UserGroup>();
+        public ICollection<GroupInteraction> groupInteractions { get; set; } = new HashSet<GroupInteraction>();
         public ICollection<UserFootballBet> footballBets { get; set; } = new HashSet<UserFootballBet>();
         public ICollection<New> news { get; set; } = new HashSet<New>();
         public ICollection<DirectMessageTitle> directMessages { get; set; } = new HashSet<DirectMessageTitle>();

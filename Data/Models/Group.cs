@@ -34,6 +34,7 @@ namespace API.Data.Models
         public int weeklyPay { get; set; } = 500;
 
         public ICollection<UserGroup> users { get; set; } = new HashSet<UserGroup>();
+        public ICollection<GroupInteraction> userInteractions { get; set; } = new HashSet<GroupInteraction>();
         public ICollection<FootballBet> bets { get; set; } = new HashSet<FootballBet>();
         public ICollection<GroupChatMessage> chatMessages { get; set; } = new HashSet<GroupChatMessage>();
         public ICollection<New> news { get; set; } = new HashSet<New>();
