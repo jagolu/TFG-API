@@ -102,6 +102,7 @@ namespace API
             TokenGenerator.Initialize(Configuration);
             PasswordHasher.Initialize(Configuration);
             SendNotification.Initialize(Configuration);
+            KickChatNotification.Initialize(Configuration);
             DBInitializer.Initialize(context);
             ShopInitializer.Initialize(context);
 

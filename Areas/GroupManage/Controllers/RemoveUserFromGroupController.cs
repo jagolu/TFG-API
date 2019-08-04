@@ -20,13 +20,15 @@ namespace API.Areas.GroupManage.Controllers
     {
         private ApplicationDBContext _context;
         private readonly IServiceScopeFactory scopeFactory;
-        private IHubContext<NotificationHub> _hub;
+        private IHubContext<NotificationHub> _notificationHub;
+        private IHubContext<ChatHub> _chatHub;
 
-        public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
+        public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> notificationHub, IHubContext<ChatHub> chatHub)
         {
             _context = context;
             scopeFactory = sf;
-            _hub = hub;
+            _notificationHub = notificationHub;
+            _chatHub = chatHub;
         }
 
         [HttpPost]
@@ -51,7 +53,8 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Entry(targetUser).Reference("User").Load();
                 User sendNew = targetUser.User;
                 Guid targetUserid = targetUser.User.id; 
-                await QuitUserFromGroup.quitUser(targetUser, _context, _hub);
+                await QuitUserFromGroup.quitUser(targetUser, _context, _notificationHub);
+                await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicId, _chatHub);
                 InteractionManager.manageInteraction(targetUser.User, group, interactionType.KICKED, _context);
 
                 using (var scope = scopeFactory.CreateScope())
@@ -63,7 +66,7 @@ namespace API.Areas.GroupManage.Controllers
 
                     Home.Util.GroupNew.launch(sendNew, group, null, Home.Models.TypeGroupNew.KICK_USER_USER, false, dbContext);
                     Home.Util.GroupNew.launch(sendNew, group, null, Home.Models.TypeGroupNew.KICK_USER_GROUP, false, dbContext);
-                    await SendNotification.send(_hub, group.name, recv, NotificationType.KICKED_GROUP, dbContext);
+                    await SendNotification.send(_notificationHub, group.name, recv, NotificationType.KICKED_GROUP, dbContext);
 
                     return Ok(GroupPageManager.GetPage(user, group, dbContext));
                 }

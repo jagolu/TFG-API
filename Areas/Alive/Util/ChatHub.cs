@@ -14,7 +14,6 @@ namespace API.Areas.Alive.Util
     {
         private readonly IServiceScopeFactory scopeFactory;
         private readonly string groupSocketId;
-        private static List<ChatIdLog> logUsers = new List<ChatIdLog>();
 
         public ChatHub(IServiceScopeFactory sf, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
@@ -39,16 +38,12 @@ namespace API.Areas.Alive.Util
 
                     if(!isHello) updateData(ref data, roleUser);
                     if (!isHello) saveMessage(data, group, roleUser, dbContext);
-                    //addId(data.group, data.publicUserId, data.username);
-
-                    //IReadOnlyList<string> ids = getNotValidIds(data.group, dbContext);
 
                     if (isHello) {
                         data.username = "";
                         await Clients.Others.SendAsync(groupSocketId + data.group, data);
                     }
                     else await Clients.All.SendAsync(groupSocketId + data.group, data);
-                    //else await Clients.AllExcept(ids).SendAsync(groupSocketId + data.group, data);
                 }
             }
             catch(Exception)
@@ -94,72 +89,6 @@ namespace API.Areas.Alive.Util
                 time = data.time
             });
             dbContext.SaveChanges();
-        }
-
-        private void addId(string groupName, string publicUserId, string username)
-        {
-            List<ChatIdLog> mightLog = logUsers.Where(log => log.groupName == groupName).ToList();
-            string connectionId = Context.ConnectionId;
-
-            if(mightLog.Count() != 1)
-            {
-                List<CoupleUserConnectionId> newIds = new List<CoupleUserConnectionId>();
-                newIds.Add(new CoupleUserConnectionId { publicUserId = publicUserId, connectionid = connectionId, username = username});
-
-                logUsers.Add(new ChatIdLog
-                {
-                    groupName = groupName,
-                    users = newIds
-                });
-            }
-            else
-            {
-                int firstIndex = logUsers.IndexOf(mightLog.First());
-                ChatIdLog groupLog = mightLog.First();
-                List<CoupleUserConnectionId> posibleUsers = groupLog.users.Where(u => u.publicUserId == publicUserId).ToList();
-
-                if (posibleUsers.Count() != 1)
-                {
-                    logUsers.ElementAt(firstIndex).users.Add(new CoupleUserConnectionId
-                    {
-                        connectionid = connectionId,
-                        publicUserId = publicUserId,
-                        username = username
-                    });
-                }
-                else
-                {
-                    int secondIndex = posibleUsers.IndexOf(posibleUsers.First());
-                    logUsers.ElementAt(firstIndex).users.ElementAt(secondIndex).connectionid = connectionId;
-                }
-            }
-        }
-
-        private List<string> getNotValidIds(string groupname, ApplicationDBContext dbContext)
-        {
-            List<string> users = new List<string>();
-            List<CoupleUserConnectionId> ids = getGroupId(groupname);
-
-
-            ids.ForEach(id =>
-            {
-                bool exist = dbContext.UserGroup.Where(ug => ug.Group.name == groupname && ug.User.publicId == id.publicUserId && !ug.blocked).Count() == 1;
-
-                if (!exist) users.Add(id.connectionid);
-            });
-
-            return users;
-        }
-
-        private List<CoupleUserConnectionId> getGroupId(string groupName)
-        {
-            List<CoupleUserConnectionId> publicIds = new List<CoupleUserConnectionId>();
-            logUsers.Where(l => l.groupName == groupName).First().users.ForEach(u =>
-            {
-                publicIds.Add(u);
-            });
-
-            return publicIds;
         }
 
         public bool isHelloMessage(ChatMessage msg)

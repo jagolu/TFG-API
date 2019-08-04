@@ -19,12 +19,14 @@ namespace API.Areas.GroupManage.Controllers
     public class BlockUserController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IHubContext<NotificationHub> _hub;
+        private IHubContext<NotificationHub> _notificationsHub;
+        private IHubContext<ChatHub> _chatHub;
 
-        public BlockUserController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
+        public BlockUserController(ApplicationDBContext context, IHubContext<NotificationHub> notificationHub, IHubContext<ChatHub> chatHub)
         {
             _context = context;
-            _hub = hub;
+            _notificationsHub = notificationHub;
+            _chatHub = chatHub;
         }
 
         [HttpPost]
@@ -55,6 +57,8 @@ namespace API.Areas.GroupManage.Controllers
                 _context.Update(targetUser);
                 _context.SaveChanges();
 
+                _context.Entry(targetUser).Reference("User").Load();
+                if(order.make_unmake) await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicId, _chatHub);
                 await sendMessages(targetUser, group, order.make_unmake);
 
                 return Ok(GroupPageManager.GetPage(user, group, _context));
@@ -73,7 +77,7 @@ namespace API.Areas.GroupManage.Controllers
             Home.Util.GroupNew.launch(targetUser.User, group, null, Home.Models.TypeGroupNew.BLOCK_USER_GROUP, makeUnmake, _context);
             //Send notifications
             NotificationType typeNotification = makeUnmake ? NotificationType.BLOCKED : NotificationType.UNBLOCKED;
-            await SendNotification.send(_hub, group.name, targetUser.User, typeNotification, _context);
+            await SendNotification.send(_notificationsHub, group.name, targetUser.User, typeNotification, _context);
         }
     }
 }
