@@ -4,26 +4,25 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.Alive.Controllers
 {
     [Route("Alive/[action]")]
     [ApiController]
-    public class WatchNotificationController : ControllerBase
+    public class WatchAllNotificationsController : ControllerBase
     {
         private ApplicationDBContext _context;
 
-        public WatchNotificationController(ApplicationDBContext context)
+        public WatchAllNotificationsController(ApplicationDBContext context)
         {
             _context = context;
         }
 
         [HttpGet]
         [Authorize]
-        [ActionName("WatchNotification")]
-        public IActionResult ReadNotifications(string id)
+        [ActionName("WatchAllNotifications")]
+        public IActionResult ReadAllNotifications()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -31,22 +30,10 @@ namespace API.Areas.Alive.Controllers
             try
             {
                 _context.Entry(user).Collection("notifications").Load();
-                List<Notifications> nots = user.notifications.Where(n => n.id.ToString() == id).ToList();
-                if(nots.Count() != 1)
-                {
-                    return Ok();
-                }
-                try
-                {
-                    _context.Remove(nots.First());
-                    _context.SaveChanges();
+                _context.RemoveRange(user.notifications.ToList());
+                _context.SaveChanges();
 
-                    return Ok();
-                }
-                catch (Exception)
-                {
-                    return StatusCode(500);
-                }
+                return Ok();
             }
             catch (Exception)
             {
