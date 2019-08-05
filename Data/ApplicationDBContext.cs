@@ -16,8 +16,6 @@ namespace API.Data
         public DbSet<Team> Teams { get; set; }
         public DbSet<Competition> Competitions { get; set; }
         public DbSet<MatchDay> MatchDays { get; set; }
-        public DbSet<OfferType> OfferTypes { get; set; }
-        public DbSet<ShopOffer> ShopOffers { get; set; }
         public DbSet<FootballBet> FootballBets { get; set; }
         public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
         public DbSet<TypePay> TypePay { get; set; }
