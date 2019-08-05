@@ -48,9 +48,19 @@ namespace API.Areas.Home.Controllers
         [ActionName("StandHome")]
         public IActionResult GetStand()
         {
+            bool isAdmin;
             try
             {
-                List<NewMessage> retMessage = GetNews.getStandNews(_context);
+                User user = TokenUserManager.getUserFromToken(HttpContext, _context);
+                isAdmin = AdminPolicy.isAdmin(user, _context);
+            }
+            catch(Exception)
+            {
+                isAdmin = false;
+            }
+            try
+            {
+                List<NewMessage> retMessage = GetNews.getStandNews(isAdmin, _context);
 
                 return Ok(retMessage);
             }

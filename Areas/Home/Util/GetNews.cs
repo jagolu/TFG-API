@@ -12,15 +12,15 @@ namespace API.Areas.Home.Util
         public static List<NewMessage> getAuthNews(Guid userid, ApplicationDBContext dbContext)
         {
             List<New> news = dbContext.News.Where(n => n.groupId == null && (n.userId==null ||  n.userId == userid)).OrderByDescending(nn => nn.date).Take(50).ToList();
-            List<NewMessage> retMessage = addNews(news);
+            List<NewMessage> retMessage = addNews(news, false);
 
             return retMessage;
         }
 
-        public static List<NewMessage> getStandNews(ApplicationDBContext dbContext)
+        public static List<NewMessage> getStandNews(bool isAdmin, ApplicationDBContext dbContext)
         {
             List<New> news = dbContext.News.Where(n => n.userId == null && n.groupId == null).OrderByDescending(nn => nn.date).Take(50).ToList();
-            List<NewMessage> retMessage = addNews(news);
+            List<NewMessage> retMessage = addNews(news, isAdmin);
 
             return retMessage;
         }
@@ -28,16 +28,16 @@ namespace API.Areas.Home.Util
         public static List<NewMessage> getGroupNews(Guid groupid, ApplicationDBContext dbContext)
         {
             List<New> news = dbContext.News.Where(n => n.groupId == groupid).OrderByDescending(nn => nn.date).Take(50).ToList();
-            List<NewMessage> retMessage = addNews(news);
+            List<NewMessage> retMessage = addNews(news, false);
 
             return retMessage;
         }
 
 
-        private static List<NewMessage> addNews(List<New> news)
+        private static List<NewMessage> addNews(List<New> news, bool isAdmin)
         {
             List<NewMessage> retMessage = new List<NewMessage>();
-            news.ForEach(n => retMessage.Add(new NewMessage(n)));
+            news.ForEach(n => retMessage.Add(new NewMessage(n, isAdmin)));
 
             return retMessage;
         }

@@ -39,7 +39,7 @@ namespace API.Areas.Admin.Controllers
                 });
 
                 _context.SaveChanges();
-                List<NewMessage> retMessage = GetNews.getStandNews(_context);
+                List<NewMessage> retMessage = GetNews.getStandNews(true, _context);
 
                 return Ok(retMessage);
             }
