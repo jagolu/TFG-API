@@ -111,6 +111,20 @@ namespace API.Data
                     title = title,
                     message = "Beta de la aplicación lanzada!!",
                     date = new DateTime(2019, 07, 14)
+                },
+                new New
+                {
+                    Group = null, User = null, groupid = null, userid = null,
+                    title = title,
+                    message = "Hemos añadido un chat grupal para la versión web. En el con vuestros compañeros de grupo.",
+                    date = new DateTime(2019, 07, 20)
+                },
+                new New
+                {
+                    Group = null, User = null, groupid = null, userid = null,
+                    title = title,
+                    message = "Beta de la versión para android lanzada!!",
+                    date = new DateTime(2019, 07, 30)
                 }
             };
 
