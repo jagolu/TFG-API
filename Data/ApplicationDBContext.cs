@@ -34,6 +34,8 @@ namespace API.Data
             onCreateGroup(mb);
             onCreateUserGroup(mb);
             onCreateMathDay(mb);
+            onCreateCompetition(mb);
+            onCreateTeam(mb);
             onCreateFootballBet(mb);
             onCreateUserFootballBet(mb);
             onCreateChatGroup(mb);
@@ -138,6 +140,20 @@ namespace API.Data
                 .WithMany(t => t.awayMatchDays)
                 .HasForeignKey(md => md.awayTeamid)
                 .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        private void onCreateCompetition(ModelBuilder mb)
+        {
+            mb.Entity<Competition>()
+                .HasIndex(c => c.name)
+                .IsUnique();
+        }
+
+        private void onCreateTeam(ModelBuilder mb)
+        {
+            mb.Entity<Team>()
+                .HasIndex(t => t.name)
+                .IsUnique();
         }
 
         private void onCreateFootballBet(ModelBuilder mb)
