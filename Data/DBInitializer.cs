@@ -107,7 +107,7 @@ namespace API.Data
             {
                 new New
                 {
-                    Group = null, User = null, groupId = null, userId = null,
+                    Group = null, User = null, groupid = null, userid = null,
                     title = title,
                     message = "Beta de la aplicación lanzada!!",
                     date = new DateTime(2019, 07, 14)

@@ -11,14 +11,14 @@ namespace API.Areas.Bet.Models
         {
             _context.Entry(bet).Reference("typePay").Load();
             _context.Entry(bet).Collection("userBets").Load();
-            var userBet = bet.userBets.Where(b => b.userId == caller.id);
+            var userBet = bet.userBets.Where(b => b.userid == caller.id);
 
             this.bet = new GroupBet(bet, _context, includeResults);
             if (userBet.Count() != 0)
             {
                 bool theUserHasWin = false;
                 this.ownBet = new List<HistoryUserFootballBet>();
-                bet.userBets.Where(b => b.userId == caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
+                bet.userBets.Where(b => b.userid == caller.id).OrderByDescending(bb => bb.dateDone).ToList().ForEach(bb =>
                 {
                     this.ownBet.Add(new HistoryUserFootballBet(bb, _context, true));
                     theUserHasWin = !theUserHasWin && bb.earnings>0 && bb.valid ? true : theUserHasWin;
@@ -32,9 +32,9 @@ namespace API.Areas.Bet.Models
                 _context.Entry(bet).Reference("Group").Load();
                 _context.Entry(bet.Group).Collection("users").Load();
                 //See all the users of the group
-                bet.Group.users.Where(g => g.userId!= caller.id).ToList().ForEach(userGroup =>
+                bet.Group.users.Where(g => g.userid!= caller.id).ToList().ForEach(userGroup =>
                 {
-                    List<UserFootballBet> anotherUserBets = bet.userBets.Where(b => b.userId == userGroup.userId)
+                    List<UserFootballBet> anotherUserBets = bet.userBets.Where(b => b.userid == userGroup.userid)
                         .OrderByDescending(bb => bb.dateDone).ToList();
 
                     if (anotherUserBets.Count() != 0)

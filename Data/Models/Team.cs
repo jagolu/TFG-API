@@ -11,6 +11,7 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string name { get; set; }
 
         public ICollection<MatchDay> awayMatchDays { get; set; } = new HashSet<MatchDay>();

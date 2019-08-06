@@ -10,7 +10,7 @@ namespace API.Areas.GroupManage.Util
     {
         public static void manageInteraction(User user, Group group, interactionType type, ApplicationDBContext dbContext)
         {
-            List<GroupInteraction> interactions = dbContext.GroupInteractions.Where(gi => gi.groupId == group.id && gi.userId == user.id).ToList();
+            List<GroupInteraction> interactions = dbContext.GroupInteractions.Where(gi => gi.groupid == group.id && gi.userid == user.id).ToList();
             bool leftTheGroup = type == interactionType.LEAVED ? true : false;
             bool wasKickedFromTheGroup = type == interactionType.KICKED ? true : false;
 

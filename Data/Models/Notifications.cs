@@ -10,7 +10,7 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
-        public Guid Userid { get; set; }
+        public Guid userid { get; set; }
         public User User { get; set; }
 
         [Required]

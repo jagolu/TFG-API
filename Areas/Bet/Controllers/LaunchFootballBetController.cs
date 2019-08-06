@@ -172,7 +172,7 @@ namespace API.Areas.Bet.Controllers
             group.users.Where(g => !g.blocked).ToList().ForEach(async ug =>
             {
                 _context.Entry(ug).Reference("User").Load();
-                bool isLauncher = ug.userId == u.id;
+                bool isLauncher = ug.userid == u.id;
                 User recv = ug.User;
 
                 Home.Util.GroupNew.launch(recv, group, fb, Home.Models.TypeGroupNew.LAUNCH_FOOTBALLBET_USER, isLauncher, _context);

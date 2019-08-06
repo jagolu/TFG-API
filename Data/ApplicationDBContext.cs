@@ -59,7 +59,7 @@ namespace API.Data
                 .IsUnique();
 
             mb.Entity<User>()
-                .HasIndex(u => u.publicId)
+                .HasIndex(u => u.publicid)
                 .IsUnique();
         }
 
@@ -89,54 +89,54 @@ namespace API.Data
         private void onCreateUserGroup(ModelBuilder mb)
         {
             mb.Entity<UserGroup>()
-                .HasKey(ug => new { ug.userId, ug.groupId });
+                .HasKey(ug => new { ug.userid, ug.groupid });
 
             mb.Entity<UserGroup>()
                 .HasOne(ug => ug.User)
                 .WithMany(u => u.groups)
-                .HasForeignKey(ug => ug.userId)
+                .HasForeignKey(ug => ug.userid)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<UserGroup>()
                 .HasOne(ug => ug.Group)
                 .WithMany(g => g.users)
-                .HasForeignKey(ug => ug.groupId)
+                .HasForeignKey(ug => ug.groupid)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void onCreateChatGroup(ModelBuilder mb)
         {
             mb.Entity<GroupChatMessage>()
-                .HasKey(c => new { c.groupId, c.publicUserId, c.time});
+                .HasKey(c => new { c.groupid, c.publicUserid, c.time});
 
             mb.Entity<GroupChatMessage>()
                 .HasOne(ug => ug.Group)
                 .WithMany(g => g.chatMessages)
-                .HasForeignKey(ug => ug.groupId)
+                .HasForeignKey(ug => ug.groupid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
         private void onCreateMathDay(ModelBuilder mb)
         {
             mb.Entity<MatchDay>()
-                .HasAlternateKey(md => new { md.CompetitionId, md.number, md.HomeTeamId, md.AwayTeamId });
+                .HasAlternateKey(md => new { md.competitionid, md.number, md.homeTeamId, md.awayTeamid });
 
             mb.Entity<MatchDay>()
                 .HasOne(md => md.Competition)
                 .WithMany(c => c.matchDays)
-                .HasForeignKey(md => md.CompetitionId)
+                .HasForeignKey(md => md.competitionid)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<MatchDay>()
                 .HasOne(md => md.HomeTeam)
                 .WithMany(t => t.homeMatchDays)
-                .HasForeignKey(md => md.HomeTeamId)
+                .HasForeignKey(md => md.homeTeamId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<MatchDay>()
                 .HasOne(md => md.AwayTeam)
                 .WithMany(t => t.awayMatchDays)
-                .HasForeignKey(md => md.AwayTeamId)
+                .HasForeignKey(md => md.awayTeamid)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
@@ -145,31 +145,31 @@ namespace API.Data
             mb.Entity<FootballBet>()
                 .HasOne(fb => fb.MatchDay)
                 .WithMany(md => md.bets)
-                .HasForeignKey(fb => fb.matchdayId)
+                .HasForeignKey(fb => fb.matchdayid)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<FootballBet>()
                 .HasOne(fb => fb.Group)
                 .WithMany(g => g.bets)
-                .HasForeignKey(fb => fb.groupId)
+                .HasForeignKey(fb => fb.groupid)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void onCreateUserFootballBet(ModelBuilder mb)
         {
             mb.Entity<UserFootballBet>()
-                .HasAlternateKey(fb => new { fb.FootballBetId, fb.userId, fb.dateDone });
+                .HasAlternateKey(fb => new { fb.footballBetid, fb.userid, fb.dateDone });
 
             mb.Entity<UserFootballBet>()
                 .HasOne(ub => ub.FootballBet)
                 .WithMany(fb => fb.userBets)
-                .HasForeignKey(ub => ub.FootballBetId)
+                .HasForeignKey(ub => ub.footballBetid)
                 .OnDelete(DeleteBehavior.Restrict);
 
             mb.Entity<UserFootballBet>()
                 .HasOne(ub => ub.User)
                 .WithMany(fb => fb.footballBets)
-                .HasForeignKey(ub => ub.userId)
+                .HasForeignKey(ub => ub.userid)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
@@ -178,13 +178,13 @@ namespace API.Data
             mb.Entity<New>()
                 .HasOne(n => n.Group)
                 .WithMany(g => g.news)
-                .HasForeignKey(n => n.groupId)
+                .HasForeignKey(n => n.groupid)
                 .OnDelete(DeleteBehavior.Cascade);
 
             mb.Entity<New>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.news)
-                .HasForeignKey(n => n.userId)
+                .HasForeignKey(n => n.userid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
@@ -193,7 +193,7 @@ namespace API.Data
             mb.Entity<DirectMessageTitle>()
                 .HasOne(dm => dm.Sender)
                 .WithMany(u => u.directMessages)
-                .HasForeignKey(dm => dm.senderId)
+                .HasForeignKey(dm => dm.senderid)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
@@ -211,25 +211,25 @@ namespace API.Data
             mb.Entity<Notifications>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.notifications)
-                .HasForeignKey(n => n.Userid)
+                .HasForeignKey(n => n.userid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
         private void onCreateGroupInteraction(ModelBuilder mb)
         {
             mb.Entity<GroupInteraction>()
-                .HasKey(ug => new { ug.userId, ug.groupId });
+                .HasKey(ug => new { ug.userid, ug.groupid });
 
             mb.Entity<GroupInteraction>()
                 .HasOne(ug => ug.User)
                 .WithMany(u => u.groupInteractions)
-                .HasForeignKey(ug => ug.userId)
+                .HasForeignKey(ug => ug.userid)
                 .OnDelete(DeleteBehavior.Cascade);
 
             mb.Entity<GroupInteraction>()
                 .HasOne(ug => ug.Group)
                 .WithMany(g => g.userInteractions)
-                .HasForeignKey(ug => ug.groupId)
+                .HasForeignKey(ug => ug.groupid)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

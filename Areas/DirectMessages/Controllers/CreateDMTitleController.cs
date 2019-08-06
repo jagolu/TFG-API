@@ -51,7 +51,7 @@ namespace API.Areas.DirectMessages.Controllers
                 DirectMessageTitle dm = new DirectMessageTitle
                 {
                     Sender = user,
-                    Receiver = receiver,
+                    receiver = receiver,
                     title = order.title
                 };
 

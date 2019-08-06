@@ -10,10 +10,10 @@ namespace API.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid id { get; set; }
 
-        public Guid matchdayId { get; set; }
+        public Guid matchdayid { get; set; }
         public MatchDay MatchDay { get; set; }
 
-        public Guid groupId { get; set; }
+        public Guid groupid { get; set; }
         public Group Group { get; set; }
 
         [Required]

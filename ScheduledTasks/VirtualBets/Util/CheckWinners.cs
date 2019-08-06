@@ -121,7 +121,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 userBet.earnings = div_jack;
-                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                UserGroup u = group.users.Where(g => g.userid == userBet.userid).First();
                 u.coins += div_jack;
                 _context.Update(u);
             });
@@ -139,7 +139,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             fb.userBets.Where(ub => toPay.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 userBet.earnings = div_jack;
-                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                UserGroup u = group.users.Where(g => g.userid == userBet.userid).First();
                 u.coins += div_jack;
                 _context.Update(u);
             });
@@ -154,7 +154,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
-                UserGroup u = group.users.Where(g => g.userId == userBet.userId).First();
+                UserGroup u = group.users.Where(g => g.userid == userBet.userid).First();
                 double coinsWin = userBet.bet * fb.winRate;
                 u.coins += (int)coinsWin;
                 userBet.earnings = (int)coinsWin;
@@ -174,7 +174,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             fb.userBets.ToList().ForEach(u => 
             {
                 _context.Entry(u).Reference("User").Load();
-                if (newGroups.All(uu => uu.id != u.userId)) newGroups.Add(u.User);
+                if (newGroups.All(uu => uu.id != u.userid)) newGroups.Add(u.User);
             });
 
             newGroups.ForEach(async u =>

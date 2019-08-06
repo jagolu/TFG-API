@@ -12,10 +12,10 @@ namespace API.Data.Models
 
         [Required]
         public User Sender { get; set; }
-        public Guid senderId { get; set; }
+        public Guid senderid { get; set; }
 
         [Required]
-        public User Receiver { get; set; }
+        public User receiver { get; set; }
 
         [Required]
         [MaxLength(64)]

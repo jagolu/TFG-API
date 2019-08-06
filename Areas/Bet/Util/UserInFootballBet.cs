@@ -29,7 +29,7 @@ namespace API.Areas.Bet.Util
         private static bool getBet(ref FootballBet fb, string betId, Group group, ApplicationDBContext _context)
         {
             List<FootballBet> fbs = _context.FootballBets
-                .Where(md => md.id.ToString() == betId && md.groupId == group.id).ToList();
+                .Where(md => md.id.ToString() == betId && md.groupid == group.id).ToList();
             if (fbs.Count() != 1)
             {
                 return false;
@@ -41,7 +41,7 @@ namespace API.Areas.Bet.Util
 
         private static bool checkUserInBet(FootballBet fb, User caller, ApplicationDBContext _context)
         {
-            var existBet = _context.UserFootballBet.Where(ufb => ufb.userId == caller.id && ufb.FootballBetId == fb.id && ufb.valid);
+            var existBet = _context.UserFootballBet.Where(ufb => ufb.userid == caller.id && ufb.footballBetid == fb.id && ufb.valid);
             if (existBet.Count() != 0)
             {
                 return false;

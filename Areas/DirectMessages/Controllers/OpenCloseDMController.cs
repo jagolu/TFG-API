@@ -95,7 +95,7 @@ namespace API.Areas.DirectMessages.Controllers
         {
             _context.Entry(title).Reference("Receiver").Load();
 
-            return title.senderId == admin.id || title.Receiver.id == admin.id;
+            return title.senderid == admin.id || title.receiver.id == admin.id;
         }
 
         private void sendClosedMessage(DirectMessageTitle title, bool open)
@@ -116,8 +116,8 @@ namespace API.Areas.DirectMessages.Controllers
         {
             _context.Entry(title).Reference("Sender").Load();
             _context.Entry(title).Reference("Receiver").Load();
-            User theUser = title.Sender.id == caller.id ? title.Sender : title.Receiver;
-            User notificationReceiver = title.Sender.id == caller.id ? title.Receiver : title.Sender;
+            User theUser = title.Sender.id == caller.id ? title.Sender : title.receiver;
+            User notificationReceiver = title.Sender.id == caller.id ? title.receiver : title.Sender;
 
             EmailSender.sendOpenCloseDMNotification(theUser.email, theUser.nickname, title.title, open);
 

@@ -51,7 +51,7 @@ namespace API.Areas.DirectMessages.Controllers
         {
             _context.Entry(user).Collection("directMessages").Load();
             List<DirectMessageTitle> dms = user.directMessages.Where(dm => dm.id.ToString() == dmId).ToList();
-            dms.AddRange(_context.DirectMessagesTitle.Where(dm => dm.id.ToString() == dmId && dm.Receiver == user).ToList());
+            dms.AddRange(_context.DirectMessagesTitle.Where(dm => dm.id.ToString() == dmId && dm.receiver == user).ToList());
             if (dms.Count() != 1)
             {
                 return false;

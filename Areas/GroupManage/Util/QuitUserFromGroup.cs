@@ -52,7 +52,7 @@ namespace API.Areas.GroupManage.Util
         public static List<UserGroup> getValidUsersInGroup(UserGroup caller, ApplicationDBContext _context)
         {
             return _context.UserGroup.Where(ug => 
-                                ug.groupId == caller.groupId && 
+                                ug.groupid == caller.groupid && 
                                 !ug.blocked &&
                                 ug.User.open
                     ).ToList();

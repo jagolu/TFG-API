@@ -8,7 +8,7 @@ namespace API.Areas.DirectMessages.Models
         {
             _context.Entry(dm).Reference("Receiver").Load();
             _context.Entry(dm).Reference("Sender").Load();
-            Data.Models.User recv = dm.Receiver;
+            Data.Models.User recv = dm.receiver;
             Data.Models.User load = userId == recv.id ? dm.Sender : recv;
 
             this.id = dm.id.ToString();

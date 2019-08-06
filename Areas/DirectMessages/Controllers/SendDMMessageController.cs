@@ -78,7 +78,7 @@ namespace API.Areas.DirectMessages.Controllers
         {
             _context.Entry(user).Collection("directMessages").Load();
             List<DirectMessageTitle> dms = user.directMessages.Where(dm => dm.id.ToString() == dmId).ToList();
-            dms.AddRange(_context.DirectMessagesTitle.Where(dm => dm.id.ToString() == dmId && dm.Receiver == user).ToList());
+            dms.AddRange(_context.DirectMessagesTitle.Where(dm => dm.id.ToString() == dmId && dm.receiver == user).ToList());
             if (dms.Count() != 1)
             {
                 return false;
@@ -116,8 +116,8 @@ namespace API.Areas.DirectMessages.Controllers
 
             _context.Entry(title).Reference("Sender").Load();
             _context.Entry(title).Reference("Receiver").Load();
-            User theUser = title.Sender.id == caller.id ? title.Sender : title.Receiver;
-            User notificationReceiver = title.Sender.id == caller.id ? title.Receiver : title.Sender;
+            User theUser = title.Sender.id == caller.id ? title.Sender : title.receiver;
+            User notificationReceiver = title.Sender.id == caller.id ? title.receiver : title.Sender;
 
             if (callerIsAdmin) EmailSender.sendDMNotification(theUser.email, theUser.nickname, title.title);
             await sendNotification(notificationReceiver);

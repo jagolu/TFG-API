@@ -98,7 +98,7 @@ namespace API.Areas.GroupManage.Controllers
             group = dbGroup.First();
             _context.Entry(group).Collection("users").Load();
 
-            if (_context.UserGroup.Where(ug => ug.userId == user.id && ug.groupId == dbGroup.First().id).Count() != 0)
+            if (_context.UserGroup.Where(ug => ug.userid == user.id && ug.groupid == dbGroup.First().id).Count() != 0)
             {
                 return false;
             }
@@ -123,7 +123,7 @@ namespace API.Areas.GroupManage.Controllers
 
         private interactionType checkInteractions(User user, Group group)
         {
-            List<GroupInteraction> interactions = _context.GroupInteractions.Where(ginteraction => ginteraction.userId == user.id && ginteraction.groupId == group.id).ToList();
+            List<GroupInteraction> interactions = _context.GroupInteractions.Where(ginteraction => ginteraction.userid == user.id && ginteraction.groupid == group.id).ToList();
 
             if(interactions.Count() == 0)
             {

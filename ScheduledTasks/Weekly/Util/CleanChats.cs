@@ -11,7 +11,7 @@ namespace API.ScheduledTasks.Weekly.Util
         {
             dbContext.Group.ToList().ForEach(g =>
             {
-                List<GroupChatMessage> msgs = dbContext.GroupChatMessage.Where(c => c.groupId == g.id).ToList();
+                List<GroupChatMessage> msgs = dbContext.GroupChatMessage.Where(c => c.groupid == g.id).ToList();
 
                 int outOfRange = 100 - msgs.Count();
 

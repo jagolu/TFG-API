@@ -49,7 +49,7 @@ namespace API.Areas.GroupManage.Controllers
             try
             {
                 _context.Entry(user).Collection("groups").Load();
-                UserGroup callerUG = user.groups.Where(g => g.groupId == group.id).First();
+                UserGroup callerUG = user.groups.Where(g => g.groupid == group.id).First();
 
                 targetUser.blocked = !targetUser.blocked;
                 targetUser.role = RoleManager.getGroupNormal(_context);
@@ -58,7 +58,7 @@ namespace API.Areas.GroupManage.Controllers
                 _context.SaveChanges();
 
                 _context.Entry(targetUser).Reference("User").Load();
-                if(order.make_unmake) await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicId, _chatHub);
+                if(order.make_unmake) await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicid, _chatHub);
                 await sendMessages(targetUser, group, order.make_unmake);
 
                 return Ok(GroupPageManager.GetPage(user, group, _context));

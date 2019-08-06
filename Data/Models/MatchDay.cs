@@ -12,24 +12,26 @@ namespace API.Data.Models
 
 
         public Competition Competition { get; set; }
-        public Guid CompetitionId { get; set; }
+        public Guid competitionid { get; set; }
 
         [Required]
         public DateTime date { get; set; }
 
         [Required]
+        [MaxLength(32)]
         public string status { get; set; }
 
         [Required]
         public int number { get; set; }
 
+        [MaxLength(64)]
         public String group { get; set; }
 
         public Team HomeTeam { get; set; }
-        public Guid HomeTeamId { get; set; }
+        public Guid homeTeamId { get; set; }
 
         public Team AwayTeam { get; set; }
-        public Guid AwayTeamId { get; set; }
+        public Guid awayTeamid { get; set; }
 
         public int? firstHalfHomeGoals { get; set; }
         public int? firstHalfAwayGoals { get; set; }

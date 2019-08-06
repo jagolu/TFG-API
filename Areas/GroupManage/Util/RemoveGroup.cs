@@ -20,11 +20,11 @@ namespace API.Areas.GroupManage.Util
             group.bets.ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
-                _context.UserFootballBet.RemoveRange(_context.UserFootballBet.Where(fb => fb.FootballBetId == bet.id));
+                _context.UserFootballBet.RemoveRange(_context.UserFootballBet.Where(fb => fb.footballBetid == bet.id));
                 //_context.Remove(bet);
             });
 
-            _context.UserGroup.Where(ug => ug.groupId == group.id).ToList().ForEach(async us =>
+            _context.UserGroup.Where(ug => ug.groupid == group.id).ToList().ForEach(async us =>
             {
                 await sendNews(us, group, _context, hub, maker);
             });

@@ -108,7 +108,7 @@ namespace API.Areas.GroupManage.Controllers
          */
         private bool canCreateANewGroup(User user)
         {
-            int totalUserGroupJoined = _context.UserGroup.Where(ug => ug.userId == user.id ).Count();
+            int totalUserGroupJoined = _context.UserGroup.Where(ug => ug.userid == user.id ).Count();
 
             return totalUserGroupJoined < user.maxGroupJoins;
         }

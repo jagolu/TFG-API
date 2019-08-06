@@ -24,7 +24,7 @@ namespace API.Areas.GroupManage.Util
                     return false;
                 }
 
-                List<User> possibleTargets = context.User.Where(u => u.publicId == publicUserId).ToList(); //The target user
+                List<User> possibleTargets = context.User.Where(u => u.publicid == publicUserId).ToList(); //The target user
 
                 if(possibleTargets.Count() != 1 || !UserFromGroup.isOnIt(possibleTargets.First().id, ref group, groupName, ref ugTarget, context, false))
                 {

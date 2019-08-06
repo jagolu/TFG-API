@@ -10,7 +10,7 @@ namespace API.Data.Models
         public Guid id { get; set; }
         
         [Required]
-        [StringLength(maximumLength:50, MinimumLength =4)]
+        [MaxLength(64)]
         public string name { get; set; }
     }
 }

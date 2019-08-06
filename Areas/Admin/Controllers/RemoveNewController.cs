@@ -33,7 +33,7 @@ namespace API.Areas.Admin.Controllers
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
 
-            List<New> possibleNews = _context.News.Where(n => n.id.ToString() == id && n.userId == null).ToList();
+            List<New> possibleNews = _context.News.Where(n => n.id.ToString() == id && n.userid == null).ToList();
             if(possibleNews.Count() != 1)
             {
                 return BadRequest();

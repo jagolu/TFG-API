@@ -79,7 +79,7 @@ namespace API.Areas.Bet.Controllers
             //User bets by the user with the userBet & valids
             _context.Entry(footballBet).Collection("userBets").Load();
             List<UserFootballBet> bet = footballBet.userBets.Where(ub => 
-                        ub.id.ToString() == userBet && ub.userId == caller.id && ub.valid).ToList();
+                        ub.id.ToString() == userBet && ub.userid == caller.id && ub.valid).ToList();
 
             if(bet.Count() != 1)
             {

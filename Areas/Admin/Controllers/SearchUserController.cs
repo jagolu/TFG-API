@@ -71,7 +71,7 @@ namespace API.Areas.Admin.Controllers
                 List<UserInGroup> uGroups = new List<UserInGroup>();
                 Role admin = RoleManager.getAdmin(_context);
 
-                _context.UserGroup.Where(ug => ug.userId == user.id && ug.Group.open).ToList().ForEach(g =>
+                _context.UserGroup.Where(ug => ug.userid == user.id && ug.Group.open).ToList().ForEach(g =>
                 {
                     _context.Entry(g).Reference("Group").Load();
                     _context.Entry(g).Reference("role").Load();
@@ -87,7 +87,7 @@ namespace API.Areas.Admin.Controllers
 
                 usersRet.Add(new UserSearchInfo
                 {
-                    publicUserId = user.publicId,
+                    publicUserId = user.publicid,
                     email = user.email,
                     username = user.nickname,
                     open = user.open,

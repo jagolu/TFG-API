@@ -54,7 +54,7 @@ namespace API.Areas.Alive.Util
 
         private bool checkExist(string group, string publicUserId, ref Group groupRet, ref Role roleRet, ApplicationDBContext dbContext)
         {
-            List<UserGroup> uExist = dbContext.UserGroup.Where(ug => ug.Group.name == group && ug.User.publicId == publicUserId && !ug.blocked).ToList();
+            List<UserGroup> uExist = dbContext.UserGroup.Where(ug => ug.Group.name == group && ug.User.publicid == publicUserId && !ug.blocked).ToList();
 
             if (uExist.Count() != 1)
             {
@@ -83,7 +83,7 @@ namespace API.Areas.Alive.Util
             {
                 Group = group,
                 username = data.username,
-                publicUserId = data.publicUserId,
+                publicUserid = data.publicUserId,
                 role = roleUser,
                 message = data.message,
                 time = data.time

@@ -28,7 +28,7 @@ namespace API.Areas.Alive.Util
                 {
                     ApplicationDBContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
 
-                    List<User> us = dbContext.User.Where(u => u.publicId == publicUserId).ToList();
+                    List<User> us = dbContext.User.Where(u => u.publicid == publicUserId).ToList();
                     if (us.Count() != 1) return;
 
                     await Clients.All.SendAsync(notificationSocketId + publicUserId, "CONNECTED");

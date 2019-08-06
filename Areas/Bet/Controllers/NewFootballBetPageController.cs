@@ -93,7 +93,7 @@ namespace API.Areas.Bet.Controllers
 
             availableMatchs.ForEach(md => 
             {
-                List<FootballBet> betsOnTheMatch = doneBets.Where(db => db.matchdayId == md.id).ToList(); //Bets done on the matchday
+                List<FootballBet> betsOnTheMatch = doneBets.Where(db => db.matchdayid == md.id).ToList(); //Bets done on the matchday
                 List<TypeFootballBet> allowedTypes = allTypes;
 
                 if(betsOnTheMatch.Count() != 0)

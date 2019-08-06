@@ -18,7 +18,7 @@ namespace API.Areas.GroupManage.Util
                     return false;
                 }
 
-                List<UserGroup> callerInGroup = context.UserGroup.Where(ug => ug.groupId == possibleGroups.First().id && ug.userId == callerId).ToList();
+                List<UserGroup> callerInGroup = context.UserGroup.Where(ug => ug.groupid == possibleGroups.First().id && ug.userid == callerId).ToList();
                 if(callerInGroup.Count() != 1)
                 {
                     return false;

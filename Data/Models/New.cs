@@ -9,20 +9,21 @@ namespace API.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid id { get; set; }
 
-        public Guid? groupId { get; set; } = null;
+        public Guid? groupid { get; set; } = null;
         public Group Group { get; set; } = null;
 
-        public Guid? userId { get; set; } = null;
+        public Guid? userid { get; set; } = null;
         public User User { get; set; } = null;
 
         [Required]
         public DateTime date { get; set; } = DateTime.Now;
 
         [Required]
+        [MaxLength(64)]
         public string title { get; set; }
 
         [Required]
-        [MaxLength(257)]
+        [MaxLength(256)]
         public string message { get; set; }
     }
 }

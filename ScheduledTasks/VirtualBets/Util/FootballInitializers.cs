@@ -28,9 +28,9 @@ namespace API.ScheduledTasks.VirtualBets.Util
             try
             {
                 DateTime parsedDate = parse(match.utcDate);
-                var exist = _context.MatchDays.Where(md => md.CompetitionId == league.id &&
-                                               md.HomeTeamId == homeTeam.id &&
-                                               md.AwayTeamId == awayTeam.id &&
+                var exist = _context.MatchDays.Where(md => md.competitionid == league.id &&
+                                               md.homeTeamId == homeTeam.id &&
+                                               md.awayTeamid == awayTeam.id &&
                                                md.date == parsedDate);
                 if (exist.Count() != 0)
                 {

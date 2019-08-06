@@ -10,10 +10,11 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string name { get; set; }
 
         [Required]
-        [MaxLength]
+        [MaxLength(256)]
         public string description { get; set; }
 
         [Required]

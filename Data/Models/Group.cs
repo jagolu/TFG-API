@@ -11,11 +11,10 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
-        [MinLength(4)]
-        [MaxLength(20)]
+        [MaxLength(32)]
         public string name { get; set; }
 
-        [MaxLength]
+        [MaxLength(512)]
         public string password { get; set; } = null;
 
         [Required]

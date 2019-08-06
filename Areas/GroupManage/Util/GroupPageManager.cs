@@ -17,7 +17,7 @@ namespace API.Areas.GroupManage.Util
             try
             {
                 _context.Entry(group).Collection("users").Load();
-                UserGroup callerInGroup = group.users.Where(u => u.userId == caller.id).First();
+                UserGroup callerInGroup = group.users.Where(u => u.userid == caller.id).First();
                 _context.Entry(callerInGroup).Reference("role").Load();
 
                 string callerInGroup_role = callerInGroup.role.name;
@@ -72,7 +72,7 @@ namespace API.Areas.GroupManage.Util
             group.bets.Where(b => !b.ended && !b.cancelled).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
-                if (bet.userBets.Where(ub => ub.userId == caller.id && ub.valid).Count() == 0)
+                if (bet.userBets.Where(ub => ub.userid == caller.id && ub.valid).Count() == 0)
                 {
                     bets.Add(new GroupBet(bet, _context, false));
                 }
@@ -90,7 +90,7 @@ namespace API.Areas.GroupManage.Util
             group.bets.Where(b=> b.ended==ended).OrderByDescending(bb => bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
-                if (bet.userBets.Where(b => b.userId == caller.id).Count() > 0)
+                if (bet.userBets.Where(b => b.userid == caller.id).Count() > 0)
                 {
                     history.Add(new EndedFootballBet(caller, bet, _context, ended));
                 }
@@ -103,14 +103,14 @@ namespace API.Areas.GroupManage.Util
             List<GroupMember> members = new List<GroupMember>();
             _context.Entry(group).Collection("users").Load();
 
-            members = addFromList(members, group.users.Where(g => !g.blocked && g.userId != callerId).OrderBy(u => u.dateJoin).ToList(), _context);
+            members = addFromList(members, group.users.Where(g => !g.blocked && g.userid != callerId).OrderBy(u => u.dateJoin).ToList(), _context);
 
             if (callerRoleInGroup != roleGroup_normal)
             {
-                members = addFromList(members, group.users.Where(g => g.blocked && g.userId != callerId).ToList(), _context);
+                members = addFromList(members, group.users.Where(g => g.blocked && g.userid != callerId).ToList(), _context);
             }
 
-            UserGroup ownMember = group.users.Where(g => g.userId == callerId).First();
+            UserGroup ownMember = group.users.Where(g => g.userid == callerId).First();
             members.Add(formatGroupMember(ownMember, _context));
 
             return members;
@@ -134,7 +134,7 @@ namespace API.Areas.GroupManage.Util
             GroupMember ret = new GroupMember
             {
                 userName = ug.User.nickname,
-                publicUserId = ug.User.publicId,
+                publicUserId = ug.User.publicid,
                 role = ug.role.name,
                 dateJoin = ug.dateJoin,
                 dateRole = ug.dateRole,
@@ -155,7 +155,7 @@ namespace API.Areas.GroupManage.Util
             _context.Entry(caller).Reference("role").Load();
             Role maker = RoleManager.getGroupMaker(_context);
 
-            if (maker != group.users.Where(u=>u.userId == caller.id).First().role)
+            if (maker != group.users.Where(u=>u.userid == caller.id).First().role)
             {
                 return null;
             }

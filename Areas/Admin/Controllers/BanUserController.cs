@@ -64,7 +64,7 @@ namespace API.Areas.Admin.Controllers
 
         private bool existUser(ref User user, string publicUserId)
         {
-            List<User> existUser = _context.User.Where(u => u.publicId == publicUserId).ToList();
+            List<User> existUser = _context.User.Where(u => u.publicid == publicUserId).ToList();
             if (existUser.Count() != 1)
             {
                 return false;

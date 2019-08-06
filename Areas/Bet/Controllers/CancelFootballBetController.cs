@@ -98,7 +98,7 @@ namespace API.Areas.Bet.Controllers
             _context.Entry(bet.Group).Collection("users").Load();
             Role maker = RoleManager.getGroupMaker(_context);
 
-            List<UserGroup> admins = bet.Group.users.Where(uu => uu.role == maker && uu.userId == u.id).ToList();
+            List<UserGroup> admins = bet.Group.users.Where(uu => uu.role == maker && uu.userid == u.id).ToList();
             if(admins.Count() != 1)
             {
                 return false;
@@ -116,7 +116,7 @@ namespace API.Areas.Bet.Controllers
             bet.userBets.ToList().ForEach(ub =>
             {
                 _context.Entry(ub).Reference("User").Load();
-                UserGroup userg = group.users.Where(u => u.userId == ub.userId).First();
+                UserGroup userg = group.users.Where(u => u.userid == ub.userid).First();
                 int coinsBet = ub.bet;
 
                 if (isJackpot || ub.valid)

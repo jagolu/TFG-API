@@ -10,10 +10,10 @@ namespace API.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid id { get; set; }
 
-        public Guid FootballBetId { get; set; }
+        public Guid footballBetid { get; set; }
         public FootballBet FootballBet { get; set; }
 
-        public Guid userId { get; set; }
+        public Guid userid { get; set; }
         public User User { get; set; }
 
         [Required]

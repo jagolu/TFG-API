@@ -11,20 +11,19 @@ namespace API.Data.Models
         public Guid id { get; set; }
 
         [Required]
-        [MaxLength]
-        public string publicId { get; set; } = Guid.NewGuid().ToString();
+        [MaxLength(256)]
+        public string publicid { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        [MaxLength]
-        [MinLength(4)]
+        [MaxLength(128)]
         public string email { get; set; }
 
         [Required]
-        [StringLength(maximumLength:20, MinimumLength =4)]
+        [MaxLength(32)]
         public string nickname { get; set; }
         
         [Required]
-        [MaxLength]
+        [MaxLength(512)]
         public string password { get; set; }
 
         [Required]
@@ -32,10 +31,10 @@ namespace API.Data.Models
 
         public Byte[] profileImg { get; set; } = null;
 
-        [MaxLength]
+        [MaxLength(256)]
         public string tokenValidation { get; set; } = Guid.NewGuid().ToString();
 
-        [MaxLength]
+        [MaxLength(256)]
         public string tokenPassword { get; set; } = null;
 
         public DateTime tokenPassword_expirationTime { get; set; } = new DateTime(1,1,1);

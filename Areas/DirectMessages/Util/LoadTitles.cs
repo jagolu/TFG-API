@@ -17,7 +17,7 @@ namespace API.Areas.DirectMessages.Util
             List<DirectMessageTitle> all = new List<DirectMessageTitle>();
 
             all.AddRange(u.directMessages);
-            all.AddRange(_context.DirectMessagesTitle.Where(dm => dm.Receiver == u).ToList());
+            all.AddRange(_context.DirectMessagesTitle.Where(dm => dm.receiver == u).ToList());
 
             unreadTitles(all, isAdmin).ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));
             unclosedTitles(all, isAdmin).ForEach(dm => retList.Add(new DMTitle(dm, u.id, isAdmin, _context)));

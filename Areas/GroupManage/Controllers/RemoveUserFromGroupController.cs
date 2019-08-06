@@ -54,7 +54,7 @@ namespace API.Areas.GroupManage.Controllers
                 User sendNew = targetUser.User;
                 Guid targetUserid = targetUser.User.id; 
                 await QuitUserFromGroup.quitUser(targetUser, _context, _notificationHub);
-                await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicId, _chatHub);
+                await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicid, _chatHub);
                 InteractionManager.manageInteraction(targetUser.User, group, interactionType.KICKED, _context);
 
                 using (var scope = scopeFactory.CreateScope())

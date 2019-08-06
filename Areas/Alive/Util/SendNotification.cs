@@ -26,7 +26,7 @@ namespace API.Areas.Alive.Util
 
             NotificationMessage ret = new NotificationMessage { id = notification.id.ToString(), message = message };
 
-            await hub.Clients.All.SendAsync(__notificationSocketId + recv.publicId.ToString(), ret);
+            await hub.Clients.All.SendAsync(__notificationSocketId + recv.publicid.ToString(), ret);
         }
     }
 }
