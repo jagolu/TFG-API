@@ -3,8 +3,9 @@ namespace API.Areas.Identity.Models
 {
     public class RememberPassword
     {
-       [Required]
-       public string email { get; set; }
+        [Required]
+        [EmailAddress]
+        public string email { get; set; }
     }
     public class ResetPassword
     {
