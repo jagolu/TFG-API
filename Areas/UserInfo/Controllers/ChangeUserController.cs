@@ -1,5 +1,6 @@
 ﻿using System;
 using API.Areas.UserInfo.Models;
+using API.Areas.UserInfo.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -47,9 +48,20 @@ namespace API.Areas.UserInfo.Controllers
                 else return BadRequest(new { error = e.Message });
             }
 
-            if (_changePass) return Ok(new { success = "PassChanged"});
+            string successRes = "";
+            if (_changePass) successRes = "PassChanged";
 
-            return Ok();
+            UserData userShow = new UserData
+            {
+                email = user.email,
+                nickname = user.nickname,
+                img = user.profileImg,
+                user_role = user.role.name,
+                rolesGroup = UserRoleGroups.get(user, _context),
+                timeSignUp = user.dateSignUp
+            };
+
+            return Ok(new { success = successRes, info = userShow});
         }
 
         private string changePassword(string oldPassword, string newPassword, string userActualPassword)

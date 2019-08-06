@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using API.Areas.UserInfo.Models;
+using API.Areas.UserInfo.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
@@ -37,7 +38,7 @@ namespace API.Areas.UserInfo.Controllers
                     nickname = user.nickname,
                     img = user.profileImg,
                     user_role = user.role.name,
-                    rolesGroup = getRoleGroups(user),
+                    rolesGroup = UserRoleGroups.get(user, _context),
                     timeSignUp = user.dateSignUp
                 };
 
@@ -46,27 +47,6 @@ namespace API.Areas.UserInfo.Controllers
             } catch (Exception) {
                 return StatusCode(500);
             }
-        }
-
-        private List<RoleGroup> getRoleGroups(User user)
-        {
-            List<RoleGroup> roleGroups = new List<RoleGroup>();
-            _context.Entry(user).Collection("groups").Load();
-
-            user.groups.ToList().ForEach(
-                group => {
-                    _context.Entry(group).Reference("Group").Load();
-                    _context.Entry(group).Reference("role").Load();
-
-                    roleGroups.Add(new RoleGroup
-                    {
-                        name = group.Group.name,
-                        role = group.role.name
-                    });
-                }
-            );
-
-            return roleGroups;
         }
     }
 }
