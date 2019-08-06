@@ -75,7 +75,7 @@ namespace API.Util
                     new Claim("refreshToken", refreshToken)
                 },
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(10),
                 //expires: DateTime.Now.AddSeconds(5),  //Debug
                 signingCredentials: creds
             );
@@ -100,7 +100,7 @@ namespace API.Util
                 else {
                     UserToken token = ut.First();
                     token.refreshToken = refreshToken;
-                    token.expirationTime = DateTime.Now.AddMinutes(30);
+                    token.expirationTime = DateTime.Now.AddMinutes(60);
                     //token.expirationTime = DateTime.Now.AddSeconds(13);  //Debug
 
                     context.Update(token);

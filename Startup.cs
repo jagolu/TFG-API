@@ -31,7 +31,7 @@ namespace API
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters {
-                        ClockSkew = TimeSpan.FromMinutes(5),
+                        ClockSkew = TimeSpan.FromMinutes(10),
                         //ClockSkew = TimeSpan.FromSeconds(5),  //Debug
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,

@@ -42,10 +42,10 @@ namespace API.Areas.Identity.Controllers
             {
                 try
                 {
-                    _context.Remove(savedRefreshToken);
+                    _context.Remove(savedRefreshToken.First());
                     _context.SaveChanges();
                 }
-                catch (Exception) {}
+                catch (Exception) { }
                 return StatusCode(401);
             }
 
