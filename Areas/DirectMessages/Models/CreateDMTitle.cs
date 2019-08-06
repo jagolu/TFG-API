@@ -10,6 +10,7 @@ namespace API.Areas.DirectMessages.Models
         [MaxLength(64)]
         public string title { get; set; }
 
+        [EmailAddress]
         public String emailReceiver { get; set; }
     }
 }

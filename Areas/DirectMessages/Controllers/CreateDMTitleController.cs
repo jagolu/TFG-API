@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using API.Areas.Alive.Models;
 using API.Areas.Alive.Util;
 using API.Areas.DirectMessages.Models;
-using API.Areas.DirectMessages.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;

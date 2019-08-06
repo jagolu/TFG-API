@@ -9,6 +9,7 @@ namespace API.Areas.Identity.Models
         [EmailAddress]
         public string email { get; set; }
 
+        [Required]
         [MinLength(8)]
         [MaxLength(20)]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{1,}$")]

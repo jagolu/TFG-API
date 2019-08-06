@@ -5,8 +5,8 @@ namespace API.Areas.Admin.Models
     public class Message
     {
         [Required]
-        [MaxLength(256)]
         [MinLength(5)]
+        [MaxLength(256)]
         public string message { get; set; }
     }
 }
