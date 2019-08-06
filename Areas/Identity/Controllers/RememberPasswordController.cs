@@ -31,7 +31,7 @@ namespace API.Areas.Identity.Controllers
             {
                 return BadRequest(new { error = "EmailDontExist"});
             }
-            if((DateTime.Now - userExists.First().tokenPassword_expirationTime).Days < 1)
+            if((DateTime.Now - userExists.First().tokenP_expiresTime).Days < 1)
             {
                 return BadRequest(new { error = "CantChangePasswordToday" });
             }
@@ -42,7 +42,7 @@ namespace API.Areas.Identity.Controllers
                 if (!user.open) return BadRequest(new { error = "YoureBanned" });
                 String token = Guid.NewGuid().ToString("N");
                 user.tokenPassword = token;
-                user.tokenPassword_expirationTime = DateTime.Now.AddDays(7);
+                user.tokenP_expiresTime = DateTime.Now.AddDays(7);
                 _context.Update(user);
 
                 EmailSender.sendVerificationPasswordToken(user.email, user.nickname, token);
@@ -90,7 +90,7 @@ namespace API.Areas.Identity.Controllers
             {
                 user.password = PasswordHasher.hashPassword(order.password);
                 user.tokenPassword = null;
-                user.tokenPassword_expirationTime = DateTime.Now;
+                user.tokenP_expiresTime = DateTime.Now;
                 _context.Update(user);
                 _context.SaveChanges();
 
@@ -112,7 +112,7 @@ namespace API.Areas.Identity.Controllers
             }
 
             //The token isn't valid
-            if(DateTime.Now > tokenExists.First().tokenPassword_expirationTime)
+            if(DateTime.Now > tokenExists.First().tokenP_expiresTime)
             {
                 return false;
             }

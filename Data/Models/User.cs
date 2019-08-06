@@ -37,7 +37,7 @@ namespace API.Data.Models
         [MaxLength(256)]
         public string tokenPassword { get; set; } = null;
 
-        public DateTime tokenPassword_expirationTime { get; set; } = new DateTime(1,1,1);
+        public DateTime tokenP_expiresTime { get; set; } = new DateTime(1,1,1);
 
         [Required]
         public DateTime dateSignUp { get; set; } = DateTime.Today;
