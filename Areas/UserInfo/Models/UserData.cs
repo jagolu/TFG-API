@@ -14,9 +14,7 @@ namespace API.Areas.UserInfo.Models
         [JsonConverter(typeof(ConvertBase64ToBlob))]
         public Byte[] img { get; set; }
 
-        public String user_role { get; set; }
-
-        public List<RoleGroup> rolesGroup { get; set; }
+        public List<string> groups { get; set; }
 
         public DateTime timeSignUp { get; set; }
     }

@@ -1,10 +1,10 @@
 ﻿using API.Areas.Identity.Models;
+using API.Areas.UserInfo.Util;
 using API.Data;
 using API.Data.Models;
 using API.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace API.Areas.Identity.Util
 {
@@ -19,7 +19,7 @@ namespace API.Areas.Identity.Util
 
                 if(session != null)
                 {
-                    List<string> groups = getUserGroups(user, context);
+                    List<string> groups = GroupsOfUser.get(user, context);
                     session.groups = groups;
                     context.SaveChanges();
                     return session;
@@ -47,23 +47,6 @@ namespace API.Areas.Identity.Util
             };
 
             return session;
-        }
-
-        private static List<string> getUserGroups(User u, ApplicationDBContext _context)
-        {
-            List<string> userGroups = new List<string>();
-            List<UserGroup> groups = _context.UserGroup.Where(ug => ug.userid == u.id && !ug.blocked).ToList();
-
-            groups.ForEach(g =>
-            {
-                _context.Entry(g).Reference("Group").Load();
-                if (g.Group.open)
-                {
-                    userGroups.Add( g.Group.name );
-                }
-            });
-
-            return userGroups;
         }
     }
 }

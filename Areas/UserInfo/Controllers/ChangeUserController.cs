@@ -56,8 +56,7 @@ namespace API.Areas.UserInfo.Controllers
                 email = user.email,
                 nickname = user.nickname,
                 img = user.profileImg,
-                user_role = user.role.name,
-                rolesGroup = UserRoleGroups.get(user, _context),
+                groups = GroupsOfUser.get(user, _context),
                 timeSignUp = user.dateSignUp
             };
 
