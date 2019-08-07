@@ -32,6 +32,8 @@ namespace API.Areas.Identity.Controllers
             string email = TokenGenerator.getEmailClaim(req.token);
             string refreshToken = TokenGenerator.getRefreshTokenClaim(req.token);
 
+            if(refreshToken == null) return StatusCode(401); 
+
             List<UserToken> savedRefreshToken = _context.UserToken.Where(ut => ut.refreshToken == refreshToken).ToList();
 
             if (savedRefreshToken.Count() != 1) {
