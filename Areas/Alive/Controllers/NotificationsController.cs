@@ -34,7 +34,7 @@ namespace API.Areas.Alive.Controllers
                 _context.Entry(user).Collection("notifications").Load();
                 List<NotificationMessage> notifications = new List<NotificationMessage>();
 
-                user.notifications.OrderBy(n => n.time).ToList().ForEach(n =>
+                user.notifications.OrderByDescending(n => n.time).ToList().ForEach(n =>
                 {
                     notifications.Add(new NotificationMessage { id = n.id.ToString(), message = n.message });
                 });
