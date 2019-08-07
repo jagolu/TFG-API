@@ -115,7 +115,7 @@ namespace API.Areas.DirectMessages.Controllers
             if (title.unreadMessagesForAdmin> 1 && !callerIsAdmin) return;
 
             _context.Entry(title).Reference("Sender").Load();
-            _context.Entry(title).Reference("Receiver").Load();
+            _context.Entry(title).Reference("receiver").Load();
             User theUser = title.Sender.id == caller.id ? title.Sender : title.receiver;
             User notificationReceiver = title.Sender.id == caller.id ? title.receiver : title.Sender;
 

@@ -93,7 +93,7 @@ namespace API.Areas.DirectMessages.Controllers
 
         private bool checkAdminInDM(DirectMessageTitle title, User admin)
         {
-            _context.Entry(title).Reference("Receiver").Load();
+            _context.Entry(title).Reference("receiver").Load();
 
             return title.senderid == admin.id || title.receiver.id == admin.id;
         }
@@ -115,7 +115,7 @@ namespace API.Areas.DirectMessages.Controllers
         private async Task sendMailAndNotification(DirectMessageTitle title, User caller, bool open)
         {
             _context.Entry(title).Reference("Sender").Load();
-            _context.Entry(title).Reference("Receiver").Load();
+            _context.Entry(title).Reference("receiver").Load();
             User theUser = title.Sender.id == caller.id ? title.Sender : title.receiver;
             User notificationReceiver = title.Sender.id == caller.id ? title.receiver : title.Sender;
 
