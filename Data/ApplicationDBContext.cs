@@ -121,7 +121,7 @@ namespace API.Data
         private void onCreateMathDay(ModelBuilder mb)
         {
             mb.Entity<MatchDay>()
-                .HasAlternateKey(md => new { md.competitionid, md.number, md.homeTeamId, md.awayTeamid });
+                .HasAlternateKey(md => new { md.competitionid, md.number, md.homeTeamId, md.awayTeamid, md.date});
 
             mb.Entity<MatchDay>()
                 .HasOne(md => md.Competition)
