@@ -31,9 +31,9 @@ namespace API.ScheduledTasks.VirtualBets
             _timer = new Timer(
                 DoWork,
                 null,
-               //TimeSpan.Zero, 
-               CalculateInitalNextTime(), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
-                CalculateInitalNextTime() //tomorrow
+               TimeSpan.Zero,
+               //CalculateInitalNextTime(), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
+               CalculateInitalNextTime() //tomorrow
             );
 
             return Task.CompletedTask;

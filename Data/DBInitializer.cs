@@ -157,14 +157,16 @@ namespace API.Data
             {
                 Random rnd = new Random();
                 DateTime n = DateTime.Now;
-                md.date = n.AddDays(rnd.Next(5));
+                //md.date = n.AddDays(-7);
                 //md.status = "SCHEDULED";
                 //md.status = "FINISHED";
-                md.firstHalfHomeGoals = rnd.Next(3);
-                md.fullTimeHomeGoals = rnd.Next(3);
-                md.fullTimeAwayGoals = rnd.Next(3);
-                md.firstHalfAwayGoals = rnd.Next(3);
-                context.SaveChanges();
+                //md.firstHalfHomeGoals = rnd.Next(3);
+                //md.fullTimeHomeGoals = rnd.Next(3);
+                //md.fullTimeAwayGoals = rnd.Next(3);
+                //md.firstHalfAwayGoals = rnd.Next(3);
+                //md.secondHalfAwayGoals = rnd.Next(3);
+                //md.secondHalfHomeGoals = rnd.Next(3);
+                //context.SaveChanges();
             });
             context.SaveChanges();
         }

@@ -33,8 +33,8 @@ namespace API.ScheduledTasks.VirtualBets
             _timer = new Timer(
                 DoWork, 
                 null,
-                //TimeSpan.Zero, //Right now
-                CalculateInitalNextTime(), //Right now
+                TimeSpan.Zero, //Right now
+                //CalculateInitalNextTime(), //Right now
                 CalculateInitalNextTime() //The next first August or the next month
             );
 
