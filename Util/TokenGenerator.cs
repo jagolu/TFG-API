@@ -19,7 +19,7 @@ namespace API.Util
             _configuration = configuration;
         }
 
-        public static string generateTokenAndRefreshToken(ApplicationDBContext context, string email, Boolean provider)
+        public static string generateTokenAndRefreshToken(ApplicationDBContext context, string email, bool provider)
         {
             try
             {
@@ -27,7 +27,6 @@ namespace API.Util
                 string newToken = generateToken(email, newRefreshToken);
 
                 return newToken;
-
             }
             catch (Exception)
             {
@@ -35,7 +34,7 @@ namespace API.Util
             }
         }
 
-        public static Boolean isValidClaim(string token)
+        public static bool isValidClaim(string token)
         {
             return getPrincipalFromExpiredToken(token) == null;
         }
@@ -52,8 +51,7 @@ namespace API.Util
         {
             var principal = getPrincipalFromExpiredToken(token);
 
-            return principal == null ? null : 
-                principal.FindFirst("refreshToken").Value;
+            return principal == null ? null : principal.FindFirst("refreshToken").Value;
         }
 
         public static string getBearerToken(string token)
@@ -63,7 +61,7 @@ namespace API.Util
             return token.Substring(start);
         }
 
-        private static String generateToken(string email, string refreshToken)
+        private static string generateToken(string email, string refreshToken)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -76,14 +74,13 @@ namespace API.Util
                 },
                 notBefore: DateTime.Now,
                 expires: DateTime.Now.AddMinutes(10),
-                //expires: DateTime.Now.AddSeconds(5),  //Debug
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private static String generateRefreshToken(ApplicationDBContext context,string email, Boolean provider)
+        private static string generateRefreshToken(ApplicationDBContext context,string email, bool provider)
         {
             var user = (from u in context.User where u.email == email select u).First();
             var ut = from t in context.UserToken where t.userId == user.id && t.loginProvider == provider select t;
@@ -101,7 +98,6 @@ namespace API.Util
                     UserToken token = ut.First();
                     token.refreshToken = refreshToken;
                     token.expirationTime = DateTime.Now.AddMinutes(60);
-                    //token.expirationTime = DateTime.Now.AddSeconds(13);  //Debug
 
                     context.Update(token);
                 }

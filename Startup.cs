@@ -32,7 +32,6 @@ namespace API
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ClockSkew = TimeSpan.FromMinutes(10),
-                        //ClockSkew = TimeSpan.FromSeconds(5),  //Debug
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
@@ -40,16 +39,13 @@ namespace API
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = Configuration["Jwt:Issuer"],
-                        //ValidAudience = Configuration["Jwt:Issuer"],
 
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
 
             services.AddDbContext<ApplicationDBContext>(options =>
-                options.UseSqlServer(
-                        Configuration.GetConnectionString("DefaultConnection")
-                )
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
 
 
@@ -105,9 +101,7 @@ namespace API
             KickChatNotification.Initialize(Configuration);
             DBInitializer.Initialize(context);
 
-            app.UseSpa(spa => {
-                spa.Options.SourcePath = "webInterface";
-            });
+            app.UseSpa(spa => spa.Options.SourcePath = "webInterface");
         }
     }
 }
