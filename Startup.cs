@@ -54,13 +54,13 @@ namespace API
 
 
             services.AddCors(options => {
-                options.AddPolicy("_myAllowSpecificOrigins",
-                    builder => { builder
+                options.AddPolicy("myCORS", builder => {
+                    builder
                         .AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowAnyMethod()
+                        .WithMethods(new string[2] { "GET", "POST" })
                         .AllowCredentials();
-                    });
+                });
             });
 
             services.AddSpaStaticFiles(configuration => {
@@ -79,7 +79,7 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDBContext context)
         {
-            app.UseCors("_myAllowSpecificOrigins");
+            app.UseCors("myCORS");
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseHttpsRedirection();
