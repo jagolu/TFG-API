@@ -16,11 +16,11 @@ namespace API.Areas.Bet.Models
             this.bet = bet.id.ToString();
             this.competition = bet.MatchDay.Competition.name;
             this.betName = bet.MatchDay.HomeTeam.name + " vs " + bet.MatchDay.AwayTeam.name;
+            this.matchdayDate = bet.MatchDay.date;
             this.typeBet = new NameWinRate(bet.type);
             this.typePay = new NameWinRate(bet.typePay);
             this.minBet = bet.minBet;
             this.maxBet = bet.maxBet;
-            this.matchdayDate = bet.MatchDay.date;
             this.lastBetTime = bet.dateLastBet;
             if (Util.CheckBetType.isJackpot(bet, _context))
             {
@@ -36,14 +36,18 @@ namespace API.Areas.Bet.Models
                 this.fullTimeAwayGoals = bet.MatchDay.fullTimeAwayGoals;
             }
         }
-        public string bet { get; set; }
+        public string bet { get; set; } //id
+
+        // Match info
         public string competition { get; set; }
         public string betName { get; set; }
+        public DateTime matchdayDate { get; set; }
+
+        // Football bet info
         public NameWinRate typeBet { get; set; }
         public NameWinRate typePay { get; set; }
         public int minBet { get; set; }
         public int maxBet { get; set; }
-        public DateTime matchdayDate { get; set; }
         public DateTime lastBetTime { get; set; }
         public int? usersJoined { get; set; }
 
