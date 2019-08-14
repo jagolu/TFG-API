@@ -35,11 +35,9 @@ namespace API
                         RequireSignedTokens = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
-                        ValidateIssuer = true,
+                        ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
                 });
