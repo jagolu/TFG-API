@@ -36,8 +36,8 @@ namespace API.Areas.GroupManage.Util
                 page.maxCapacity = group.capacity;
                 page.bets = getBets(caller, group, _context);
                 page.manageBets = getManageBets(caller, group, _context);
-                page.myBets = getActiveBets(caller, group, _context, false);
-                page.betsHistory = getActiveBets(caller, group, _context, true);
+                page.myBets = getBetAndUserBets(caller, group, _context, false);
+                page.betsHistory = getBetAndUserBets(caller, group, _context, true);
                 page.members = getMembers(caller.id, callerInGroup_role, group, _context, role_group_normal);
                 page.news = Home.Util.GetNews.getGroupNews(group.id, _context);
 
@@ -69,7 +69,7 @@ namespace API.Areas.GroupManage.Util
             List<GroupBet> bets = new List<GroupBet>();
             _context.Entry(group).Collection("bets").Load();
 
-            group.bets.Where(b => !b.ended && !b.cancelled).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
+            group.bets.Where(b => !b.ended && !b.cancelled && b.dateEnded>DateTime.Now).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
                 if (bet.userBets.Where(ub => ub.userid == caller.id && ub.valid).Count() == 0)
@@ -81,7 +81,7 @@ namespace API.Areas.GroupManage.Util
             return bets;
         }
 
-        public static List<EndedFootballBet> getActiveBets(User caller, Group group, ApplicationDBContext _context, bool ended)
+        public static List<EndedFootballBet> getBetAndUserBets(User caller, Group group, ApplicationDBContext _context, bool ended)
         {
             List<EndedFootballBet> history = new List<EndedFootballBet>();
             _context.Entry(group).Collection("bets").Load();
