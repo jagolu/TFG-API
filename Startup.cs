@@ -65,8 +65,8 @@ namespace API
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
-            //services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
+            services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
+            services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
             services.AddHostedService<WeeklyGroupHostedService>(); 
         }
 

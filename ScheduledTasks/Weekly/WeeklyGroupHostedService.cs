@@ -1,5 +1,6 @@
 ﻿using API.Areas.Alive.Util;
 using API.Data;
+using API.ScheduledTasks.VirtualBets.Util;
 using API.ScheduledTasks.Weekly.Util;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,8 @@ namespace API.ScheduledTasks.Weekly
             _timer = new Timer(
                 DoWork,
                 null,
-                CalculateInitalNextTime(), //Next day
-                CalculateInitalNextTime() //Next day
+                NextScheduledTime.nextTime(5, 5), //Initial time
+                new TimeSpan(1, 0, 0, 0) //The next day
             );
 
             return Task.CompletedTask;
@@ -42,8 +43,8 @@ namespace API.ScheduledTasks.Weekly
          */
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            //Stop the timer
-            _timer.Change(Timeout.Infinite, 0);
+            //Restart the timer
+            _timer?.Change(NextScheduledTime.nextTime(5, 5), new TimeSpan(1, 0, 0, 0));
 
             return Task.CompletedTask;
         }
@@ -68,7 +69,8 @@ namespace API.ScheduledTasks.Weekly
             }
             catch (Exception)
             {
-                _timer?.Change(TimeSpan.FromDays(1), TimeSpan.FromDays(2));
+                //Restart the timer
+                _timer?.Change(NextScheduledTime.nextTime(5, 5), new TimeSpan(1, 0, 0, 0));
             }
         }
 
@@ -79,38 +81,6 @@ namespace API.ScheduledTasks.Weekly
         public void Dispose()
         {
             _timer?.Dispose();
-        }
-
-
-        /**
-         * Function to get the time next day at 03:05
-         * @return TimeSpan
-         *      Return the TimeSpan time to the 00:30 the next day
-         */
-        private TimeSpan CalculateInitalNextTime()
-        {
-            DateTime nowDay = DateTime.Now;
-            nowDay = new DateTime(nowDay.Year, nowDay.Month, nowDay.Day); //Actual day at 00:00
-
-            double now = DateTime.Now
-                .ToUniversalTime()
-                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                .TotalMilliseconds;
-
-            double then = nowDay.AddDays(1).AddMinutes(30)
-                .ToUniversalTime()
-                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                .TotalMilliseconds;
-
-            int time = ((int)(then - now)) / 1000;
-
-            int mins = (int)(time / 60); //total min
-            int hours = mins / 60; //total hours
-
-            hours = hours % 24; //Exactly hours in one day
-            mins = (mins % 60); //Exactly min in one hour
-
-            return new TimeSpan(hours, mins, 0);
         }
     }
 }

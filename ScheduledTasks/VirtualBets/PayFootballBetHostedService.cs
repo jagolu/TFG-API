@@ -14,12 +14,12 @@ namespace API.ScheduledTasks.VirtualBets
 {
     public class PayFootballBetHostedService : IHostedService, IDisposable
     {
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private Timer _timer;
 
         public PayFootballBetHostedService(IServiceScopeFactory sf)
         {
-            scopeFactory = sf;
+            _scopeFactory = sf;
         }
 
        
@@ -29,11 +29,10 @@ namespace API.ScheduledTasks.VirtualBets
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(
-                DoWork,
-                null,
-               TimeSpan.Zero,
-               //CalculateInitalNextTime(), //30 minutes from now, to wait the football database is initialized (Free azure background services are so slow -.-)
-               CalculateInitalNextTime() //tomorrow
+               DoWork,
+               null,
+               NextScheduledTime.nextTime(3, 5), //Initial time
+               new TimeSpan(1, 0, 0, 0) //The next day
             );
 
             return Task.CompletedTask;
@@ -44,8 +43,8 @@ namespace API.ScheduledTasks.VirtualBets
          */
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            //Stop the timer
-            _timer.Change(Timeout.Infinite, 0);
+            //Restart the timer
+            _timer?.Change(NextScheduledTime.nextTime(3, 5), new TimeSpan(1, 0, 0, 0));
 
             return Task.CompletedTask;
         }
@@ -57,7 +56,7 @@ namespace API.ScheduledTasks.VirtualBets
         {
             try
             {
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
@@ -78,13 +77,11 @@ namespace API.ScheduledTasks.VirtualBets
                         }
                     });
                 }
-
-                //Set cron next day
-                _timer?.Change(CalculateInitalNextTime(), CalculateInitalNextTime());
             }
             catch (Exception)
             {
-                _timer?.Change(TimeSpan.FromHours(1), TimeSpan.FromHours(2));
+                //Restart the timer
+                _timer?.Change(NextScheduledTime.nextTime(3, 5), new TimeSpan(1, 0, 0, 0));
             }
         }
 
@@ -94,37 +91,6 @@ namespace API.ScheduledTasks.VirtualBets
         public void Dispose()
         {
             _timer?.Dispose();
-        }
-
-        /**
-         * Function to get the time next day at 03:05
-         * @return TimeSpan
-         *      Return the TimeSpan time to the 03:05 the next day
-         */
-        private TimeSpan CalculateInitalNextTime()
-        {
-            DateTime nowDay = DateTime.Now;
-            nowDay = new DateTime(nowDay.Year, nowDay.Month, nowDay.Day); //Actual day at 00:00
-
-            double now = DateTime.Now
-                .ToUniversalTime()
-                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                .TotalMilliseconds;
-
-            double then = nowDay.AddDays(1).AddHours(3)
-                .ToUniversalTime()
-                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                .TotalMilliseconds;
-
-            int time = ((int)(then - now)) / 1000;
-
-            int mins = (int)(time / 60); //total min
-            int hours = mins / 60; //total hours
-
-            hours = hours % 24; //Exactly hours in one day
-            mins = (mins % 60) + 5; //Exactly min in one hour
-
-            return new TimeSpan(hours, mins, 0);
         }
     }
 }
