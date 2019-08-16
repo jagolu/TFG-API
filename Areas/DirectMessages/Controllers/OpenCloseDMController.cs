@@ -11,7 +11,6 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.DirectMessages.Controllers
 {
@@ -20,13 +19,11 @@ namespace API.Areas.DirectMessages.Controllers
     public class OpenCloseDMController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
         private IHubContext<NotificationHub> _hub;
 
-        public OpenCloseDMController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
+        public OpenCloseDMController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
-            scopeFactory = sf;
             _hub = hub;
         }
 
@@ -55,17 +52,11 @@ namespace API.Areas.DirectMessages.Controllers
                 sendClosedMessage(title, open);
                 title.closed = !open;
                 _context.SaveChanges();
+
                 await sendMailAndNotification(title, user, open);
+                DMRoom room = new DMRoom(title, user, _context);
 
-                using (var scope = scopeFactory.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-                    DirectMessageTitle dbTitle = dbContext.DirectMessagesTitle.Where(t => t.id == title.id).First();
-                    User dbuser = dbContext.User.Where(u => u.id == user.id).First();
-
-                    DMRoom room = new DMRoom(dbTitle, dbuser, dbContext);
-                    return Ok(room);
-                }
+                return Ok(room);
             }
             catch (Exception)
             {

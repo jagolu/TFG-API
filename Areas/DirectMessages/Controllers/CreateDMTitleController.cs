@@ -11,7 +11,6 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.DirectMessages.Controllers
 {
@@ -20,12 +19,12 @@ namespace API.Areas.DirectMessages.Controllers
     public class CreateDMTitleController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private IHubContext<NotificationHub> _hub;
 
-        public CreateDMTitleController(ApplicationDBContext context, IServiceScopeFactory sf)
+        public CreateDMTitleController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
-            scopeFactory = sf;
+            _hub = hub;
         }
 
         [HttpPost]
@@ -56,16 +55,10 @@ namespace API.Areas.DirectMessages.Controllers
 
                 _context.Add(dm);
                 _context.SaveChanges();
-                using (var scope = scopeFactory.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-                    var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
-                    User dbUser = dbContext.User.Where(u => u.id == user.id).First();
 
-                    await sendNotification(dbUser, receiver.id, dbContext, hub);
+                await sendNotification(user, receiver, dm);
 
-                    return Ok(dm.id.ToString());
-                }
+                return Ok(dm.id.ToString());
             }
             catch (Exception)
             {
@@ -117,16 +110,15 @@ namespace API.Areas.DirectMessages.Controllers
             return true;
         }
 
-        private async Task sendNotification(User user, Guid recvId, ApplicationDBContext dbContext, IHubContext<NotificationHub> hub)
+        private async Task sendNotification(User user, User recv, DirectMessageTitle title)
         {
-            dbContext.Entry(user).Reference("role").Load();
-            User recv = dbContext.User.Where(u => u.id == recvId).First();
-            bool isAdmin = user.role == RoleManager.getAdmin(dbContext);
+            bool isAdmin = user.role == RoleManager.getAdmin(_context);
 
             NotificationType type = isAdmin ? NotificationType.OPEN_DM_FROM_ADMIN : NotificationType.OPEN_DM_FROM_USER;
             String recvName = isAdmin ? "" : recv.nickname;
 
-            await SendNotification.send(hub, recvName, recv, type, dbContext);
+            EmailSender.sendOpenCreateDMNotification(recv.email, recv.nickname, title.title);
+            await SendNotification.send(_hub, recvName, recv, type, _context);
         }
     }
 }

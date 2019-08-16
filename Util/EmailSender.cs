@@ -75,6 +75,18 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        public static void sendOpenCreateDMNotification(string email, string name, string dmTitle)
+        {
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress(_configuration["Email:username"] + "@gmail.com");
+            msg.To.Add(email);
+            msg.Body = getBodySendCreateDMNotificacion(name, dmTitle);
+            msg.IsBodyHtml = true;
+            msg.Subject = "Un administrador ha abierto una conversación";
+
+            _client.Send(msg);
+        }
+
         private static void initializeClient()
         {
             _client = new SmtpClient("smtp.gmail.com");
@@ -157,6 +169,17 @@ namespace API.Util
             body += "<p>Uno de los administradores de la plataforma ha cerrado la ";
             body += "conversación sobre el tema " + dmTitle + "</p>";
             body += "<p>Si tienes otro problema no dudes en abrir otra conversación.</p>";
+            body += "</body></html>";
+            return body;
+        }
+
+        private static String getBodySendCreateDMNotificacion(string name, string dmTitle)
+        {
+            string body = "<html><head></head><body>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Uno de los administradores de la plataforma ha creado una ";
+            body += "conversación sobre el tema " + dmTitle + "</p>";
+            body += "<p>Dirígite a la plataforma lo más rápido posible y continua la conversación</p>";
             body += "</body></html>";
             return body;
         }
