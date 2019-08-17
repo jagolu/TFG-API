@@ -330,8 +330,11 @@ namespace API.Areas.Home.Util
 
         private static New pay_bets_group(Group group, FootballBet fb, ApplicationDBContext _context)
         {
+            _context.Entry(fb).Reference("type").Load();
+            _context.Entry(fb).Reference("typePay").Load();
             string title = "Se han pagado los resultados de las apuestas!!";
-            string message = "Se han pagado las apuestas asociadas al partido "+getMatchTitle(fb, _context);
+            string message = "Se han pagado las apuestas asociadas al partido "
+                +getMatchTitle(fb, _context)+" del tipo "+fb.type.name+" y premio "+fb.typePay.name;
 
             New n = new New
             {
@@ -345,8 +348,11 @@ namespace API.Areas.Home.Util
 
         private static New pay_bets_user(User user, Group group, FootballBet fb, ApplicationDBContext _context)
         {
+            _context.Entry(fb).Reference("type").Load();
+            _context.Entry(fb).Reference("typePay").Load();
             string title = "Se han pagado los resultados de las apuestas";
-            string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\" asociadas al partido " + getMatchTitle(fb, _context);
+            string message = "Se han pagado los resultados de las apuestas del grupo \""+group.name+"\" asociadas al partido " 
+                + getMatchTitle(fb, _context) + " del tipo " + fb.type.name + " y premio " + fb.typePay.name;
 
             New n = new New
             {
