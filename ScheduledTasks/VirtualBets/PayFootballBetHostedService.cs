@@ -70,10 +70,6 @@ namespace API.ScheduledTasks.VirtualBets
                             CheckWinners.checkWinner(bet, dbContext, hub);
                             bet.ended = true;
                             dbContext.SaveChanges();
-
-                            //Add the group to launch the pay-new
-                            dbContext.Entry(bet).Reference("Group").Load();
-                            if (!groupsNews.Any(g => g.id == bet.groupid)) groupsNews.Add(bet.Group);
                         }
                     });
                 }

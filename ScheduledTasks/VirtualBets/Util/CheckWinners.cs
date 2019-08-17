@@ -23,8 +23,8 @@ namespace API.ScheduledTasks.VirtualBets.Util
             List<List<Guid>> winners;
 
             winners = CheckBetType.isWinner(footballBet, _context) ? 
-                      calculateResult(footballBet, time, _context) :
-                      calculateTypeScore(footballBet, time, _context);
+                      calculateResult(footballBet, time) :
+                      calculateTypeScore(footballBet, time);
 
             if (CheckBetType.isJackpotExact(footballBet, _context))
             {
@@ -44,7 +44,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             launchNews(footballBet, _context, hub);
         }
 
-        private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time, ApplicationDBContext _context)
+        private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time)
         {
             List<List<Guid>> ret = new List<List<Guid>>();
             ret.Add(new List<Guid>());
@@ -70,7 +70,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             return ret;
         }
 
-        private static List<List<Guid>> calculateResult(FootballBet fb, int time, ApplicationDBContext _context)
+        private static List<List<Guid>> calculateResult(FootballBet fb, int time)
         {
             List<List<Guid>> ret = new List<List<Guid>>();
             ret.Add(new List<Guid>());
