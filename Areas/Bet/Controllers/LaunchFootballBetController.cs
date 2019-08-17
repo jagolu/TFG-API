@@ -75,7 +75,7 @@ namespace API.Areas.Bet.Controllers
                     maxBet = order.maxBet,
                     winRate = typeBet.winRate + typePay.winRate,
                     dateLastBet = order.lastBetTime,
-                    dateEnded = match.date.AddDays(1)
+                    dateEnded = match.date
                 };
                 _context.Add(fb);
                 _context.SaveChanges();

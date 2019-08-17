@@ -11,5 +11,6 @@ namespace API.Areas.Bet.Models
         public bool ended { get; set; }
         public DateTime dateCancelled { get; set; }
         public bool cancelled { get; set; }
+        public bool canBeCancelled { get; set; }
     }
 }

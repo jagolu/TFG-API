@@ -170,7 +170,8 @@ namespace API.Areas.GroupManage.Util
                     dateEnd = b.dateEnded,
                     dateCancelled = b.dateCancelled,
                     cancelled = b.cancelled,
-                    betId = b.id.ToString()
+                    betId = b.id.ToString(),
+                    canBeCancelled = b.dateEnded > DateTime.Now
                 });
             });
 

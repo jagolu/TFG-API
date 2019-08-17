@@ -57,6 +57,10 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest();
             }
+            if(bet.dateEnded < DateTime.Now)
+            {
+                return BadRequest(new { error = "CantCancelTheFootballBet" });
+            }
 
             try
             {
