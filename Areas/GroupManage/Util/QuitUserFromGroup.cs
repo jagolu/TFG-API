@@ -90,11 +90,14 @@ namespace API.Areas.GroupManage.Util
         {
             context.Entry(ug).Reference("User").Load();
             context.Entry(ug.User).Collection("footballBets").Load();
-            ug.User.footballBets.ToList().ForEach(b =>
-            { 
-                context.Remove(b);
+            ug.User.footballBets.ToList().ForEach(ufb =>
+            {
+                context.Entry(ufb).Reference("FootballBet").Load();
+                if(ufb.FootballBet.groupid == ug.groupid)
+                {
+                    context.Remove(ufb);
+                }
             });
-
             context.SaveChanges();
         }
     }

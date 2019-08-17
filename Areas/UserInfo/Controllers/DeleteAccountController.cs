@@ -11,6 +11,7 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Areas.UserInfo.Controllers
 {
@@ -19,12 +20,12 @@ namespace API.Areas.UserInfo.Controllers
     public class DeleteAccountController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private IHubContext<NotificationHub> _hub;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public DeleteAccountController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
+        public DeleteAccountController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
-            _hub = hub;
+            _scopeFactory = sf;
         }
 
         [HttpPost]
@@ -49,6 +50,9 @@ namespace API.Areas.UserInfo.Controllers
             try {
                 user.dateDeleted = DateTime.Now;
                 _context.SaveChanges();
+
+                removeTitles(user);
+                removeNotifications(user);
 
             } catch (Exception){
                 return StatusCode(500);
@@ -80,13 +84,43 @@ namespace API.Areas.UserInfo.Controllers
 
             for(int i = 0; i < groups.Count(); i++)
             {
-                if (!await QuitUserFromGroup.quitUser(groups.ElementAt(i), _context, _hub))
+                using (var scope = _scopeFactory.CreateScope())
                 {
-                    return false;
+                    try
+                    {
+                        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+                        var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
+
+                        UserGroup delGroup = dbContext.UserGroup.Where(g => 
+                            g.groupid == groups.ElementAt(i).groupid && g.userid == user.id).First();
+
+                        if (!await QuitUserFromGroup.quitUser(delGroup, dbContext, hub))
+                        {
+                            return false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 }
             }
 
             return true;
+        }
+
+        private void removeTitles(User user)
+        {
+            _context.Entry(user).Collection("directMessages");
+            _context.RemoveRange(user.directMessages.ToList());
+            _context.SaveChanges();
+        }
+
+        private void removeNotifications(User user)
+        {
+            _context.Entry(user).Collection("notifications");
+            _context.RemoveRange(user.notifications.ToList());
+            _context.SaveChanges();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace API.Areas.Alive.Util
                     else await Clients.All.SendAsync(groupSocketId + data.group, data);
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return;
             }

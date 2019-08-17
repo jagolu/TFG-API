@@ -33,7 +33,7 @@ namespace API.Areas.Alive.Util
                     }
                 );
             }
-            catch(Exception e)
+            catch(Exception)
             {
 
             }
