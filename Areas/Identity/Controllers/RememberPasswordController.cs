@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using API.Areas.Identity.Models;
 using API.Data;
@@ -55,70 +54,6 @@ namespace API.Areas.Identity.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        [ActionName("checkPasswordToken")]
-        public IActionResult checkPassword([Required] string passwordToken)
-        {
-            User u = new User();
-            if (!isValidToken(passwordToken, ref u))
-            {
-                return BadRequest();
-            }
-
-            return Ok();
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ActionName("ResetPassword")]
-        public IActionResult resetPassword([FromBody] ResetPassword order)
-        {
-            User user = new User();
-            if (!isValidToken(order.tokenPassword, ref user))
-            {
-                return BadRequest();
-            }
-            if (!PasswordHasher.validPassword(order.password))
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                user.password = PasswordHasher.hashPassword(order.password);
-                user.tokenPassword = null;
-                user.tokenP_expiresTime = DateTime.Now;
-                _context.Update(user);
-                _context.SaveChanges();
-
-                return Ok(new { success = "PassChanged"});
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-
-        private bool isValidToken(string token, ref User user)
-        {
-            var tokenExists = _context.User.Where(u => u.tokenPassword == token);
-            if (tokenExists.Count() != 1) //The token doesn't exists
-            {
-                return false;
-            }
-
-            //The token isn't valid
-            if(DateTime.Now > tokenExists.First().tokenP_expiresTime)
-            {
-                return false;
-            }
-            user = tokenExists.First();
-
-            return true;
         }
     }
 }
