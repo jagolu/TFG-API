@@ -86,7 +86,7 @@ namespace API.ScheduledTasks.VirtualBets
          */
         public void Dispose()
         {
-            //_timer?.Dispose();
+            _timer?.Dispose();
         }
     }
 }

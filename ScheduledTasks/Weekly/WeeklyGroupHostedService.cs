@@ -80,7 +80,7 @@ namespace API.ScheduledTasks.Weekly
          */
         public void Dispose()
         {
-            //_timer?.Dispose();
+            _timer?.Dispose();
         }
     }
 }
