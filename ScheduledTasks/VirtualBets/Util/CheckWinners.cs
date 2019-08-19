@@ -117,7 +117,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
             if (winners.Count() == 0) return;
 
-            int div_jack = jackpot / winners.Count();
+            int div_jack = winners.Count()>0 ? jackpot / winners.Count() : 0;
             fb.userBets.Where(ub => winners.Contains(ub.id)).ToList().ForEach(userBet =>
             {
                 userBet.earnings = div_jack;
@@ -134,7 +134,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _context.Entry(fb).Collection("userBets").Load();
             List<Guid> toPay = winners.First().Count() > 0 ? winners.First() : winners.Last();
             int jackpot = fb.usersJoined * fb.minBet;
-            int div_jack = jackpot / toPay.Count();
+            int div_jack = toPay.Count()>0 ? jackpot / toPay.Count() : 0;
 
             fb.userBets.Where(ub => toPay.Contains(ub.id)).ToList().ForEach(userBet =>
             {
