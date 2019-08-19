@@ -8,16 +8,15 @@ using API.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace API.Areas.Home.Controllers
 {
     [Route("Home/[action]")]
     [ApiController]
-    public class HomeNewsController : ControllerBase
+    public class AuthorizedNewsController : ControllerBase
     {
         private ApplicationDBContext _context;
 
-        public HomeNewsController(ApplicationDBContext context)
+        public AuthorizedNewsController(ApplicationDBContext context)
         {
             _context = context;
         }
@@ -34,33 +33,6 @@ namespace API.Areas.Home.Controllers
             try
             {
                 List<NewMessage> retMessage = GetNews.getAuthNews(user.id, _context);
-
-                return Ok(retMessage);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-
-        [HttpGet]
-        [ActionName("StandHome")]
-        public IActionResult GetStand()
-        {
-            bool isAdmin;
-            try
-            {
-                User user = TokenUserManager.getUserFromToken(HttpContext, _context);
-                isAdmin = AdminPolicy.isAdmin(user, _context);
-            }
-            catch(Exception)
-            {
-                isAdmin = false;
-            }
-            try
-            {
-                List<NewMessage> retMessage = GetNews.getStandNews(isAdmin, _context);
 
                 return Ok(retMessage);
             }
