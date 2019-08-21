@@ -31,8 +31,8 @@ namespace API.Areas.Home.Util
             else if (type == TypeGroupNew.LAUNCH_FOOTBALLBET_GROUP) whatsGoingOn = launchFootballBet_group(group, fb, context);
             else if (type == TypeGroupNew.PAID_BETS_USER) whatsGoingOn = pay_bets_user(user, group, fb, context);
             else if (type == TypeGroupNew.PAID_BETS_GROUP) whatsGoingOn = pay_bets_group(group, fb, context);
-            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_GROUP) whatsGoingOn = cancellFootballBet_group(group, fb, context);
-            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_USER) whatsGoingOn = cancellFootballBet_user(user, group, fb, makeUnmake, context);
+            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_GROUP) whatsGoingOn = cancelFootballBet_group(group, fb, context);
+            else if (type == TypeGroupNew.FOOTBALLBET_CANCELLED_USER) whatsGoingOn = cancelFootballBet_user(user, group, fb, makeUnmake, context);
 
 
             else if (type == TypeGroupNew.PAID_PLAYERS_USER) whatsGoingOn = pay_players_user(user, group);
@@ -243,9 +243,9 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New makeMaker_group(User user, Group group, bool leave)
+        private static New makeMaker_group(User user, Group group, bool makeUnmake)
         {
-            string bitM = leave ? "se ha marchado" : "ha sido baneado";
+            string bitM = makeUnmake ? "se ha marchado" : "ha sido baneado";
             string title = "El creador del grupo ha cambiado";
             string message = "Debido a que el creador " +  bitM + ", se ha elegido automáticamente el nuevo creador del mismo."+
                               "El elegido es \""+user.nickname+"\".";
@@ -260,9 +260,9 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New makeMaker_user(User user, Group group, bool leave)
+        private static New makeMaker_user(User user, Group group, bool makeUnmake)
         {
-            string bitM = leave ? "se ha marchado" : "ha sido baneado";
+            string bitM = makeUnmake ? "se ha marchado" : "ha sido baneado";
             string title = "Se te ha elegido como creador de un grupo!!";
             string message = "Debido a que el creador del grupo \"" + group.name + "\" " + bitM +
                             ", se te ha elegido automáticamente como nuevo creador del mismo.";
@@ -364,7 +364,7 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New cancellFootballBet_user(User user, Group group, FootballBet fb, bool isLauncher, ApplicationDBContext _context)
+        private static New cancelFootballBet_user(User user, Group group, FootballBet fb, bool isLauncher, ApplicationDBContext _context)
         {
 
             string title = !isLauncher ? "Se ha cancelado una apuesta en uno de tus grupos" :
@@ -383,7 +383,7 @@ namespace API.Areas.Home.Util
             return n;
         }
 
-        private static New cancellFootballBet_group(Group group, FootballBet fb, ApplicationDBContext _context)
+        private static New cancelFootballBet_group(Group group, FootballBet fb, ApplicationDBContext _context)
         {
             string title = "Se ha cancelado una apuesta!";
             string message = "Se ha cancelado la apuesta asociada al partido " + getMatchTitle(fb, _context);

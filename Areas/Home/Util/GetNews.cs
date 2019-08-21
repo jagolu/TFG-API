@@ -33,7 +33,6 @@ namespace API.Areas.Home.Util
             return retMessage;
         }
 
-
         private static List<NewMessage> addNews(List<New> news, bool isAdmin)
         {
             List<NewMessage> retMessage = new List<NewMessage>();
