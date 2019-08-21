@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace API.Areas.Bet.Models
 {
-    public class FootBallMatch
+    public class FootballMatch
     {
         public string competition { get; set; }
         public string match_name { get; set; }

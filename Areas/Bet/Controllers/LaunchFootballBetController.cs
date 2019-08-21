@@ -44,7 +44,7 @@ namespace API.Areas.Bet.Controllers
             {
                 return BadRequest();
             }
-            if(!GetMatchDay(ref match, order.matchday))
+            if(!getMatchDay(ref match, order.matchday))
             {
                 return BadRequest();
             }
@@ -90,7 +90,7 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
-        private bool GetMatchDay(ref MatchDay match, string matchday)
+        private bool getMatchDay(ref MatchDay match, string matchday)
         {
             List<MatchDay> matchs = _context.MatchDays.Where(md => md.id.ToString() == matchday).ToList();
             if(matchs.Count() != 1)

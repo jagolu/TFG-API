@@ -43,7 +43,7 @@ namespace API.Areas.Bet.Controllers
 
             try
             {
-                List<FootBallMatch> availableMatches =  getAvailableMatchDays(group);
+                List<FootballMatch> availableMatches =  getAvailableMatchDays(group);
                 LaunchFootballBetManager response = new LaunchFootballBetManager();
                 response.typeBets = loadTypeFootballBet();
                 response.typePays = loadTypePays();
@@ -56,8 +56,6 @@ namespace API.Areas.Bet.Controllers
                 return StatusCode(500);
             }
         }
-
-
 
         private bool checkMaxBetAllowed(Group group)
         {
@@ -80,14 +78,14 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
-        private List<FootBallMatch> getAvailableMatchDays(Group group)
+        private List<FootballMatch> getAvailableMatchDays(Group group)
         {
             _context.Entry(group).Collection("bets").Load();
             DateTime now = DateTime.Now;
             DateTime aWeek = DateTime.Now.AddDays(8);
             List<TypeFootballBet> allTypes = _context.TypeFootballBet.ToList();
             List<FootballBet> doneBets = group.bets.ToList(); //Group bets
-            List<FootBallMatch> retmatchs = new List<FootBallMatch>(); //return array
+            List<FootballMatch> retmatchs = new List<FootballMatch>(); //return array
             List<MatchDay> availableMatchs = _context.MatchDays.Where(
                 md => md.date > now && md.date < aWeek && md.status == "SCHEDULED").ToList(); //matchdays from now to a week
 
@@ -101,14 +99,13 @@ namespace API.Areas.Bet.Controllers
                     allowedTypes = availableTypeBets(betsOnTheMatch, allTypes);
                 }
 
-                addFootBallMatch(retmatchs, md, allowedTypes);
+                addFootballMatch(retmatchs, md, allowedTypes);
             });
 
             return retmatchs;
         }
 
-
-        private void addFootBallMatch(List<FootBallMatch> mainArray, MatchDay md, List<TypeFootballBet> allowedTypes)
+        private void addFootballMatch(List<FootballMatch> mainArray, MatchDay md, List<TypeFootballBet> allowedTypes)
         {
             if(allowedTypes.Count() == 0)
             {
@@ -119,7 +116,7 @@ namespace API.Areas.Bet.Controllers
             _context.Entry(md).Reference("AwayTeam").Load();
             _context.Entry(md).Reference("Competition").Load();
 
-            mainArray.Add(new FootBallMatch
+            mainArray.Add(new FootballMatch
             {
                 competition = md.Competition.name,
                 match_name = md.HomeTeam.name+" vs "+md.AwayTeam.name,
@@ -129,13 +126,12 @@ namespace API.Areas.Bet.Controllers
             });
         }
 
-
-        private List<AvailableBet> getAvailableBets(List<FootBallMatch> matchs)
+        private List<AvailableBet> getAvailableBets(List<FootballMatch> matchs)
         {
             List<AvailableBet> availableBets = new List<AvailableBet>();
             _context.Competitions.ToList().ForEach(competition =>
             {
-                List<FootBallMatch> mtchs_comp = matchs.Where(m => m.competition == competition.name).ToList();
+                List<FootballMatch> mtchs_comp = matchs.Where(m => m.competition == competition.name).ToList();
                 if(mtchs_comp.Count() != 0)
                 {
                     availableBets.Add(new AvailableBet
@@ -148,7 +144,6 @@ namespace API.Areas.Bet.Controllers
 
             return availableBets;
         }
-
 
         private List<string> getIdsFromTypeBets(List<TypeFootballBet> types)
         {
@@ -201,7 +196,7 @@ namespace API.Areas.Bet.Controllers
             res.competitionMatches = new List<AvailableBet>();
             res.competitionMatches.Add(new AvailableBet
             {
-                matches = new List<FootBallMatch>(),
+                matches = new List<FootballMatch>(),
                 competition = "MaximunWeekBetsReached"
             });
 

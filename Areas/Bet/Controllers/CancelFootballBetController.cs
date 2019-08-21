@@ -20,20 +20,20 @@ namespace API.Areas.Bet.Controllers
     public class CancelFootballBetController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private IHubContext<NotificationHub> _hub;
 
         public CancelFootballBetController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
-            scopeFactory = sf;
+            _scopeFactory = sf;
             _hub = hub;
         }
 
         [HttpGet]
         [Authorize]
         [ActionName("CancelFootballBet")]
-        public IActionResult createGroup([Required] string betId)
+        public IActionResult cancel([Required] string betId)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -71,7 +71,7 @@ namespace API.Areas.Bet.Controllers
                 bet.dateCancelled = DateTime.Now;
                 
                 _context.SaveChanges();
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     Group dbgroup = dbContext.Group.Where(g => g.name == group.name).First();
