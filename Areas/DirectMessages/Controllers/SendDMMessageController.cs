@@ -19,13 +19,13 @@ namespace API.Areas.DirectMessages.Controllers
     public class SendDMMessageController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private IHubContext<NotificationHub> _hub;
 
         public SendDMMessageController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
-            scopeFactory = sf;
+            _scopeFactory = sf;
             _hub = hub;
         }
 
@@ -58,7 +58,7 @@ namespace API.Areas.DirectMessages.Controllers
                 _context.SaveChanges();
                 await sendMailAndSendNotification(title, user);
 
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     DirectMessageTitle dbTitle = dbContext.DirectMessagesTitle.Where(t => t.id == title.id).First();
