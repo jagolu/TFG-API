@@ -12,12 +12,12 @@ namespace API.Areas.Alive.Util
     public class NotificationHub : Hub
     {
         private readonly IServiceScopeFactory scopeFactory;
-        private readonly string notificationSocketId;
+        private readonly string _notificationSocketId;
 
         public NotificationHub(IServiceScopeFactory sf, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             scopeFactory = sf;
-            notificationSocketId = configuration["socket:inAppNotifications"];
+            _notificationSocketId = configuration["socket:inAppNotifications"];
         }
 
         public async Task BroadcastNotificationsData(string publicUserId)
@@ -31,7 +31,7 @@ namespace API.Areas.Alive.Util
                     List<User> us = dbContext.User.Where(u => u.publicid == publicUserId).ToList();
                     if (us.Count() != 1) return;
 
-                    await Clients.All.SendAsync(notificationSocketId + publicUserId, "CONNECTED");
+                    await Clients.All.SendAsync(_notificationSocketId + publicUserId, "CONNECTED");
                 }
             }
             catch (Exception)

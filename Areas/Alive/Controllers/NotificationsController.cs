@@ -24,7 +24,7 @@ namespace API.Areas.Alive.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("NotificationsLogin")]
-        public IActionResult LoginNotifications()
+        public IActionResult loginNotifications()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });

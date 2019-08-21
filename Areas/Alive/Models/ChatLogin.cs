@@ -7,9 +7,9 @@ namespace API.Areas.Alive.Models
     {
         public string callerPublicId { get; set; }
         public string group { get; set; }
-        public List<ChatUserMesssages> userMessages { get; set; }
+        public List<ChatUserMessages> userMessages { get; set; }
 
-        public class ChatUserMesssages
+        public class ChatUserMessages
         {
             public string username { get; set; }
             public string publicUserId { get; set; }

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using static API.Areas.Alive.Models.ChatLogin;
-using static API.Areas.Alive.Models.ChatLogin.ChatUserMesssages;
+using static API.Areas.Alive.Models.ChatLogin.ChatUserMessages;
 
 namespace API.Areas.Alive.Controllers
 {
@@ -28,7 +28,7 @@ namespace API.Areas.Alive.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("ChatLogin")]
-        public IActionResult LoginChat([Required]string groupName)
+        public IActionResult loginChat([Required]string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if(!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -56,11 +56,10 @@ namespace API.Areas.Alive.Controllers
                 return StatusCode(500);
             }
         }
-
-        public List<ChatUserMesssages> filterMessages(List<GroupChatMessage> msgs)
+        private List<ChatUserMessages> filterMessages(List<GroupChatMessage> msgs)
         {
             string lastUserId = "";
-            List<ChatUserMesssages> messages = new List<ChatUserMesssages>();
+            List<ChatUserMessages> messages = new List<ChatUserMessages>();
 
             msgs.ForEach(msg =>
             {
@@ -70,7 +69,7 @@ namespace API.Areas.Alive.Controllers
                     lastUserId = msg.publicUserid;
                     List<SingleUserChatMessage> newMessages = new List<SingleUserChatMessage>();
                     newMessages.Add(new SingleUserChatMessage { message = msg.message, time = msg.time });
-                    messages.Add(new ChatUserMesssages
+                    messages.Add(new ChatUserMessages
                     {
                         username = msg.username,
                         publicUserId = msg.publicUserid,

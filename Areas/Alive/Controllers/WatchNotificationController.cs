@@ -23,7 +23,7 @@ namespace API.Areas.Alive.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("WatchNotification")]
-        public IActionResult ReadNotifications(string id)
+        public IActionResult readNotifications(string id)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });

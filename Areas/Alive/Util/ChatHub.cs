@@ -12,20 +12,20 @@ namespace API.Areas.Alive.Util
 {
     public class ChatHub : Hub
     {
-        private readonly IServiceScopeFactory scopeFactory;
-        private readonly string groupSocketId;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly string _groupSocketId;
 
         public ChatHub(IServiceScopeFactory sf, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
-            scopeFactory = sf;
-            groupSocketId = configuration["socket:chatRoom"];
+            _scopeFactory = sf;
+            _groupSocketId = configuration["socket:chatRoom"];
         }
 
         public async Task BroadcastChartData(ChatMessage data)
         {
             try
             {
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     ApplicationDBContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     Group group = new Group();
@@ -41,9 +41,9 @@ namespace API.Areas.Alive.Util
 
                     if (isHello) {
                         data.username = "";
-                        await Clients.Others.SendAsync(groupSocketId + data.group, data);
+                        await Clients.Others.SendAsync(_groupSocketId + data.group, data);
                     }
-                    else await Clients.All.SendAsync(groupSocketId + data.group, data);
+                    else await Clients.All.SendAsync(_groupSocketId + data.group, data);
                 }
             }
             catch(Exception)
@@ -91,7 +91,7 @@ namespace API.Areas.Alive.Util
             dbContext.SaveChanges();
         }
 
-        public bool isHelloMessage(ChatMessage msg)
+        private bool isHelloMessage(ChatMessage msg)
         {
             return msg.role == "Conexión" && msg.message.Contains("está conectado.");
         }

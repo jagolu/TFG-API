@@ -9,13 +9,12 @@ namespace API.Areas.Alive.Util
 {
     public static class SendNotification
     {
-        private static string __notificationSocketId;
+        private static string _notificationSocketId;
 
         public static void Initialize(IConfiguration conf)
         {
-            __notificationSocketId = conf["socket:inAppNotifications"];
+            _notificationSocketId = conf["socket:inAppNotifications"];
         }
-
 
         public static async Task send(IHubContext<NotificationHub> hub, string target, User recv, NotificationType type, ApplicationDBContext context)
         {
@@ -26,7 +25,7 @@ namespace API.Areas.Alive.Util
 
             NotificationMessage ret = new NotificationMessage { id = notification.id.ToString(), message = message };
 
-            await hub.Clients.All.SendAsync(__notificationSocketId + recv.publicid.ToString(), ret);
+            await hub.Clients.All.SendAsync(_notificationSocketId + recv.publicid.ToString(), ret);
         }
     }
 }
