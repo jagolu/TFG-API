@@ -30,7 +30,7 @@ namespace API.Areas.Admin.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("BanGroup")]
-        public IActionResult banUser([FromBody] BanGroup order)
+        public IActionResult banGroup([FromBody] BanGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             Group targetGroup = new Group();

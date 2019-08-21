@@ -17,18 +17,18 @@ namespace API.Areas.Admin.Controllers
     public class RemoveNewController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         public RemoveNewController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
-            scopeFactory = sf;
+            _scopeFactory = sf;
         }
 
         [HttpGet]
         [Authorize]
         [ActionName("RemoveNew")]
-        public IActionResult launchNew(string id)
+        public IActionResult removeNew(string id)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
@@ -44,7 +44,7 @@ namespace API.Areas.Admin.Controllers
                 _context.Remove(possibleNews.First());
                 _context.SaveChanges();
 
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     List<NewMessage> retMessage = GetNews.getStandNews(true, dbContext);

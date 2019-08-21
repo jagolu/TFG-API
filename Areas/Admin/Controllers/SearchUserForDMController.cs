@@ -11,11 +11,11 @@ namespace API.Areas.Admin.Controllers
 {
     [Route("Admin/[action]")]
     [ApiController]
-    public class SearchUseForDM : ControllerBase
+    public class SearchUserForDM : ControllerBase
     {
         private ApplicationDBContext _context;
 
-        public SearchUseForDM(ApplicationDBContext context)
+        public SearchUserForDM(ApplicationDBContext context)
         {
             _context = context;
         }
