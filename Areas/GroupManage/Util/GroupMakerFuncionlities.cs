@@ -6,7 +6,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class GroupMakerFuncionlities
     {
-        public static bool checkFuncionlity(User caller, ref Group group, string groupName, GroupMakerFuncionlity type, ApplicationDBContext _context, string newPassword = null, string oldPassword = null)
+        public static bool checkFuncionality(User caller, ref Group group, string groupName, GroupMakerFuncionality type, ApplicationDBContext _context, string newPassword = null, string oldPassword = null)
         {
             UserGroup ugCaller = new UserGroup();
 
@@ -18,16 +18,16 @@ namespace API.Areas.GroupManage.Util
             bool can;
             switch (type)
             {
-                case GroupMakerFuncionlity.MANAGE_PASSWORD:
+                case GroupMakerFuncionality.MANAGE_PASSWORD:
                     can = justCheckMaker(ugCaller, _context) && hasPermissionsManagePassword(group, newPassword, oldPassword);
                     break;
-                case GroupMakerFuncionlity.REMOVE_GROUP:
+                case GroupMakerFuncionality.REMOVE_GROUP:
                     can = justCheckMaker(ugCaller, _context);
                     break;
-                case GroupMakerFuncionlity.STARTCREATE_FOOTBALL_BET:
+                case GroupMakerFuncionality.STARTCREATE_FOOTBALL_BET:
                     can = justCheckMaker(ugCaller, _context);
                     break;
-                case GroupMakerFuncionlity.MANAGEWEEKPAY:
+                case GroupMakerFuncionality.MANAGEWEEKPAY:
                     can = justCheckMaker(ugCaller, _context);
                     break;
                 default:
@@ -72,7 +72,7 @@ namespace API.Areas.GroupManage.Util
 
 
 
-    public enum GroupMakerFuncionlity
+    public enum GroupMakerFuncionality
     {
         MANAGE_PASSWORD = 1,
         REMOVE_GROUP = 2,

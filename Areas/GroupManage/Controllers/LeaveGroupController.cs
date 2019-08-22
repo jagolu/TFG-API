@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace API.Areas.GroupManage.Controllers
@@ -18,13 +16,13 @@ namespace API.Areas.GroupManage.Controllers
     public class LeaveGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private IHubContext<NotificationHub> _hub;
 
         public LeaveGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
-            scopeFactory = sf;
+            _scopeFactory = sf;
             _hub = hub;
         }
 
@@ -50,7 +48,7 @@ namespace API.Areas.GroupManage.Controllers
             }
             InteractionManager.manageInteraction(user, group, interactionType.LEAVED, _context);
 
-            using (var scope = scopeFactory.CreateScope())
+            using (var scope = _scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                 var groupE = dbContext.Group.Where(g => g.name == groupName);

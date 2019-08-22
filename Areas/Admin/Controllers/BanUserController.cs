@@ -113,7 +113,7 @@ namespace API.Areas.Admin.Controllers
                 else
                 {
                     _context.Entry(g).Reference("Group").Load();
-                    GroupManage.Util.RemoveGroup.Remove(g.Group, _context, _hub);
+                    GroupManage.Util.RemoveGroup.remove(g.Group, _context, _hub);
                 }
             });
         }

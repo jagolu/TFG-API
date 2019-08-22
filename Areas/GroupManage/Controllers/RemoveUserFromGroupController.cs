@@ -19,14 +19,14 @@ namespace API.Areas.GroupManage.Controllers
     public class RemoveUserFromGroupController : ControllerBase
     {
         private ApplicationDBContext _context;
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly IServiceScopeFactory _scopeFactory;
         private IHubContext<NotificationHub> _notificationHub;
         private IHubContext<ChatHub> _chatHub;
 
         public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> notificationHub, IHubContext<ChatHub> chatHub)
         {
             _context = context;
-            scopeFactory = sf;
+            _scopeFactory = sf;
             _notificationHub = notificationHub;
             _chatHub = chatHub;
         }
@@ -42,7 +42,7 @@ namespace API.Areas.GroupManage.Controllers
             UserGroup targetUser = new UserGroup();
             Group group = new Group();
 
-            if (!GroupAdminFuncionlities.checkFuncionality(user, ref group, order.groupName, ref targetUser, order.publicId, _context, GroupAdminFuncionlity.REMOVE_USER, false))
+            if (!GroupAdminFuncionlities.checkFuncionality(user, ref group, order.groupName, ref targetUser, order.publicId, _context, GroupAdminFuncionality.REMOVE_USER, false))
             {
                 return BadRequest();
             }
@@ -57,7 +57,7 @@ namespace API.Areas.GroupManage.Controllers
                 await KickChatNotification.sendKickMessageAsync(group.name, targetUser.User.publicid, _chatHub);
                 InteractionManager.manageInteraction(targetUser.User, group, interactionType.KICKED, _context);
 
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     group = dbContext.Group.Where(g => g.name == order.groupName).First();

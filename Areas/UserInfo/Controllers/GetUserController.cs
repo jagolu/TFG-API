@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using API.Areas.UserInfo.Models;
 using API.Areas.UserInfo.Util;
 using API.Data;

@@ -40,7 +40,7 @@ namespace API.Areas.Bet.Controllers
             TypeFootballBet typeBet = new TypeFootballBet();
             TypePay typePay = new TypePay();
 
-            if (!GroupMakerFuncionlities.checkFuncionlity(caller, ref group, order.groupName, GroupMakerFuncionlity.STARTCREATE_FOOTBALL_BET, _context))
+            if (!GroupMakerFuncionlities.checkFuncionality(caller, ref group, order.groupName, GroupMakerFuncionality.STARTCREATE_FOOTBALL_BET, _context))
             {
                 return BadRequest();
             }

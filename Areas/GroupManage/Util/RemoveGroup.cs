@@ -12,7 +12,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class RemoveGroup
     {
-        public static void Remove(Group group, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
+        public static void remove(Group group, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             _context.Entry(group).Collection("users").Load();
             _context.Entry(group).Collection("bets").Load();

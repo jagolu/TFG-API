@@ -33,7 +33,7 @@ namespace API.Areas.GroupManage.Controllers
             if (AdminPolicy.isAdmin(user, _context)) return BadRequest("notAllowed");
             Group group = new Group();
 
-            if (!GroupMakerFuncionlities.checkFuncionlity(user, ref group, order.name, GroupMakerFuncionlity.REMOVE_GROUP, _context))
+            if (!GroupMakerFuncionlities.checkFuncionality(user, ref group, order.name, GroupMakerFuncionality.REMOVE_GROUP, _context))
             {
                 return BadRequest();
             }
@@ -44,7 +44,7 @@ namespace API.Areas.GroupManage.Controllers
             if (!group.open) return BadRequest(new { error = "GroupBanned" });
             try
             {
-                RemoveGroup.Remove(group, _context, _hub);
+                RemoveGroup.remove(group, _context, _hub);
 
                 return Ok(new { success = "SuccesfullGroupRemoved" });
             }

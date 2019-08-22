@@ -26,7 +26,7 @@ namespace API.Areas.GroupManage.Controllers
         [HttpPost]
         [Authorize]
         [ActionName("JoinGroup")]
-        public IActionResult JoinGroup([FromBody] JoinGroup order)
+        public IActionResult joinGroup([FromBody] JoinGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });

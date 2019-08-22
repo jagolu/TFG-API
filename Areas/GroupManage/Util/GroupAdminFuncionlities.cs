@@ -9,7 +9,7 @@ namespace API.Areas.GroupManage.Util
 {
     public static class GroupAdminFuncionlities
     {
-        public static bool checkFuncionality(User caller, ref Group group, string groupName, ref UserGroup ugTarget, string publicUserId, ApplicationDBContext context, GroupAdminFuncionlity type, bool make_unmake)
+        public static bool checkFuncionality(User caller, ref Group group, string groupName, ref UserGroup ugTarget, string publicUserId, ApplicationDBContext context, GroupAdminFuncionality type, bool make_unmake)
         {
             try
             {
@@ -40,13 +40,13 @@ namespace API.Areas.GroupManage.Util
                 bool can;
                 switch (type)
                 {
-                    case GroupAdminFuncionlity.MAKE_ADMIN:
+                    case GroupAdminFuncionality.MAKE_ADMIN:
                         can = hasPermissionsMakeAdmin(callerRole, targetRole, make_unmake, ugTarget.blocked, context);
                         break;
-                    case GroupAdminFuncionlity.REMOVE_USER:
+                    case GroupAdminFuncionality.REMOVE_USER:
                         can = hasPermissionsKickUser(callerRole, targetRole, ugTarget.blocked, ugTarget.blocked ? ugTarget.blockedBy : new Role(), context);
                         break;
-                    case GroupAdminFuncionlity.BLOCK_USER:
+                    case GroupAdminFuncionality.BLOCK_USER:
                         can = hasPermissionsBlockUser(callerRole, targetRole, ugTarget, make_unmake, context);
                         break;
                     default:
@@ -117,7 +117,7 @@ namespace API.Areas.GroupManage.Util
         }
     }
 
-    public enum GroupAdminFuncionlity
+    public enum GroupAdminFuncionality
     {
         MAKE_ADMIN = 1,
         REMOVE_USER = 2,

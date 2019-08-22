@@ -23,7 +23,7 @@ namespace API.Areas.GroupManage.Util
                 if (members.Count() == 1) // The user in the group is the only member in
                 {
                     _context.Entry(userGroup).Reference("Group").Load();
-                    RemoveGroup.Remove(userGroup.Group, _context, hub);
+                    RemoveGroup.remove(userGroup.Group, _context, hub);
                 }
                 else
                 {
