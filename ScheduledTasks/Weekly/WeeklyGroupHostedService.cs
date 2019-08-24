@@ -30,7 +30,7 @@ namespace API.ScheduledTasks.Weekly
             _timer = new Timer(
                 DoWork,
                 null,
-                NextScheduledTime.nextTime(5, 5), //Initial time
+                NextScheduledTime.nextTime(5), //Initial time
                 new TimeSpan(1, 0, 0, 0) //The next day
             );
 
@@ -44,7 +44,7 @@ namespace API.ScheduledTasks.Weekly
         public Task StopAsync(CancellationToken cancellationToken)
         {
             //Restart the timer
-            _timer?.Change(NextScheduledTime.nextTime(5, 5), new TimeSpan(1, 0, 0, 0));
+            _timer?.Change(NextScheduledTime.nextTime(5), new TimeSpan(1, 0, 0, 0));
 
             return Task.CompletedTask;
         }
@@ -70,7 +70,7 @@ namespace API.ScheduledTasks.Weekly
             catch (Exception)
             {
                 //Restart the timer
-                _timer?.Change(NextScheduledTime.nextTime(5, 5), new TimeSpan(1, 0, 0, 0));
+                _timer?.Change(NextScheduledTime.nextTime(5), new TimeSpan(1, 0, 0, 0));
             }
         }
 

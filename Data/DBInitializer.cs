@@ -62,6 +62,7 @@ namespace API.Data
         {
             List<User> test_users = new List<User>();
             Role normal = RoleManager.getNormalUser(context);
+            Role admin = RoleManager.getAdmin(context);
             string hashedPassword = PasswordHasher.hashPassword("asdfasdf1A");
 
             for (int i = 0; i < 7; i++)
@@ -72,31 +73,34 @@ namespace API.Data
                     nickname = "u" + i + "_test",
                     password = hashedPassword,
                     tokenValidation = null,
-                    role = normal
+                    role = normal,
+                    dateSignUp = new DateTime(2019, 07, i+20, 3*i, 8*i, 00)
                 });
             }
-            User admin = new User
+            User admin1 = new User
             {
                 email = "a@gmail.com",
-                nickname = "a_ADMIN",
+                nickname = "Javier Gómez",
                 password = hashedPassword,
                 tokenValidation = null,
-                role = RoleManager.getAdmin(context)
+                role = RoleManager.getAdmin(context),
+                dateSignUp = new DateTime(2019, 06, 20, 17, 00, 00)
             };
 
             User admin2 = new User
             {
                 email = "a2@gmail.com",
-                nickname = "a2_ADMIN",
+                nickname = "Diego Carrillo",
                 password = hashedPassword,
                 tokenValidation = null,
-                role = RoleManager.getAdmin(context)
+                role = admin,
+                dateSignUp = new DateTime(2019, 06, 20, 17, 20, 00)
             };
 
 
             test_users.Where(u => context.User.All(dbUser => dbUser.email != u.email)).ToList().ForEach(newU => context.Add(newU));
 
-            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin);
+            if (context.User.Where(u => u.email == "a@gmail.com").Count() == 0) context.Add(admin1);
             if (context.User.Where(u => u.email == "a2@gmail.com").Count() == 0) context.Add(admin2);
         }
 
