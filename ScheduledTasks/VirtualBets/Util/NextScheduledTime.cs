@@ -4,7 +4,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 {
     public static class NextScheduledTime
     {
-        public static TimeSpan nextTime(int addHours, int addMins)
+        public static TimeSpan nextTime(int addHours)
         {
             DateTime nowDay = DateTime.Now;
             nowDay = new DateTime(nowDay.Year, nowDay.Month, nowDay.Day); //Actual day at 00:00
@@ -14,7 +14,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;
 
-            double then = nowDay.AddDays(1).AddHours(addHours).AddMinutes(addMins)
+            double then = nowDay.AddDays(1).AddHours(addHours).AddMinutes(5)
                 .ToUniversalTime()
                 .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;

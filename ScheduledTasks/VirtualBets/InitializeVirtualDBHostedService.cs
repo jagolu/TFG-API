@@ -30,7 +30,7 @@ namespace API.ScheduledTasks.VirtualBets
          */
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            NextScheduledTime.nextTime(0, 5);
+            NextScheduledTime.nextTime(0);
             _timer = new Timer(
                 DoWork, 
                 null,
@@ -48,7 +48,7 @@ namespace API.ScheduledTasks.VirtualBets
         public Task StopAsync(CancellationToken cancellationToken)
         {
             //Restart the timer
-            _timer?.Change(NextScheduledTime.nextTime(0, 5), new TimeSpan(1, 0, 0, 0));
+            _timer?.Change(NextScheduledTime.nextTime(0), new TimeSpan(1, 0, 0, 0));
 
             return Task.CompletedTask;
         }
@@ -75,7 +75,7 @@ namespace API.ScheduledTasks.VirtualBets
                 catch (Exception)
                 {
                     //Restart the timer
-                    _timer?.Change(NextScheduledTime.nextTime(0, 5), new TimeSpan(1, 0, 0, 0));
+                    _timer?.Change(NextScheduledTime.nextTime(0), new TimeSpan(1, 0, 0, 0));
                 }
             }
         } 
