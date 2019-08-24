@@ -51,7 +51,7 @@ namespace API.Data
                     description ="Tiene bote. El bote sera para el participante que acierte el resultado exacto. Si nadie acierta el resultado, todos perderán las monedas apostadas."},
                 new TypePay{name=CheckBetType.getJackpotCloser(), winRate=0, winLoseCancel=100,
                     description ="Tiene bote. El bote será para el participante que se acerque más al resultado exacto."},
-                new TypePay{name=CheckBetType.getSoloExact(), winRate=1.5, winLoseCancel=0.3,
+                new TypePay{name=CheckBetType.getSoloExact(), winRate=1.5, winLoseCancel=0.2,
                     description ="Cada participante participa el solo. Las apuestas tienen una cuota. Si el participante no gana perderá sus monedas."},
             };
 
@@ -110,14 +110,28 @@ namespace API.Data
                     Group = null, User = null, groupid = null, userid = null,
                     title = title,
                     message = "Beta de la aplicación lanzada!!",
-                    date = new DateTime(2019, 07, 14)
+                    date = new DateTime(2019, 06, 20)
                 },
                 new New
                 {
                     Group = null, User = null, groupid = null, userid = null,
                     title = title,
-                    message = "Hemos añadido un chat grupal para la versión web. En el con vuestros compañeros de grupo.",
-                    date = new DateTime(2019, 07, 20)
+                    message = "Hemos añadido un chat grupal. Podreis hablar con vuestros compañeros de grupo.",
+                    date = new DateTime(2019, 06, 29)
+                },
+                new New
+                {
+                    Group = null, User = null, groupid = null, userid = null,
+                    title = title,
+                    message = "Hemos añadido una lista de noticias para los grupos y para la página principal. Podreis ver un historial de todo lo que os pasado en VirtualBet.",
+                    date = new DateTime(2019, 07, 05)
+                },
+                new New
+                {
+                    Group = null, User = null, groupid = null, userid = null,
+                    title = title,
+                    message = "Hemos añadido notificaciones en tiempo real para que os entereis al momento de cualquier cosa que os suceda a vosotros o en alguno de tus grupos.",
+                    date = new DateTime(2019, 07, 11)
                 },
                 new New
                 {
