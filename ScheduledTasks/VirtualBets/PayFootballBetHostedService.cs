@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace API.ScheduledTasks.VirtualBets
             _timer = new Timer(
                DoWork,
                null,
-               NextScheduledTime.nextTime(3, 5), //Initial time
+               NextScheduledTime.nextTime(4), //Initial time
                new TimeSpan(1, 0, 0, 0) //The next day
             );
 
@@ -44,7 +43,7 @@ namespace API.ScheduledTasks.VirtualBets
         public Task StopAsync(CancellationToken cancellationToken)
         {
             //Restart the timer
-            _timer?.Change(NextScheduledTime.nextTime(3), new TimeSpan(1, 0, 0, 0));
+            _timer?.Change(NextScheduledTime.nextTime(4), new TimeSpan(1, 0, 0, 0));
 
             return Task.CompletedTask;
         }
@@ -60,7 +59,6 @@ namespace API.ScheduledTasks.VirtualBets
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
                     var hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationHub>>();
-                    List<Data.Models.Group> groupsNews = new List<Data.Models.Group>();
 
                     dbContext.FootballBets.Where(fb => !fb.ended && !fb.cancelled).ToList().ForEach(bet =>
                     {
@@ -77,7 +75,7 @@ namespace API.ScheduledTasks.VirtualBets
             catch (Exception)
             {
                 //Restart the timer
-                _timer?.Change(NextScheduledTime.nextTime(3), new TimeSpan(1, 0, 0, 0));
+                _timer?.Change(NextScheduledTime.nextTime(4), new TimeSpan(1, 0, 0, 0));
             }
         }
 
