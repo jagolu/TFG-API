@@ -35,7 +35,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             CompetitionMatches comptMatchs = await APIRequest.getMatchesFromCompetition(token, leagueId, _http);
             CompetitionInfo comptInfo = await APIRequest.getCompetitionInfo(token, leagueId, _http);
             if (comptInfo == null) return;
-            int actualMatchD = comptInfo.currentSeason.currentMatchday;
+            int actualMatchD = comptInfo.currentSeason.currentMatchday + 1;
 
             Competition league = FootballInitializers.initializeLeague(comptMatchs.competition.name, _context);
 
