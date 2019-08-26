@@ -37,8 +37,7 @@ namespace API.ScheduledTasks
             _timer = new Timer(
                 DoWork,
                 null,
-                //TimeSpan.Zero,
-                nextTime(0), //Right now
+                nextTime(0), 
                 new TimeSpan(1, 0, 0, 0) //The next day
             );
 

@@ -52,7 +52,8 @@ namespace API.ScheduledTasks.VirtualBets.Util
                     secondHalfHomeGoals = match.status == "FINISHED" ? (match.score.fullTime.homeTeam - match.score.halfTime.homeTeam): null,
                     secondHalfAwayGoals = match.status == "FINISHED" ? (match.score.fullTime.awayTeam - match.score.halfTime.awayTeam) : null,
                     fullTimeHomeGoals = match.status == "FINISHED" ? match.score.fullTime.homeTeam : null,
-                    fullTimeAwayGoals = match.status == "FINISHED" ? match.score.fullTime.awayTeam : null
+                    fullTimeAwayGoals = match.status == "FINISHED" ? match.score.fullTime.awayTeam : null,
+                    season = match.season.id
                 });
 
                 return true;
@@ -86,6 +87,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
             md.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
             md.fullTimeHomeGoals = match.score.fullTime.homeTeam;
             md.fullTimeAwayGoals = match.score.fullTime.awayTeam;
+            md.season = match.season.id;
 
             _context.MatchDays.Update(md);
         }
