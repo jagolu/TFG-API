@@ -24,6 +24,9 @@ namespace API.Data.Models
         [Required]
         public int number { get; set; }
 
+        [Required]
+        public int season { get; set; }
+
         [MaxLength(64)]
         public String group { get; set; }
 

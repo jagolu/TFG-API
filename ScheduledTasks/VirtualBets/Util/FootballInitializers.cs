@@ -27,11 +27,11 @@ namespace API.ScheduledTasks.VirtualBets.Util
         {
             try
             {
-                DateTime parsedDate = parse(match.utcDate);
                 var exist = _context.MatchDays.Where(md => md.competitionid == league.id &&
-                                               md.homeTeamId == homeTeam.id &&
-                                               md.awayTeamid == awayTeam.id &&
-                                               md.date == parsedDate);
+                                                           md.homeTeamId == homeTeam.id &&
+                                                           md.awayTeamid == awayTeam.id &&
+                                                           md.season == match.season.id &&
+                                                           md.number == match.matchday);
                 if (exist.Count() != 0)
                 {
                     updateExistingMatchDay(match, league, homeTeam, awayTeam, exist.First(), _context);

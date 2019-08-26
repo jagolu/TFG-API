@@ -2,6 +2,7 @@
 {
     public class Match
     {
+        public Season season { get; set; }
         public string utcDate { get; set; }
         public string status { get; set; }
         public int? matchday { get; set; }
@@ -39,6 +40,11 @@
         public class AwayTeam
         {
             public string name { get; set; }
+        }
+
+        public class Season
+        {
+            public int id { get; set; }
         }
     }
 }

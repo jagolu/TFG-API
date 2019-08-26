@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Util;
-using API.ScheduledTasks.VirtualBets;
-using API.ScheduledTasks.Weekly;
+using API.ScheduledTasks;
 using API.Areas.Alive.Util;
 
 namespace API
@@ -65,9 +64,7 @@ namespace API
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddHostedService<InitializeVirtualDBHostedService>(); //Comment for developing
-            services.AddHostedService<PayFootballBetHostedService>(); //Comment for developing
-            services.AddHostedService<WeeklyGroupHostedService>(); 
+            services.AddHostedService<DailyHostedService>(); //Comment for developing
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

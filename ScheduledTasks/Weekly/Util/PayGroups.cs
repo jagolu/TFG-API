@@ -15,12 +15,12 @@ namespace API.ScheduledTasks.Weekly.Util
             int day = DateTime.Now.DayOfYear;
             int year = DateTime.Now.Year;
 
-            _context.Group.Where(g => 
-                                        g.dateCreated.DayOfWeek == today && 
-                                        g.dateCreated.DayOfYear != day && 
-                                        g.dateCreated.Year != year
-            ).ToList().ForEach(group =>
+
+            _context.Group.ToList().ForEach(group =>
             {
+                if (today != group.dateCreated.DayOfWeek) return;
+                if (day == group.dateCreated.DayOfYear && year == group.dateCreated.Year) return;
+
                 _context.Entry(group).Collection("users").Load();
                 int moreCoins = group.weeklyPay;
                 Areas.Home.Util.GroupNew.launch(null, group, null, Areas.Home.Models.TypeGroupNew.PAID_PLAYERS_GROUPS, false, _context);
