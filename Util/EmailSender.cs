@@ -22,7 +22,7 @@ namespace API.Util
             msg.To.Add(email);
             msg.Body = getBodySendTokenEmailVerification(name, tokenValidation);
             msg.IsBodyHtml = true;
-            msg.Subject = "Email confirmation";
+            msg.Subject = "Confirmación de correo electrónico";
 
             _client.Send(msg);
         }
@@ -34,7 +34,7 @@ namespace API.Util
             msg.To.Add(email);
             msg.Body = getBodySendTokenChangePassword(name, email, passwordToken);
             msg.IsBodyHtml = true;
-            msg.Subject = "Reset your password";
+            msg.Subject = "Recuperar contraseña";
 
             _client.Send(msg);
         }
@@ -46,7 +46,7 @@ namespace API.Util
             msg.To.Add(email);
             msg.Body = ban ? getBodySendBanNotification(name) : getBodySendUnBanNotification(name);
             msg.IsBodyHtml = true;
-            msg.Subject = ban ? "!Has sido baneado de VirtualBet!" : "Tu cuenta de VirtualBet ha sido desbloqueada!";
+            msg.Subject = ban ? "!Tu cuenta de usuario de VirtualBet ha sido bloqueada!" : "Tu cuenta de VirtualBet ha sido desbloqueada!";
 
             _client.Send(msg);
         }
@@ -101,9 +101,9 @@ namespace API.Util
         private static String getBodySendTokenEmailVerification(string name, string tokenVerfication)
         {
             string body = "<html><head></head><body>";
-            body += "<h1>Hello "+name+"</h1><br>";
-            body += "<p>Click on the link below to confirm your email: </p>";
-            body += _configuration["URL"]+"/emailVerification/" + tokenVerfication;
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Haz click en el enlace de abajo para confirmar tu correo electrónico: </p>";
+            body += "<a href=\""+_configuration["URL"]+"/emailVerification/" + tokenVerfication+"\"> Confirmar correo electrónico</a>";
             body += "</body></html>";
             return body;
         }
@@ -111,11 +111,11 @@ namespace API.Util
         private static String getBodySendTokenChangePassword(string name, string email, string tokenPassword)
         {
             string body = "<html><head></head><body>";
-            body += "<h1>Hello "+name+"</h1><br>";
-            body += "<p>You have ask for a new password for VirtualBet on this email ("+email+"): </p>";
-            body += "<p>If you really forgot the password click on the following link: </p>";
-            body += _configuration["URL"]+ "/changePassword/" + tokenPassword;
-            body += "<br><p>If you did't ask for this don't follow the link. </p>";
+            body += "<h1>Hola "+name+"</h1><br>";
+            body += "<p>Has pedido una nueva contraseña para la cuenta de VirtualBet asociada al email ("+email+"): </p>";
+            body += "<p>Si realmente pediste una nueva contraseña sigue el siguiente enlace: </p>";
+            body += "<a href=\""+_configuration["URL"]+ "/changePassword/" + tokenPassword+"\">Recuperar contraseña</a>";
+            body += "<br><p>Si no fuiste tu quien hizo esta petición, ignora el enlace y toma medidas de seguridad.</p>";
             body += "</body></html>";
             return body;
         }
