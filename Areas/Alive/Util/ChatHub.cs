@@ -33,7 +33,7 @@ namespace API.Areas.Alive.Util
                     bool isHello = isHelloMessage(data);
                     
                     
-                    if (data.message.Length > 128) return;
+                    if (data.message.Length > 120) return;
                     if (!isHello && !checkExist(data.group, data.publicUserId, ref group, ref roleUser, dbContext)) return;
 
                     if(!isHello) updateData(ref data, roleUser);

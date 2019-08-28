@@ -19,7 +19,7 @@ namespace API.Data.Models
         public string email { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(128)]
         public string nickname { get; set; }
         
         [Required]

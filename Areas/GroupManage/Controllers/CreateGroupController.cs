@@ -31,7 +31,7 @@ namespace API.Areas.GroupManage.Controllers
         [HttpGet]
         [Authorize]
         [ActionName("CreateGroup")]
-        public IActionResult createGroup([Required][MaxLength(20)][MinLength(4)] string groupName )
+        public IActionResult createGroup([Required][MaxLength(30)][MinLength(4)] string groupName )
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
             if (!user.open) return BadRequest(new { error = "YoureBanned" });

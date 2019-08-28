@@ -9,7 +9,7 @@ namespace API.Areas.DirectMessages.Models
 
         [Required]
         [MinLength(3)]
-        [MaxLength(256)]
+        [MaxLength(510)]
         public string message { get; set; }
     }
 }

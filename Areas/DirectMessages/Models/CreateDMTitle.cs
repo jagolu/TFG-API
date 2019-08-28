@@ -7,7 +7,7 @@ namespace API.Areas.DirectMessages.Models
     {
         [Required]
         [MinLength(3)]
-        [MaxLength(64)]
+        [MaxLength(60)]
         public string title { get; set; }
 
         [EmailAddress]
