@@ -143,6 +143,13 @@ namespace API.Data
                     title = title,
                     message = "Beta de la versión para android lanzada!!",
                     date = new DateTime(2019, 07, 30)
+                },
+                new New
+                {
+                    Group = null, User = null, groupid = null, userid = null,
+                    title = title,
+                    message = "Hemos añadido una sección de ayuda donde se explican las cuestíones más frecuentes.",
+                    date = new DateTime(2019, 08, 30)
                 }
             };
 
