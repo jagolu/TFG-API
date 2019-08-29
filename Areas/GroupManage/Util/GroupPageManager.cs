@@ -69,7 +69,7 @@ namespace API.Areas.GroupManage.Util
             List<GroupBet> bets = new List<GroupBet>();
             _context.Entry(group).Collection("bets").Load();
 
-            group.bets.Where(b => !b.ended && !b.cancelled && b.dateEnded>DateTime.Now).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
+            group.bets.Where(b => !b.ended && !b.cancelled && b.dateEnded>DateTime.Now && b.dateLastBet>DateTime.Now).OrderByDescending(bb=> bb.dateReleased).ToList().ForEach(bet =>
             {
                 _context.Entry(bet).Collection("userBets").Load();
                 if (bet.userBets.Where(ub => ub.userid == caller.id && ub.valid).Count() == 0)
