@@ -39,6 +39,7 @@ namespace API.Areas.Identity.Controllers
             {
                 User user = userExists.First();
                 if (!user.open) return BadRequest(new { error = "YoureBanned" });
+                if (user.tokenValidation != null) return BadRequest(new { error = "NotFullyRegister" });
                 String token = Guid.NewGuid().ToString("N");
                 user.tokenPassword = token;
                 user.tokenP_expiresTime = DateTime.Now.AddDays(7);
