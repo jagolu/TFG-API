@@ -1,5 +1,8 @@
 ﻿namespace API.Areas.Home.Models
 {
+    /// <summary>
+    /// The type of a new
+    /// </summary>
     public enum TypeGroupNew
     {
         CREATE_GROUP_GROUP = 1001,
