@@ -14,16 +14,47 @@ namespace API.Areas.Admin.Controllers
     [ApiController]
     public class SearchAllUserController : ControllerBase
     {
+        //
+        // ────────────────────────────────────────────────────────────  ──────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public SearchAllUserController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        
         [HttpGet]
         [Authorize]
         [ActionName("GetAllUsers")]
+        /// <summary>
+        /// Get all the users from the database who are not admin users
+        /// </summary>
+        /// <returns>A list with all the not-admin users</returns>
+        /// See <see cref="Areas.Admin.Models.UserSearchInfo"/> to know the response structure
         public List<UserSearchInfo> getAllUsers()
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);

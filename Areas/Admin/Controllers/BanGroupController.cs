@@ -17,9 +17,31 @@ namespace API.Areas.Admin.Controllers
     [ApiController]
     public class BanGroupController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+        
+        /// <value>The notification hub</value>
         private IHubContext<NotificationHub> _hub;
 
+        
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+        
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public BanGroupController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
@@ -27,9 +49,21 @@ namespace API.Areas.Admin.Controllers
         }
 
 
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("BanGroup")]
+        /// <summary>
+        /// Bans a group
+        /// </summary>
+        /// <param name="order">The info</param>
+        /// See <see cref="Areas.Admin.Models.BanGroup"/> to see the param info
+        /// <returns>The IActionResult of the ban action</returns>
         public IActionResult banGroup([FromBody] BanGroup order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -62,6 +96,19 @@ namespace API.Areas.Admin.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Check if a group exists
+        /// </summary>
+        /// <param name="group">A new Group object (ref param)</param>
+        /// <param name="name">The name of the group</param>
+        /// <returns>True if the group exists, false otherwise</returns>
         private bool existGroup(ref Group group, string name)
         {
             List<Group> existGroup = _context.Group.Where(u => u.name == name).ToList();
@@ -75,6 +122,12 @@ namespace API.Areas.Admin.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Checks if the http order is correct or not
+        /// </summary>
+        /// <param name="group">The group which we want to do the operation</param>
+        /// <param name="order">The operation to do. True to ban the group, false to unban it</param>
+        /// <returns>True if the operation can be done, false otherwise</returns>
         private bool validOrder(Group group, bool order)
         {
             bool userBlock = group.open;
@@ -82,6 +135,11 @@ namespace API.Areas.Admin.Controllers
             return userBlock != order;
         }
 
+        /// <summary>
+        /// Send the news and notifications to the group members
+        /// </summary>
+        /// <param name="group">The group which has been banned or unbanned</param>
+        /// <param name="ban">True if the group has been banned, false otherwise</param>
         private void sendNews(Group group, bool ban)
         {
             _context.Entry(group).Collection("users").Load();

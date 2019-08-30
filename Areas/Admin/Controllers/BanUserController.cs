@@ -16,18 +16,52 @@ namespace API.Areas.Admin.Controllers
     [ApiController]
     public class BanUserController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The notification hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public BanUserController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [Authorize]
         [ActionName("BanUser")]
+        /// <summary>
+        /// Bans a user
+        /// </summary>
+        /// <param name="order">The info</param>
+        /// See <see cref="Areas.Admin.Models.BanUser"/> to see the param info
+        /// <returns>The IActionResult of the ban action</returns>
         public IActionResult banUser([FromBody] BanUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -62,6 +96,19 @@ namespace API.Areas.Admin.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Checks if a user exists
+        /// </summary>
+        /// <param name="user">A new User object (ref param)</param>
+        /// <param name="publicUserId">The public id of the user</param>
+        /// <returns>True if the user exists, false otherwise</returns>
         private bool existUser(ref User user, string publicUserId)
         {
             List<User> existUser = _context.User.Where(u => u.publicid == publicUserId).ToList();
@@ -75,6 +122,12 @@ namespace API.Areas.Admin.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Checks if the http order is correct or not
+        /// </summary>
+        /// <param name="user">The user which we want to do the operation</param>
+        /// <param name="order">The operation to do. True to ban the user, false to unban it</param>
+        /// <returns>True if the operation can be done, false otherwise</returns>
         private bool validOrder(User user, bool order)
         {
             _context.Entry(user).Reference("role").Load();
@@ -88,6 +141,10 @@ namespace API.Areas.Admin.Controllers
             return user.open != order;
         }
 
+        /// <summary>
+        /// Manage the groups which the user belongs to
+        /// </summary>
+        /// <param name="user">The user who has been banned or unbanned</param>
         private void manageGroups(User user)
         {
             _context.Entry(user).Collection("groups").Load();

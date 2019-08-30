@@ -16,18 +16,52 @@ namespace API.Areas.Admin.Controllers
     [ApiController]
     public class RemoveNewController : ControllerBase
     {
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>A scope factory to reset the database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The Scope Factory</param>
         public RemoveNewController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
             _scopeFactory = sf;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        
         [HttpGet]
         [Authorize]
         [ActionName("RemoveNew")]
+        /// <summary>
+        /// Removes a new
+        /// </summary>
+        /// <param name="id">The id of the new</param>
+        /// <returns>The IActionResult of the remove new action</returns>
         public IActionResult removeNew(string id)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);

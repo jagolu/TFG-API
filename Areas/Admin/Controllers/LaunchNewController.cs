@@ -15,16 +15,47 @@ namespace API.Areas.Admin.Controllers
     [ApiController]
     public class LaunchNewController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public LaunchNewController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("LaunchNew")]
+        /// <summary>
+        /// Launchs a new new for all the users
+        /// </summary>
+        /// <param name="message">The info</param>
+        /// See <see cref="Areas.Admin.Models.Message"/> to see the param info
+        /// <returns>The IActionResult of the launch new action</returns>
         public IActionResult launchNew([FromBody] Message message)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);

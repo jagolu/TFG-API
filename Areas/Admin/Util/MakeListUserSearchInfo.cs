@@ -8,8 +8,17 @@ using static API.Areas.Admin.Models.UserSearchInfo;
 
 namespace API.Areas.Admin.Util
 {
+    /// <summary>
+    /// Static class to add users to a list
+    /// </summary>
     public static class MakeListUserSearchInfo
     {
+        /// <summary>
+        /// Parse a list of user to a <see cref="Areas.Admin.Models.UserSearchInfo"/> list
+        /// </summary>
+        /// <param name="users">The list of the users to parse</param>
+        /// <param name="dbContext">The context of the database</param>
+        /// <returns>The parsed list</returns>
         public static List<UserSearchInfo> make(List<User> users, ApplicationDBContext dbContext)
         {
             List<UserSearchInfo> usersRet = new List<UserSearchInfo>();
