@@ -12,15 +12,48 @@ namespace API.Areas.Alive.Util
 {
     public class ChatHub : Hub
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The scope factory to get the database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
+
+        /// <value>The id for all the group socket</value>
         private readonly string _groupSocketId;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor 
+        /// </summary>
+        /// <param name="sf">The scope factory</param>
+        /// <param name="configuration">The configuration of the application</param>
         public ChatHub(IServiceScopeFactory sf, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             _scopeFactory = sf;
             _groupSocketId = configuration["socket:chatRoom"];
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Receives a message and send it to the group chat
+        /// </summary>
+        /// <param name="data">The info of the message</param>
+        /// See <see cref="Areas.Alive.Models.ChatMessage"/> to see the param structure
         public async Task BroadcastChartData(ChatMessage data)
         {
             try
@@ -52,6 +85,22 @@ namespace API.Areas.Alive.Util
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check if the user is joined in a group
+        /// </summary>
+        /// <param name="group">The name of the group</param>
+        /// <param name="publicUserId">The public id of the user who sent the messsage</param>
+        /// <param name="groupRet">The group object (ref object)</param>
+        /// <param name="roleRet">The role of the user in the group</param>
+        /// <param name="dbContext">The context of the database</param>
+        /// <returns>True if the group has joined in the group, false otherwise</returns>
         private bool checkExist(string group, string publicUserId, ref Group groupRet, ref Role roleRet, ApplicationDBContext dbContext)
         {
             List<UserGroup> uExist = dbContext.UserGroup.Where(ug => ug.Group.name == group && ug.User.publicid == publicUserId && !ug.blocked).ToList();
@@ -71,12 +120,24 @@ namespace API.Areas.Alive.Util
             return true;
         }
 
+        /// <summary>
+        /// Update the data of the message
+        /// </summary>
+        /// <param name="data">The message</param>
+        /// <param name="role">The role of the user</param>
         private void updateData(ref ChatMessage data, Role role)
         {
             data.role = role.name;
             data.time = DateTime.Now;
         }
 
+        /// <summary>
+        /// Saves the message in the database
+        /// </summary>
+        /// <param name="data">The message</param>
+        /// <param name="group">The group of the chat</param>
+        /// <param name="roleUser">The role of the user</param>
+        /// <param name="dbContext">The context of the database</param>
         private void saveMessage(ChatMessage data, Group group, Role roleUser, ApplicationDBContext dbContext)
         {
             dbContext.Add(new GroupChatMessage
@@ -91,6 +152,11 @@ namespace API.Areas.Alive.Util
             dbContext.SaveChanges();
         }
 
+        /// <summary>
+        /// Checks if the received message is a "hello message"
+        /// </summary>
+        /// <param name="msg">The message to check</param>
+        /// <returns>True if the message is a "hello message", false otherwise</returns>
         private bool isHelloMessage(ChatMessage msg)
         {
             return msg.role == "Conexión" && msg.message.Contains("está conectado.");

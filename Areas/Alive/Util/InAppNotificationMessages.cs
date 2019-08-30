@@ -4,6 +4,12 @@ namespace API.Areas.Alive.Util
 {
     public static class InAppNotificationMessages
     {
+        /// <summary>
+        /// Get the text for a notification
+        /// </summary>
+        /// <param name="type">The type of the notification</param>
+        /// <param name="target">The target of the notification</param>
+        /// <returns></returns>
         public static string getMessage(NotificationType type, string target)
         {
             string message;

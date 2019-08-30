@@ -1,5 +1,8 @@
 ﻿namespace API.Areas.Alive.Models
 {
+    /// <summary>
+    /// The type of the notifications
+    /// </summary>
     public enum NotificationType
     {
         BLOCKED = 100,

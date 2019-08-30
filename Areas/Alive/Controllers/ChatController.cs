@@ -18,16 +18,47 @@ namespace API.Areas.Alive.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The context of the database</param>
         public ChatController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [Authorize]
         [ActionName("ChatLogin")]
+        /// <summary>
+        /// Log the user in a group chat
+        /// </summary>
+        /// <param name="groupName">The name of the group</param>
+        /// <returns>IActionResult of the log chat action</returns>
+        /// See <see cref="Areas.Alive.Models.ChatLogin"/> to see the response structure
         public IActionResult loginChat([Required]string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -56,6 +87,19 @@ namespace API.Areas.Alive.Controllers
                 return StatusCode(500);
             }
         }
+
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────  ──────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Filter the messages on the response structure
+        /// </summary>
+        /// <param name="msgs">The messages of a group chat</param>
+        /// <returns>The group chat messages on <see cref="Areas.Alive.Models.ChatLogin"/></returns>
         private List<ChatUserMessages> filterMessages(List<GroupChatMessage> msgs)
         {
             string lastUserId = "";
