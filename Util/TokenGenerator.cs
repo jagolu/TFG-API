@@ -12,13 +12,47 @@ namespace API.Util
 {
     public static class TokenGenerator
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// The configuration of the app
+        /// </summary>
         private static IConfiguration _configuration;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Initializes the configruation
+        /// </summary>
+        /// <param name="configuration">The configuration of the app</param>
         public static void Initialize(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Generate a new session token and a refresh token
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="email">The email of the user who wants the new token</param>
+        /// <param name="provider">The provider of the caller</param>
+        /// <returns>The new session token</returns>
         public static string generateTokenAndRefreshToken(ApplicationDBContext context, string email, bool provider)
         {
             try
@@ -34,11 +68,21 @@ namespace API.Util
             }
         }
 
+        /// <summary>
+        /// Check if the claim of the token is valid
+        /// </summary>
+        /// <param name="token">The session token</param>
+        /// <returns>True if the claim is valid, false otherwise</returns>
         public static bool isValidClaim(string token)
         {
             return getPrincipalFromExpiredToken(token) == null;
         }
 
+        /// <summary>
+        /// Get the email claim of the token
+        /// </summary>
+        /// <param name="token">The session token</param>
+        /// <returns>The email claim of the token</returns>
         public static string getEmailClaim(string token)
         {
             var principal = getPrincipalFromExpiredToken(token);
@@ -47,6 +91,11 @@ namespace API.Util
                 principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
         }
 
+        /// <summary>
+        /// Get the refresh token claim of the token
+        /// </summary>
+        /// <param name="token">The session token</param>
+        /// <returns>The refresh token claim of the token</returns>
         public static string getRefreshTokenClaim(string token)
         {
             var principal = getPrincipalFromExpiredToken(token);
@@ -54,6 +103,11 @@ namespace API.Util
             return principal == null ? null : principal.FindFirst("refreshToken").Value;
         }
 
+        /// <summary>
+        /// Get the bearer of the http request
+        /// </summary>
+        /// <param name="token">The value of the authorization header</param>
+        /// <returns>The bearer token</returns>
         public static string getBearerToken(string token)
         {
             string bearer = "Bearer ";
@@ -61,6 +115,19 @@ namespace API.Util
             return token.Substring(start);
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Generates a new session token
+        /// </summary>
+        /// <param name="email">The email of the user who wants the new token</param>
+        /// <param name="refreshToken">The refresh token of the user</param>
+        /// <returns>The new token</returns>
         private static string generateToken(string email, string refreshToken)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -80,6 +147,13 @@ namespace API.Util
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// Generate a new refresh token
+        /// </summary>
+        /// <param name="context">The context of the database</param>
+        /// <param name="email">The email of the user who wants the new token</param>
+        /// <param name="provider">The provider of the caller</param>
+        /// <returns>The new refresh token</returns>
         private static string generateRefreshToken(ApplicationDBContext context,string email, bool provider)
         {
             var user = (from u in context.User where u.email == email select u).First();
@@ -110,6 +184,11 @@ namespace API.Util
             return refreshToken;
         }
 
+        /// <summary>
+        /// Get the "principal" of the expired token
+        /// </summary>
+        /// <param name="token">The token that has expired</param>
+        /// <returns>The token that has expired</returns>
         private static ClaimsPrincipal getPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters {

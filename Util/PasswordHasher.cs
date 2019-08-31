@@ -7,14 +7,43 @@ namespace API.Util
 {
     public static class PasswordHasher
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The configuration of the </value>
         private static IConfiguration _configuration;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration">The configuration of the app</param>
         public static void Initialize(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
 
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Get the password hashed
+        /// </summary>
+        /// <param name="pass">The password without hash</param>
+        /// <returns>The password hashed</returns>
         public static string hashPassword(string pass)
         {
             if (pass == null) return null;
@@ -27,6 +56,12 @@ namespace API.Util
             )); ;
         }
 
+        /// <summary>
+        /// Check if both password are equals
+        /// </summary>
+        /// <param name="pass">The password without hash</param>
+        /// <param name="hashPass">The password hashed</param>
+        /// <returns>True if both password are equals, false otherwise</returns>
         public static bool areEquals(string pass, string hashPass)
         {
             if(hashPassword(pass) != hashPass)
@@ -37,6 +72,11 @@ namespace API.Util
             return true;
         }
 
+        /// <summary>
+        /// Check if a password is valid
+        /// </summary>
+        /// <param name="pass">The password without hash</param>
+        /// <returns>True if the password is valid, false otherwise</returns>
         public static bool validPassword(string pass)
         {
             if (pass == null) return false;

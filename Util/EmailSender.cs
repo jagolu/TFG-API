@@ -7,14 +7,47 @@ namespace API.Util
 {
     public static class EmailSender
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The smtp client to send the email</value>
         private static SmtpClient _client;
+        
+        /// <value>The configuration of the application</value>
         private static IConfiguration _configuration;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Initializes the class
+        /// </summary>
+        /// <param name="config">The configuration of the application</param>
         public static void Initialize(IConfiguration config) {
             _configuration = config;
             initializeClient();
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Send a email to the user (Verify your email)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="tokenValidation">The token to verify the email</param>
         public static void sendVerificationToken(string email, string name, string tokenValidation)
         {
             MailMessage msg = new MailMessage();
@@ -27,6 +60,12 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        /// <summary>
+        /// Send a email to the user (Recuperate your password)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="passwordToken">The token to recuperate the password</param>
         public static void sendVerificationPasswordToken(string email, string name, string passwordToken)
         {
             MailMessage msg = new MailMessage();
@@ -39,6 +78,12 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        /// <summary>
+        /// Send a email to the user (The user has been banned)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="ban">True if the user has been banned, false otherwise</param>
         public static void sendBanNotification(string email, string name, bool ban)
         {
             MailMessage msg = new MailMessage();
@@ -51,6 +96,12 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        /// <summary>
+        /// Send a email to the user (An admin has started a dm with you)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
         public static void sendDMNotification(string email, string name, string dmTitle)
         {
             MailMessage msg = new MailMessage();
@@ -63,6 +114,13 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        /// <summary>
+        /// Send a email to the user (A dm conversation has been close/reopened)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
+        /// <param name="open">True if the dm has been reopened, false if the dm hass been closed</param>
         public static void sendOpenCloseDMNotification(string email, string name, string dmTitle, bool open)
         {
             MailMessage msg = new MailMessage();
@@ -75,6 +133,12 @@ namespace API.Util
             _client.Send(msg);
         }
 
+        /// <summary>
+        /// Send a email to the user (A user has spoke in the dm conversation)
+        /// </summary>
+        /// <param name="email">The email of the receiver</param>
+        /// <param name="name">The name of the user</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
         public static void sendOpenCreateDMNotification(string email, string name, string dmTitle)
         {
             MailMessage msg = new MailMessage();
@@ -87,6 +151,16 @@ namespace API.Util
             _client.Send(msg);
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Initializes the smtp client
+        /// </summary>
         private static void initializeClient()
         {
             _client = new SmtpClient("smtp.gmail.com");
@@ -98,6 +172,12 @@ namespace API.Util
             _client.EnableSsl = true;
         }
 
+        /// <summary>
+        /// Get the body for the email (Verify your email)
+        /// </summary>
+        /// <param name="name">The name of the user who have to verify his email</param>
+        /// <param name="tokenVerfication">The token to verify the email</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendTokenEmailVerification(string name, string tokenVerfication)
         {
             string body = "<html><head></head><body>";
@@ -108,6 +188,12 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (Recuperate your password)
+        /// </summary>
+        /// <param name="name">The name of the user who have to recuperate the password</param>
+        /// <param name="tokenPassword">The token to recuperate the password</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendTokenChangePassword(string name, string email, string tokenPassword)
         {
             string body = "<html><head></head><body>";
@@ -120,6 +206,11 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (The user has been banned)
+        /// </summary>
+        /// <param name="name">The name of the user who has been banned</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendBanNotification(string name)
         {
             string body = "<html><head></head><body>";
@@ -132,6 +223,11 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (The user has been unbanned)
+        /// </summary>
+        /// <param name="name">The name of the user who has been unbanned</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendUnBanNotification(string name)
         {
             string body = "<html><head></head><body>";
@@ -142,6 +238,12 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (The user has been unbanned)
+        /// </summary>
+        /// <param name="name">The name of the user who has been unbanned</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendDMNotification(string name, string dmTitle)
         {
             string body = "<html><head></head><body>";
@@ -152,6 +254,12 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (A dm conversation has been reopened)
+        /// </summary>
+        /// <param name="name">The name of the user who has in the dm</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendOpenDMNotification(string name, string dmTitle)
         {
             string body = "<html><head></head><body>";
@@ -162,6 +270,12 @@ namespace API.Util
             return body;
         }
 
+        /// <summary>
+        /// Get the body for the email (A dm conversation has been closed)
+        /// </summary>
+        /// <param name="name">The name of the user who has in the dm</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendCloseDMNotification(string name, string dmTitle)
         {
             string body = "<html><head></head><body>";
@@ -172,7 +286,13 @@ namespace API.Util
             body += "</body></html>";
             return body;
         }
-
+        
+        /// <summary>
+        /// Get the body for the email (A dm conversation has been created)
+        /// </summary>
+        /// <param name="name">The name of the user who received the dm conversation</param>
+        /// <param name="dmTitle">The title of the dm conversation</param>
+        /// <returns>The body of the email</returns>
         private static String getBodySendCreateDMNotificacion(string name, string dmTitle)
         {
             string body = "<html><head></head><body>";
