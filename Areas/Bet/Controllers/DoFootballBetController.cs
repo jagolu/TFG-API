@@ -15,16 +15,48 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class DoFootballBetController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public DoFootballBetController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("DoFootballBet")]
+        /// <summary>
+        /// Do a user fb on a fb
+        /// </summary>
+        /// <param name="order">The info to do the user fb</param>
+        /// See <see cref="Areas.Bet.Models.DoFootballBet"/> to know the param structure
+        /// <returns>IActionResult of the do user fb action</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public IActionResult doFootballBet([FromBody] DoFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -85,6 +117,20 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check the new user fb
+        /// </summary>
+        /// <param name="userBet">The coins bet by the user</param>
+        /// <param name="userCoins">The total coins of the user</param>
+        /// <param name="fb">The fb to bet on</param>
+        /// <returns>True if the user can do the bet, false otherwise</returns>
         private bool checkBet(int userBet, int userCoins, FootballBet fb)
         {
             bool typeJackpot = CheckBetType.isJackpot(fb, _context);
@@ -105,6 +151,14 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check if the guessed of the bet is correct on its type
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="homeGoals">The home goals guessed by the user</param>
+        /// <param name="awayGoals">The away goals guessed by the user</param>
+        /// <param name="winner">The winner guessed by the user</param>
+        /// <returns>Check if the guessed by the user is correct on the fb type</returns>
         private bool checkTypePriceWithBet(FootballBet fb, int ? homeGoals, int ? awayGoals, int? winner)
         {
             bool type_winner = CheckBetType.isWinner(fb, _context);

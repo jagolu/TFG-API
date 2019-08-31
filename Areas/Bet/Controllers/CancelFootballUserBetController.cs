@@ -16,16 +16,48 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class CancelFootballUserBetController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public CancelFootballUserBetController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("CancelUserFootballBet")]
+        /// <summary>
+        /// Cancel a user fb
+        /// </summary>
+        /// <param name="order">The info to cancel the user fb</param>
+        /// See <see cref="Areas.Bet.Models.CancelUserFootballBet"/> to know the param structure
+        /// <returns>The IActionResult of the cancel a user fb action</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public IActionResult cancelUserFootballBet([FromBody] CancelUserFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -74,6 +106,21 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check if the order is correct
+        /// </summary>
+        /// <param name="userFB">A new UserFootballBet object, to save the user fb in it</param>
+        /// <param name="userBet">The id of the user fb</param>
+        /// <param name="footballBet">The fb where the user fb belongs to</param>
+        /// <param name="caller">The user who wants to cancel the user fb</param>
+        /// <returns>True if user fb exists and belongs to the user, false otherwise</returns>
         private bool checkBet(ref UserFootballBet userFB, string userBet, FootballBet footballBet, User caller)
         {
             //User bets by the user with the userBet & valids

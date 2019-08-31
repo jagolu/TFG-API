@@ -19,10 +19,34 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class CancelFootballBetController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>Scope factory to get an updated database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
+
+        /// <value>The notification hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The scope factory</param>
+        /// <param name="hub">The notification hub</param>
         public CancelFootballBetController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
@@ -30,9 +54,22 @@ namespace API.Areas.Bet.Controllers
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpGet]
         [Authorize]
         [ActionName("CancelFootballBet")]
+        /// <summary>
+        /// Cancel a fb
+        /// </summary>
+        /// <param name="betId">The id of the fb</param>
+        /// <returns>IActionResult of the cancel action</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public IActionResult cancel([Required] string betId)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -86,6 +123,18 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check if the fb can be cancelled
+        /// </summary>
+        /// <param name="bet">The fb</param>
+        /// <returns>True if the fb can be cancelled, false otherwise</returns>
         private bool checkValidBet(FootballBet bet)
         {
             if (bet.cancelled || bet.ended)
@@ -96,6 +145,12 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check if the caller can cancel the fb
+        /// </summary>
+        /// <param name="bet">The bet to cancel</param>
+        /// <param name="u">The user who wants to cancel the fb</param>
+        /// <returns>Check if the caller is an admin</returns>
         private bool checkAdmin(FootballBet bet, User u)
         {
             _context.Entry(bet).Reference("Group").Load();
@@ -111,6 +166,11 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Return the coins to the users who bet in that fb
+        /// </summary>
+        /// <param name="bet">The fb</param>
+        /// <param name="group">The group where the fb was launched</param>
         private void getMoneyBackAndLaunchNews(FootballBet bet, Group group)
         {
             _context.Entry(bet).Collection("userBets").Load();

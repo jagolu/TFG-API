@@ -4,6 +4,18 @@ namespace API.Areas.Bet.Models
 {
     public class GroupBet
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="bet">The fb</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="includeResult">True to include the result of the match, false otherwise</param>
         public GroupBet(Data.Models.FootballBet bet, Data.ApplicationDBContext _context, bool includeResult)
         {
             _context.Entry(bet).Reference("MatchDay").Load();
@@ -36,27 +48,75 @@ namespace API.Areas.Bet.Models
                 this.fullTimeAwayGoals = bet.MatchDay.fullTimeAwayGoals;
             }
         }
-        public string bet { get; set; } //id
+        
 
-        // Match info
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The id of the fb</value>
+        public string bet { get; set; }
+
+
+        //
+        // ─── MATCH INFO ──────────────────────────────────────────────────
+        //
+
+        /// <value>The name of the competition</value>
         public string competition { get; set; }
+        
+        /// <value>The name of the match</value>
         public string betName { get; set; }
+        
+        /// <value>The time when the match starts</value>
         public DateTime matchdayDate { get; set; }
 
-        // Football bet info
+
+        //
+        // ─── FOOTBALL BET INFO ───────────────────────────────────────────
+        //
+
+        /// <value>The bet type</value>        
         public NameWinRate typeBet { get; set; }
+        
+        /// <value>The pay type</value>
         public NameWinRate typePay { get; set; }
+        
+        /// <value>The min of the bet</value>
         public int minBet { get; set; }
+        
+        /// <value>The max of the bet</value>
         public int maxBet { get; set; }
+        
+        /// <value>The last time to do a user fb</value>
         public DateTime lastBetTime { get; set; }
+        
+        /// <value>The count of the users that has joined to this fb</value>
         public int? usersJoined { get; set; }
 
-        //Result matchday
+
+        //
+        // ─── RESULT MATCHDAY ─────────────────────────────────────────────
+        //
+
+        /// <value>The home goals on the first part</value>            
         public int? firstHalfHomeGoals { get; set; }
+        
+        /// <value>The away goals on the first part</value>
         public int? firstHalfAwayGoals { get; set; }
+        
+        /// <value>The home goals on the second part</value>
         public int? secondHalfHomeGoals { get; set; }
+        
+        /// <value>The away goals on the second part</value>
         public int? secondHalfAwayGoals { get; set; }
+        
+        /// <value>The home goals on the full match</value>
         public int? fullTimeHomeGoals { get; set; }
+        
+        /// <value>The away goals on the full match</value>
         public int? fullTimeAwayGoals { get; set; }
     }
 }

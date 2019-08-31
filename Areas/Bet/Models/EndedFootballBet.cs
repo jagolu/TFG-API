@@ -5,8 +5,24 @@ using System.Linq;
 
 namespace API.Areas.Bet.Models
 {
+    /// <summary>
+    /// The group football bets that has ended
+    /// </summary>
     public class EndedFootballBet
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="caller">The caller of the function</param>
+        /// <param name="bet">The fb that has ended</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="includeResults">True to include the results of the match, false otherwise</param>
         public EndedFootballBet(User caller, FootballBet bet, ApplicationDBContext _context, bool includeResults)
         {
             _context.Entry(bet).Reference("typePay").Load();
@@ -54,9 +70,23 @@ namespace API.Areas.Bet.Models
             else this.users = null;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The info of the bet</value>
         public GroupBet bet { get; set; }
+        
+        /// <value>The user fb done by other user that the caller</value>
         public List<OtherUserBets> users { get; set; }
+        
+        /// <value>The user fb done by the caller on that fb</value>
         public List<HistoryUserFootballBet> ownBet { get; set; }
+        
+        /// <value>True if the caller won that fb</value>
         public bool? userWins { get; set; }
     }
 }

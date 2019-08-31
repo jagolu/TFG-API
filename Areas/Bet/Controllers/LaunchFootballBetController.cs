@@ -18,18 +18,53 @@ namespace API.Areas.Bet.Controllers
     [ApiController]
     public class LaunchFootballBetController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The notification hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public LaunchFootballBetController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("LaunchFootBallBet")]
+        /// <summary>
+        /// Launchs a new fb
+        /// </summary>
+        /// <param name="order">The info to launch a new fb</param>
+        /// See <see cref="Areas.Bet.Models.LaunchFootballBet"/> to know the param structure
+        /// <returns>IActionResult of the launch fb action</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public IActionResult launchBet([FromBody] LaunchFootballBet order)
         {
             User caller = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -90,6 +125,18 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Get the matchday that the fb is going to be
+        /// </summary>
+        /// <param name="match">A new matchday object, to save the matchday on it</param>
+        /// <param name="matchday">The id of the matchday</param>
+        /// <returns>True if the matchday exists, false otherwise</returns>
         private bool getMatchDay(ref MatchDay match, string matchday)
         {
             List<MatchDay> matchs = _context.MatchDays.Where(md => md.id.ToString() == matchday).ToList();
@@ -107,6 +154,11 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check if the group has reached the max weekly bets allowed
+        /// </summary>
+        /// <param name="group">The group</param>
+        /// <returns>True if the group can do more bets this week, false otherwise</returns>
         private bool checkMaxBetAllowed(Group group)
         {
             _context.Entry(group).Collection("bets").Load();
@@ -128,6 +180,14 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Check if the params of the fb are correct
+        /// </summary>
+        /// <param name="type_bet">A new TypeFootballBet object, to save the type on it</param>
+        /// <param name="typeBet">The name of the bet type</param>
+        /// <param name="type_pay">A new TypePay object, to save the type on it</param>
+        /// <param name="typePay">The name of the pay type</param>
+        /// <returns>True if the types are correct, false otherwise</returns>
         private bool checkParams(ref TypeFootballBet type_bet, string typeBet, ref TypePay type_pay, string typePay)
         {
             try
@@ -155,6 +215,12 @@ namespace API.Areas.Bet.Controllers
             }
         }
 
+        /// <summary>
+        /// Check the max and min of the new fb
+        /// </summary>
+        /// <param name="min">The min coins of the new fb</param>
+        /// <param name="max">The max coins of the new fb</param>
+        /// <returns>True if the max and min are correct, false otherwise</returns>
         private bool checkMaxMin(int min, int max)
         {
             if (min > max) return false;
@@ -164,6 +230,12 @@ namespace API.Areas.Bet.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Launch the news for the group and for the members on it
+        /// </summary>
+        /// <param name="u">The user who has launch the fb</param>
+        /// <param name="group">The group where the new fb has been launched</param>
+        /// <param name="fb">The fb that has been launched</param>
         private void launchNews(User u, Group group, FootballBet fb)
         {
             _context.Entry(group).Collection("users").Load();
