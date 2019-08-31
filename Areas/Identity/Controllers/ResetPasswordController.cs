@@ -13,16 +13,47 @@ namespace API.Areas.Identity.Controllers
     [ApiController]
     public class ResetPasswordController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public ResetPasswordController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [AllowAnonymous]
         [ActionName("ResetPassword")]
+        /// <summary>
+        /// Change the password of a user when the user uses the "remember password option"
+        /// </summary>
+        /// <param name="order">The info of the reset password</param>
+        /// See <see cref="Areas.Identity.Models.ResetPassword"/> to know the param structure
+        /// <returns></returns>
         public IActionResult reset([FromBody] ResetPassword order)
         {
             User user = new User();

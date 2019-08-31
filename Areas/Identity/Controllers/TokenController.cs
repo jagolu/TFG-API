@@ -15,16 +15,48 @@ namespace API.Areas.Identity.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The context of the database</param>        
         public TokenController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [AllowAnonymous]
         [ActionName("Refresh")]
+        /// <summary>
+        /// Get a new session token
+        /// </summary>
+        /// <param name="req">The info of the refresh</param>
+        /// See <see cref="Areas.Identity.Models.RefreshRequest"/> to know the param structure
+        /// <returns>The IActionResult of the refresh request</returns>
+        /// See <see cref="Areas.Identity.Models.UserSession"/> the response structure
         public IActionResult refresh([FromBody] RefreshRequest req)
         {
             if (TokenGenerator.isValidClaim(req.token)) return StatusCode(401);

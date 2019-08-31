@@ -20,31 +20,86 @@ namespace API.Areas.Identity.Controllers
     [ApiController]
     public class SocialLogController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+        
+        /// <value>The configuration of the application</value>
         private IConfiguration _configuration;
+        
+        /// <value>Http client factory to do http request</value>
         private readonly IHttpClientFactory _http;
 
-        public SocialLogController(ApplicationDBContext context, IConfiguration configuration,
-                                IHttpClientFactory clientFactory)
-        {
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="configuration">The configuration of the application</param>
+        /// <param name="clientFactory">Http client factory</param>
+        public SocialLogController(
+            ApplicationDBContext context, 
+            IConfiguration configuration,
+            IHttpClientFactory clientFactory
+        ){
             _context = context;
             _configuration = configuration;
             _http = clientFactory;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [AllowAnonymous]
         [ActionName("SocialLog")]
+        /// <summary>
+        /// Log in or sign up an user by google or facebook
+        /// </summary>
+        /// <param name="socialUser">The info to log a user</param>
+        /// See <see cref="Areas.Identity.Models.UserMediaLog"/> to know the param structure
+        /// <returns>The IActionResult of the socialLog action</returns>
+        /// See <see cref="Areas.Identity.Models.UserSession"/> to know the return structure
         public async Task<IActionResult> socialLog([FromBody] UserMediaLog socialUser)
         {
-            if (socialUser.socialProvider == "FACEBOOK") return await socialLog(socialUser, false);
+            if (socialUser.socialProvider == "FACEBOOK") return await doSocialLog(socialUser, false);
 
-            else if (socialUser.socialProvider == "GOOGLE") return await socialLog(socialUser, true);
+            else if (socialUser.socialProvider == "GOOGLE") return await doSocialLog(socialUser, true);
 
             return BadRequest(new { error = "InvalidSocialToken" });
         }
 
-        private async Task<IActionResult> socialLog(UserMediaLog socialUser, Boolean isGoogleType)
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Do the social log on google and facebook
+        /// </summary>
+        /// <param name="socialUser">The info to log/sign the user</param>
+        /// See <see cref="Areas.Identity.Models.UserMediaLog"/> to know param structure
+        /// <param name="isGoogleType">True if the log/sign is to Google, false if is a Facebook log/sign</param>
+        /// <returns>The IActionResult of the social log</returns>
+        /// See <see cref="Areas.Identity.Models.UserSession"/> to know the return structure
+        private async Task<IActionResult> doSocialLog(UserMediaLog socialUser, Boolean isGoogleType)
         {
             try {
                 if(isGoogleType && !await verifyGoogleToken(socialUser.authToken, socialUser.id)) {
@@ -105,6 +160,12 @@ namespace API.Areas.Identity.Controllers
             }
         }
 
+        /// <summary>
+        /// Check if the email is saved in the database
+        /// </summary>
+        /// <param name="email">The email to log/sign</param>
+        /// <param name="user">The user object with the user (only if the user exists)</param>
+        /// <returns>True if the user exists, false otherwise</returns>
         private bool existsUser(string email, ref User user)
         {
             var userExists = _context.User.Where(u => u.email == email);
@@ -116,6 +177,12 @@ namespace API.Areas.Identity.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Add a user to the database
+        /// </summary>
+        /// <param name="socialUser">The info of the user to add</param>
+        /// See <see cref="Areas.Identity.Models.UserMediaLog"/> to know the param structure
+        /// <returns>The user who has been added</returns>
         private User addSocialUser(UserMediaLog socialUser)
         {
             User newUser = new User {
@@ -133,6 +200,12 @@ namespace API.Areas.Identity.Controllers
             return newUser;
         }
 
+        /// <summary>
+        /// Verify the Google token
+        /// </summary>
+        /// <param name="token">The token to verify</param>
+        /// <param name="userId">The id of ther user in Google</param>
+        /// <returns>True if the token is valid, false otherwise</returns>
         private async Task<Boolean> verifyGoogleToken(string token, string userId)
         {
             //Install-Package Google.Apis.Auth -Version 1.38.0
@@ -147,6 +220,12 @@ namespace API.Areas.Identity.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Do the request to verify the Facebook token
+        /// </summary>
+        /// <param name="token">The token to verify</param>
+        /// <param name="userId">The id of the user in Facebook</param>
+        /// <returns>True if the token is valid, false otherwise</returns>
         private async Task<Boolean> verifyFacebookToken(string token, string userId)
         {
             string facebookId = _configuration["Social:facebookSecret"];
@@ -164,6 +243,12 @@ namespace API.Areas.Identity.Controllers
             return isValidFacebookToken(resultJSON, userId);
         }
 
+        /// <summary>
+        /// Verify the Facebook token
+        /// </summary>
+        /// <param name="res">The response of the verify Facebook request</param>
+        /// <param name="userId">The id of the user in facebook</param>
+        /// <returns>True if the token is valid, false otherwise</returns>
         private Boolean isValidFacebookToken(FacebookResponse res, string userId)
         {
             if (res.data.app_id != _configuration["Social:facebookId"]) return false;
@@ -172,6 +257,11 @@ namespace API.Areas.Identity.Controllers
             return res.data.is_valid;
         }
 
+        /// <summary>
+        /// Get the image from a url
+        /// </summary>
+        /// <param name="url">The url to get the image</param>
+        /// <returns>The image in bytes</returns>
         private Byte[] getImage(string url)
         {
             WebClient client = new WebClient();

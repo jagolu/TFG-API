@@ -7,6 +7,13 @@ namespace API.Areas.Identity.Util
 {
     public static class ValidTokenPassword
     {
+        /// <summary>
+        /// Checks if a password token is valid
+        /// </summary>
+        /// <param name="token">The password token to validate</param>
+        /// <param name="user">The user owner of the token</param>
+        /// <param name="dbContext">The database context</param>
+        /// <returns>True if the token is valid, false otherwise</returns>
         public static bool isValid(string token, ref User user, ApplicationDBContext dbContext)
         {
             var tokenExists = dbContext.User.Where(u => u.tokenPassword == token);

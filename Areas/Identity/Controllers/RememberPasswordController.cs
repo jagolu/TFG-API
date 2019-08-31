@@ -13,16 +13,47 @@ namespace API.Areas.Identity.Controllers
     [ApiController]
     public class RememberPasswordController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public RememberPasswordController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ─────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [AllowAnonymous]
         [ActionName("RememberPassword")]
+        /// <summary>
+        /// Send a email with the remember password token
+        /// </summary>
+        /// <param name="order">The info to remember the password</param>
+        /// See <see cref="Areas.Identity.Models.RememberPassword"/> to know the param structure
+        /// <returns>The IActionResult of the remember password action</returns>
         public IActionResult rememberPassword([FromBody] RememberPassword order)
         {
             var userExists = _context.User.Where(u => u.email == order.email);
