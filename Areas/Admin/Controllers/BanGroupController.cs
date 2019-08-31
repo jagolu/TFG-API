@@ -106,7 +106,7 @@ namespace API.Areas.Admin.Controllers
         /// <summary>
         /// Check if a group exists
         /// </summary>
-        /// <param name="group">A new Group object (ref param)</param>
+        /// <param name="group">A new group object, to save the group on it</param>
         /// <param name="name">The name of the group</param>
         /// <returns>True if the group exists, false otherwise</returns>
         private bool existGroup(ref Group group, string name)

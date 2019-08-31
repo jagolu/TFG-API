@@ -106,7 +106,7 @@ namespace API.Areas.Admin.Controllers
         /// <summary>
         /// Checks if a user exists
         /// </summary>
-        /// <param name="user">A new User object (ref param)</param>
+        /// <param name="user">A new User object, to save the user on it</param>
         /// <param name="publicUserId">The public id of the user</param>
         /// <returns>True if the user exists, false otherwise</returns>
         private bool existUser(ref User user, string publicUserId)

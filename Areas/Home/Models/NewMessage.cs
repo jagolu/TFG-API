@@ -7,6 +7,12 @@ namespace API.Areas.Home.Models
     /// </summary>
     public class NewMessage
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+        
         /// <summary>
         /// Create the new object
         /// </summary>
@@ -19,6 +25,13 @@ namespace API.Areas.Home.Models
             this.body = notice.message;
             this.time = notice.date;
         }
+
+
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //        
         
         /// <value>The id of the new</value>
         public String id { get; set; }

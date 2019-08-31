@@ -11,7 +11,7 @@ namespace API.Areas.Identity.Util
         /// Checks if a password token is valid
         /// </summary>
         /// <param name="token">The password token to validate</param>
-        /// <param name="user">The user owner of the token</param>
+        /// <param name="user">A new user object, to save the user owner of the token on it</param>
         /// <param name="dbContext">The database context</param>
         /// <returns>True if the token is valid, false otherwise</returns>
         public static bool isValid(string token, ref User user, ApplicationDBContext dbContext)

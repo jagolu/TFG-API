@@ -164,7 +164,7 @@ namespace API.Areas.Identity.Controllers
         /// Check if the email is saved in the database
         /// </summary>
         /// <param name="email">The email to log/sign</param>
-        /// <param name="user">The user object with the user (only if the user exists)</param>
+        /// <param name="user">A new user object, to save the user on it (only if its exists)</param>
         /// <returns>True if the user exists, false otherwise</returns>
         private bool existsUser(string email, ref User user)
         {
