@@ -18,10 +18,34 @@ namespace API.Areas.DirectMessages.Controllers
     [ApiController]
     public class SendDMMessageController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The scope factory to get the updated database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
+
+        /// <value>The notification hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The service scope factory</param>
+        /// <param name="hub">The notification hub</param>
         public SendDMMessageController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
@@ -29,9 +53,23 @@ namespace API.Areas.DirectMessages.Controllers
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
         [HttpPost]
         [Authorize]
         [ActionName("SendDMMessage")]
+        /// <summary>
+        /// Sends a message to a dm conversation
+        /// </summary>
+        /// <param name="order">The info to send the message</param>
+        /// See <see cref="Areas.DirectMessages.Models.SendDMMessage"/> to know the param structure
+        /// <returns>IActionResult of the send message action</returns>
+        /// See <see cref="Areas.DirectMessages.Models.DMRoom"/> to know the response structure
         public async Task<IActionResult> sendMsg([FromBody] SendDMMessage order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -74,6 +112,20 @@ namespace API.Areas.DirectMessages.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check the param request
+        /// </summary>
+        /// <param name="title">A new DirectMessageTitle object to save the dm conversation on it</param>
+        /// <param name="dmId">The id of the dm conversation</param>
+        /// <param name="user">The caller of the function</param>
+        /// <returns>True if the params request are good, false otherwise</returns>
         private bool checkOrder(ref DirectMessageTitle title, string dmId, User user)
         {
             _context.Entry(user).Collection("directMessages").Load();
@@ -93,6 +145,11 @@ namespace API.Areas.DirectMessages.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Add an unread message to the receiver of the message
+        /// </summary>
+        /// <param name="title">The dm conversation</param>
+        /// <param name="isAdmin">True if the sender is an admin, false otherwise</param>
         private void addUnreadMessages(DirectMessageTitle title, bool isAdmin)
         {
             if (isAdmin)
@@ -106,6 +163,11 @@ namespace API.Areas.DirectMessages.Controllers
             title.lastUpdate = DateTime.Now;
         }
 
+        /// <summary>
+        /// Send a email and notification to the receiver
+        /// </summary>
+        /// <param name="title">The dm conversation</param>
+        /// <param name="caller">The caller of the function</param>
         private async Task sendMailAndSendNotification(DirectMessageTitle title, User caller)
         {
             //If the recv has more than 1 unread messages doesn't need another email
@@ -122,7 +184,11 @@ namespace API.Areas.DirectMessages.Controllers
             if (callerIsAdmin) EmailSender.sendDMNotification(theUser.email, theUser.nickname, title.title);
             await sendNotification(notificationReceiver);
         }
-
+        
+        /// <summary>
+        /// Send the notification to the user
+        /// </summary>
+        /// <param name="recv">The receiver of the notification</param>
         private async Task sendNotification(User recv)
         {
             await SendNotification.send(_hub, "", recv, Alive.Models.NotificationType.RECEIVED_DM, _context);
