@@ -13,16 +13,46 @@ namespace API.Areas.UserInfo.Controllers
     [ApiController]
     public class GetUserController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private readonly ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public GetUserController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [Authorize]
         [ActionName("UserInfo")]
+        /// <summary>
+        /// Get the user profile
+        /// </summary>
+        /// <returns>The IActionResult of the get user action</returns>
+        /// See <see cref="Areas.UserInfo.Models.UserData"/> to know the response structure
         public IActionResult getUser()
         {
             try {

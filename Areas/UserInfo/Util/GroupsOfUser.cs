@@ -7,6 +7,12 @@ namespace API.Areas.UserInfo.Util
 {
     public static class GroupsOfUser
     {
+        /// <summary>
+        /// Get the groups of a user
+        /// </summary>
+        /// <param name="user">The user who we want to know the groups</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>A list with the groups of the user</returns>
         public static List<string> get(User user, ApplicationDBContext _context)
         {
             List<string> userGroups = new List<string>();

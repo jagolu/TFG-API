@@ -19,18 +19,52 @@ namespace API.Areas.UserInfo.Controllers
     [ApiController]
     public class DeleteAccountController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>Scope factory to get an updated context of the database</value>
         private readonly IServiceScopeFactory _scopeFactory;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The scope factory</param>
         public DeleteAccountController(ApplicationDBContext context, IServiceScopeFactory sf)
         {
             _context = context;
             _scopeFactory = sf;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [Authorize]
         [ActionName("DeleteAccount")]
+        /// <summary>
+        /// Removes a account of a user
+        /// </summary>
+        /// <param name="userDelete">Removes the account of a user</param>
+        /// See <see cref=""/> to know the param structure
+        /// <returns>IActionResult of the delete account action</returns>
         public async Task<IActionResult> deleteAccount([FromBody] DeleteUser userDelete)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -61,6 +95,18 @@ namespace API.Areas.UserInfo.Controllers
             return Ok();
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check if the user can really remove his account
+        /// </summary>
+        /// <param name="u">The user who wants to delete his account</param>
+        /// <returns>True if the user can remove his account, false otherwise</returns>
         private async Task<bool> deleteAccountBeingNormal(User u)
         {
             _context.Entry(u).Reference("role").Load();
@@ -75,6 +121,11 @@ namespace API.Areas.UserInfo.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Remove the groups where the user was joined at
+        /// </summary>
+        /// <param name="user">The user who wants to delete his account</param>
+        /// <returns>True if the process was right, false otherwise</returns>
         private async Task<bool> removeGroups(User user)
         {
             _context.Entry(user).Collection("groups").Load();
@@ -109,6 +160,10 @@ namespace API.Areas.UserInfo.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Remove the direct messages from the user
+        /// </summary>
+        /// <param name="user">The user who wants to delete his account</param>
         private void removeTitles(User user)
         {
             _context.Entry(user).Collection("directMessages");
@@ -116,6 +171,10 @@ namespace API.Areas.UserInfo.Controllers
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Remove the notifications of the user
+        /// </summary>
+        /// <param name="user">The user who wants to remove his account</param>
         private void removeNotifications(User user)
         {
             _context.Entry(user).Collection("notifications");

@@ -3,6 +3,9 @@ using System;
 
 namespace API.Areas.UserInfo.Util
 {
+    /// <summary>
+    /// Class to convert a base-64 image on a blob image and vice versa
+    /// </summary>
     public class ConvertBase64ToBlob : JsonConverter
     {
         public override bool CanConvert(Type objectType)
