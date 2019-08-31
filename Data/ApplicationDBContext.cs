@@ -3,30 +3,94 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
+    /// <summary>
+    /// The database context
+    /// </summary>
     public class ApplicationDBContext: DbContext
     {
-        public ApplicationDBContext(DbContextOptions<ApplicationDBContext>options) : base(options) { }
-
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <value>The users in the database</value>
         public DbSet<User> User { get; set; }
+        
+        /// <value>The roles in the database</value>
         public DbSet<Role> Role { get; set; }
+        
+        /// <value>The groups in the database</value>
         public DbSet<Group> Group { get; set; }
+        
+        /// <value>The group members in the database</value>
         public DbSet<UserGroup> UserGroup { get; set; }
+        
+        /// <value>The group chat messages in the database</value>
         public DbSet<GroupChatMessage> GroupChatMessage { get; set; }
+        
+        /// <value>The session tokens in the database</value>
         public DbSet<UserToken> UserToken { get; set; }
+        
+        /// <value>The football teams in the database</value>
         public DbSet<Team> Teams { get; set; }
+        
+        /// <value>The competitions in the database</value>
         public DbSet<Competition> Competitions { get; set; }
+        
+        /// <value>The matchdays in the database</value>
         public DbSet<MatchDay> MatchDays { get; set; }
+        
+        /// <value>The fb in the database</value>
         public DbSet<FootballBet> FootballBets { get; set; }
+        
+        /// <value>The type fb in the database</value>
         public DbSet<TypeFootballBet> TypeFootballBet { get; set; }
+        
+        /// <value>The pay types in the database</value>
         public DbSet<TypePay> TypePay { get; set; }
+        
+        /// <value>The user fb in the database</value>
         public DbSet<UserFootballBet> UserFootballBet { get; set; }
+        
+        /// <value>The news in the database</value>
         public DbSet<New> News { get; set; }
+        
+        /// <value>The direct messages conversations in the database</value>
         public DbSet<DirectMessageTitle> DirectMessagesTitle { get; set; }
+        
+        /// <value>The messages in direct messages conversations in the database</value>
         public DbSet<DirectMessageMessages> DirectMessagesMessages { get; set; }
+        
+        /// <value>The notifications in the database</value>
         public DbSet<Notifications> Notifications { get; set; }
+        
+        /// <value>The group interactions in the database</value>
         public DbSet<GroupInteraction> GroupInteractions { get; set; }
 
 
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public ApplicationDBContext(DbContextOptions<ApplicationDBContext>options) : base(options) { }
+
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Create all the database models
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         protected override void OnModelCreating(ModelBuilder mb)
         {
             onCreateUser(mb);
@@ -46,6 +110,17 @@ namespace API.Data
             onCreateGroupInteraction(mb);
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Create the user model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateUser(ModelBuilder mb)
         {
             mb.Entity<User>()
@@ -65,6 +140,10 @@ namespace API.Data
                 .IsUnique();
         }
 
+        /// <summary>
+        /// Create the user token model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateUserToken(ModelBuilder mb)
         {
             mb.Entity<UserToken>()
@@ -81,6 +160,10 @@ namespace API.Data
                 .IsUnique();
         }
 
+        /// <summary>
+        /// Create the group model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateGroup(ModelBuilder mb)
         {
             mb.Entity<Group>()
@@ -88,6 +171,10 @@ namespace API.Data
                 .IsUnique();
         }
 
+        /// <summary>
+        /// Create the group member model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateUserGroup(ModelBuilder mb)
         {
             mb.Entity<UserGroup>()
@@ -106,6 +193,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
+        /// <summary>
+        /// Create the group chat model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateChatGroup(ModelBuilder mb)
         {
             mb.Entity<GroupChatMessage>()
@@ -118,6 +209,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
+        /// <summary>
+        /// Create the matchday model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateMathDay(ModelBuilder mb)
         {
             mb.Entity<MatchDay>()
@@ -142,6 +237,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
+        /// <summary>
+        /// Create the competition model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateCompetition(ModelBuilder mb)
         {
             mb.Entity<Competition>()
@@ -149,6 +248,10 @@ namespace API.Data
                 .IsUnique();
         }
 
+        /// <summary>
+        /// Create the team model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateTeam(ModelBuilder mb)
         {
             mb.Entity<Team>()
@@ -156,6 +259,10 @@ namespace API.Data
                 .IsUnique();
         }
 
+        /// <summary>
+        /// Create the fb model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateFootballBet(ModelBuilder mb)
         {
             mb.Entity<FootballBet>()
@@ -171,6 +278,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
+        /// <summary>
+        /// Create the user fb model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateUserFootballBet(ModelBuilder mb)
         {
             mb.Entity<UserFootballBet>()
@@ -189,6 +300,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
+        /// <summary>
+        /// Create the new model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateNew(ModelBuilder mb)
         {
             mb.Entity<New>()
@@ -204,6 +319,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
+        /// <summary>
+        /// Create the dm model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateDirectMessagesTitle(ModelBuilder mb)
         {
             mb.Entity<DirectMessageTitle>()
@@ -213,6 +332,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
+        /// <summary>
+        /// Create the dm messages model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateDirectMessagesMessages(ModelBuilder mb)
         {
             mb.Entity<DirectMessageMessages>()
@@ -222,6 +345,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
+        /// <summary>
+        /// Create the notifications model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateNotifications(ModelBuilder mb)
         {
             mb.Entity<Notifications>()
@@ -231,6 +358,10 @@ namespace API.Data
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
+        /// <summary>
+        /// Create the group interactions model
+        /// </summary>
+        /// <param name="mb">The database model builder</param>
         private void onCreateGroupInteraction(ModelBuilder mb)
         {
             mb.Entity<GroupInteraction>()

@@ -7,8 +7,21 @@ using System.Linq;
 
 namespace API.Data
 {
+    /// <summary>
+    /// Initializes the database
+    /// </summary>
     public class DBInitializer
     {
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Initializes the roles 
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void InitializeRoles(ApplicationDBContext context)
         {
             var roles = new Role[] {
@@ -22,6 +35,10 @@ namespace API.Data
             roles.Where(r => context.Role.All(role => role.name != r.name)).ToList().ForEach(rr => context.Add(rr));
         }
 
+        /// <summary>
+        /// Initializes the football bet types
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void InitializeTypeFootballBet(ApplicationDBContext context)
         {
             var types = new TypeFootballBet[]
@@ -43,6 +60,10 @@ namespace API.Data
             types.Where(t => context.TypeFootballBet.All(type => type.name != t.name)).ToList().ForEach(tfb => context.Add(tfb));
         }
 
+        /// <summary>
+        /// Initializes the pay types
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void InitializeTypePay(ApplicationDBContext context)
         {
             var types = new TypePay[]
@@ -58,6 +79,10 @@ namespace API.Data
             types.Where(t => context.TypePay.All(type => type.name != t.name)).ToList().ForEach(tp => context.Add(tp));
         }
 
+        /// <summary>
+        /// Initializes the development users
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void createDevelopmentUser(ApplicationDBContext context)
         {
             List<User> test_users = new List<User>();
@@ -104,6 +129,10 @@ namespace API.Data
             if (context.User.Where(u => u.email == "a2@gmail.com").Count() == 0) context.Add(admin2);
         }
 
+        /// <summary>
+        /// Creates some news
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void createNews(ApplicationDBContext context)
         {
             string title = "Aviso de los administradores!";
@@ -156,26 +185,10 @@ namespace API.Data
             news.Where(nn => context.News.All(n => n.message != nn.message)).ToList().ForEach(nws => context.Add(nws));
         }
 
-        public static void Initialize(ApplicationDBContext context)
-        {
-            context.Database.EnsureCreated();
-
-            InitializeRoles(context);
-            InitializeTypeFootballBet(context);
-            InitializeTypePay(context);
-            createNews(context);
-            context.SaveChanges();
-
-            createDevelopmentUser(context); //Test users & admin user
-            context.SaveChanges();
-
-            //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
-        }
-
-
-
-
-
+        /// <summary>
+        /// Function to do development stuff with the matchdays
+        /// </summary>
+        /// <param name="context">The database context</param>
         private static void aumentarFechaParapruebas(ApplicationDBContext context)
         {
             context.MatchDays.ToList().ForEach(md =>
@@ -194,6 +207,33 @@ namespace API.Data
                 //context.SaveChanges();
             });
             context.SaveChanges();
+        }
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        
+        /// <summary>
+        /// Initializes the database
+        /// </summary>
+        /// <param name="context"></param>
+        public static void Initialize(ApplicationDBContext context)
+        {
+            context.Database.EnsureCreated();
+
+            InitializeRoles(context);
+            InitializeTypeFootballBet(context);
+            InitializeTypePay(context);
+            createNews(context);
+            context.SaveChanges();
+
+            createDevelopmentUser(context); //Test users & admin user
+            context.SaveChanges();
+
+            //aumentarFechaParapruebas(context);//Para pruebas, se borra despues
         }
     }
 }
