@@ -187,14 +187,15 @@ namespace API.Data
 
         /// <summary>
         /// Function to do development stuff with the matchdays
+        /// DO NOT USE IN PRODUCTION MODE
         /// </summary>
         /// <param name="context">The database context</param>
         private static void aumentarFechaParapruebas(ApplicationDBContext context)
         {
-            context.MatchDays.ToList().ForEach(md =>
-            {
-                Random rnd = new Random();
-                DateTime n = DateTime.Now;
+            //context.MatchDays.ToList().ForEach(md =>
+            //{
+                //Random rnd = new Random();
+                //DateTime n = DateTime.Now;
                 //md.date = n.AddDays(-7);
                 //md.status = "SCHEDULED";
                 //md.status = "FINISHED";
@@ -205,8 +206,8 @@ namespace API.Data
                 //md.secondHalfAwayGoals = rnd.Next(3);
                 //md.secondHalfHomeGoals = rnd.Next(3);
                 //context.SaveChanges();
-            });
-            context.SaveChanges();
+            //});
+            //context.SaveChanges();
         }
 
         //
