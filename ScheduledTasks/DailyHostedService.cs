@@ -59,22 +59,18 @@ namespace API.ScheduledTasks
         // ──────────────────────────────────────────────────────────────────────────────────
         //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
         // ──────────────────────────────────────────────────────────────────────────────────
-        //        
+        //    
 
-        /**
-         * Start the service
-         */
         /// <summary>
         /// Starts the timing of the service
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            nextTime(0);
             _timer = new Timer(
                 DoWork,
                 null,
-                nextTime(0), 
+                nextTime(0),
                 new TimeSpan(1, 0, 0, 0) //The next day
             );
 
@@ -108,9 +104,6 @@ namespace API.ScheduledTasks
         // ────────────────────────────────────────────────────────────────────────────────────
         //
 
-        /**
-         * Initialize the database for virtual bets
-         */
         /// <summary>
         /// Update the football data in the database, pay the fb to the groups,
         /// do the weekly pay to the groups, remove the expired user session tokens, 
@@ -199,6 +192,14 @@ namespace API.ScheduledTasks
                     _timer?.Change(nextTime(0), new TimeSpan(1, 0, 0, 0));
                 }
             }
+
+            //Re send the timer
+            _timer = new Timer(
+                DoWork,
+                null,
+                nextTime(0),
+                new TimeSpan(1, 0, 0, 0) //The next day
+            );
         }
 
         /// <summary>
