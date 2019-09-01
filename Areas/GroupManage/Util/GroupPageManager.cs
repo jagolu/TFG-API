@@ -10,8 +10,25 @@ using API.Util;
 
 namespace API.Areas.GroupManage.Util
 {
+    /// <summary>
+    /// Page to the create the group-page object
+    /// </summary>
     public static class GroupPageManager
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Gets the group page for a member of it
+        /// </summary>
+        /// <param name="caller">The member of the group who wants the group page</param>
+        /// <param name="group">The group</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The group page</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public static GroupPage GetPage(User caller, Group group, ApplicationDBContext _context)
         {
             try
@@ -64,6 +81,21 @@ namespace API.Areas.GroupManage.Util
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Get the new bets of this week for the group
+        /// </summary>
+        /// <param name="caller">The member of the group who wants the group page</param>
+        /// <param name="group">The group</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The new fb of the groups</returns>
+        /// See <see cref="Areas.Bet.Models.GroupBet"/> to know the response strucure
         private static List<GroupBet> getBets(User caller, Group group, ApplicationDBContext _context)
         {
             List<GroupBet> bets = new List<GroupBet>();
@@ -81,7 +113,16 @@ namespace API.Areas.GroupManage.Util
             return bets;
         }
 
-        public static List<EndedFootballBet> getBetAndUserBets(User caller, Group group, ApplicationDBContext _context, bool ended)
+        /// <summary>
+        /// Get the active fb and the fb history
+        /// </summary>
+        /// <param name="caller">The member of the group who wants the group page</param>
+        /// <param name="group">The group</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="ended">True to get the fb history, false to get the active fb</param>
+        /// <returns>A list of ended fb</returns>
+        /// See <see cref="Areas.Bet.Models.EndedFootballBet"/> to know the response structure
+        private static List<EndedFootballBet> getBetAndUserBets(User caller, Group group, ApplicationDBContext _context, bool ended)
         {
             List<EndedFootballBet> history = new List<EndedFootballBet>();
             _context.Entry(group).Collection("bets").Load();
@@ -98,6 +139,15 @@ namespace API.Areas.GroupManage.Util
             return history;
         }
 
+        /// <summary>
+        /// Get the members of the group
+        /// </summary>
+        /// <param name="callerId">The id of the caller member of the group</param>
+        /// <param name="callerRoleInGroup">The name of the role of the caller member of the group</param>
+        /// <param name="group">The group</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="roleGroup_normal">The name of the normal role in the group</param>
+        /// <returns></returns>
         private static List<GroupMember> getMembers(Guid callerId, string callerRoleInGroup, Group group, ApplicationDBContext _context, string roleGroup_normal)
         {
             List<GroupMember> members = new List<GroupMember>();
@@ -116,6 +166,13 @@ namespace API.Areas.GroupManage.Util
             return members;
         }
 
+        /// <summary>
+        /// Add a member to the list of members
+        /// </summary>
+        /// <param name="mainList">The main list with the til now users</param>
+        /// <param name="outList">The list of the members of the group</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The list of the members of the group</returns>
         private static List<GroupMember> addFromList(List<GroupMember> mainList, List<UserGroup> outList, ApplicationDBContext _context)
         {
             outList.ForEach(user =>
@@ -126,6 +183,12 @@ namespace API.Areas.GroupManage.Util
             return mainList;
         }
 
+        /// <summary>
+        /// Transform a UserGroup object to a GroupMember object
+        /// </summary>
+        /// <param name="ug">The UserGroup object</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The group member object</returns>
         private static GroupMember formatGroupMember(UserGroup ug, ApplicationDBContext _context)
         {
             _context.Entry(ug).Reference("User").Load();
@@ -147,6 +210,13 @@ namespace API.Areas.GroupManage.Util
             return ret;
         }
 
+        /// <summary>
+        /// Get the manage fb objects for the group maker
+        /// </summary>
+        /// <param name="caller">The caller member of the group</param>
+        /// <param name="group">The group</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The list of fb that maker can manage</returns>
         private static List<BetsManager> getManageBets(User caller, Group group, ApplicationDBContext _context)
         {
             List<BetsManager> bets = new List<BetsManager>();

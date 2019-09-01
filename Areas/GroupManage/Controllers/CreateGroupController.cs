@@ -13,24 +13,46 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class CreateGroupController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public CreateGroupController(ApplicationDBContext context)
         {
             _context = context;
         }
 
 
-        /**
-         * Create a new group
-         * @param group The new group to create
-         * @return 500 The group already exists
-         * @return 401 LimitationCreateGroup The user can't create more groups of the specificated type
-         * @return 200 The group has been created sucesfully
-         */ 
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [Authorize]
         [ActionName("CreateGroup")]
+        /// <summary>
+        /// Create a new group
+        /// </summary>
+        /// <param name="groupName">The name of the new group</param>
+        /// <returns>The IActionResult of the create group action</returns>
         public IActionResult createGroup([Required][MaxLength(30)][MinLength(4)] string groupName )
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);
@@ -85,6 +107,18 @@ namespace API.Areas.GroupManage.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check if the user can create a new group
+        /// </summary>
+        /// <param name="user">The user who wants to create a new group</param>
+        /// <returns>True if the user can create a new group, false otherwise</returns>
         private bool canCreateAGroup(User user)
         {
             if (user.lastTimeCreateGroup == null)
@@ -99,13 +133,11 @@ namespace API.Areas.GroupManage.Controllers
             return true;
         }
 
-        /**
-         * Function to know if the user can create a new group ignoring its type
-         * 
-         * @access private
-         * @param {User} The user who tries to create the new group
-         * @return {bool} True if the user can create another group, false otherwhise
-         */
+        /// <summary>
+        /// Check if the user can create a new group ignorign its type
+        /// </summary>
+        /// <param name="user">The user who tries to create the new group</param>
+        /// <returns>True if the user can create another group, false otherwhise</returns>
         private bool canCreateANewGroup(User user)
         {
             int totalUserGroupJoined = _context.UserGroup.Where(ug => ug.userid == user.id ).Count();

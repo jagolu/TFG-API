@@ -18,11 +18,38 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class RemoveUserFromGroupController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The scope factory to get an updated database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
+
+        /// <value>The notifications hub</value>
         private IHubContext<NotificationHub> _notificationHub;
+
+        /// <value>The chat hub</value>
         private IHubContext<ChatHub> _chatHub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The scope factory</param>
+        /// <param name="notificationHub">The notifications hub</param>
+        /// <param name="chatHub">The chat hub</param>
         public RemoveUserFromGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> notificationHub, IHubContext<ChatHub> chatHub)
         {
             _context = context;
@@ -31,9 +58,23 @@ namespace API.Areas.GroupManage.Controllers
             _chatHub = chatHub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [Authorize]
         [ActionName("RemoveUser")]
+        /// <summary>
+        /// Kick a user out from the group
+        /// </summary>
+        /// <param name="order">The info to kick a user from the group</param>
+        /// See <see cref="Areas.GroupManage.Models.KickUser"/> to know the param structure
+        /// <returns>The updated group page</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public async System.Threading.Tasks.Task<IActionResult> removeUserAsync([FromBody] KickUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to kick the user from the group

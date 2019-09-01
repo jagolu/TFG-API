@@ -13,16 +13,48 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class ManagePasswordController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public ManagePasswordController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [Authorize]
         [ActionName("ManagePassword")]
+        /// <summary>
+        /// Mange the password of the group
+        /// </summary>
+        /// <param name="order">The info to manage the password of the group</param>
+        /// See <see cref="Areas.GroupManage.Models.ManagePassword"/> to know the param structure
+        /// <returns>The updated group page</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
         public IActionResult managePassword([FromBody] ManagePassword order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user

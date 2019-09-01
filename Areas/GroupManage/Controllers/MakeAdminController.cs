@@ -17,19 +17,54 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class MakeAdminController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The notifications hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="hub">The notifications hub</param>
         public MakeAdminController(ApplicationDBContext context, IHubContext<NotificationHub> hub)
         {
             _context = context;
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpPost]
         [Authorize]
         [ActionName("MakeAdmin")]
-        public async Task<IActionResult> makeAdminAsync([FromBody] MakeAdmin_blockUser order)
+        /// <summary>
+        /// Gives the group-admin to a member of a group
+        /// </summary>
+        /// <param name="order">The infoto make a user admin of a group</param>
+        /// See <see cref="Areas.GroupManage.Models.MakeAdmin_blockUser"/> to know the param structure
+        /// <returns>The updated group page</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupPage"/> to know the response structure
+        public async Task<IActionResult> makeAdmin([FromBody] MakeAdmin_blockUser order)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to make admin to another user
             if (!user.open) return BadRequest(new { error = "YoureBanned" });
@@ -59,6 +94,20 @@ namespace API.Areas.GroupManage.Controllers
             }
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Send the news and the notifications to the group and the new admin
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="group"></param>
+        /// <param name="makeUnmake"></param>
+        /// <returns></returns>
         private async Task sendNews(UserGroup target, Group group, bool makeUnmake)
         {
             //Send home news

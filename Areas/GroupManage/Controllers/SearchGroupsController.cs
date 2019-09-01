@@ -14,16 +14,47 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class SearchGroupsController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public SearchGroupsController(ApplicationDBContext context)
         {
             _context = context;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [Authorize]
         [ActionName("SearchGroup")]
+        /// <summary>
+        /// Get a list of groups with a similar name
+        /// </summary>
+        /// <param name="name">The name of the group to find</param>
+        /// <returns>A list of group with a similar name</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupInfo"/> to see the response structure
         public List<GroupInfo> searchGroupByName(string name)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context);

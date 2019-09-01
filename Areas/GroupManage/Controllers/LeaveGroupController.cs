@@ -15,10 +15,34 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class LeaveGroupController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
+
+        /// <value>The scope factory to get an updated database context</value>
         private readonly IServiceScopeFactory _scopeFactory;
+
+        /// <value>The notifications hub</value>
         private IHubContext<NotificationHub> _hub;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="sf">The service factory</param>
+        /// <param name="hub">The notifications hub</param>
         public LeaveGroupController(ApplicationDBContext context, IServiceScopeFactory sf, IHubContext<NotificationHub> hub)
         {
             _context = context;
@@ -26,9 +50,21 @@ namespace API.Areas.GroupManage.Controllers
             _hub = hub;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [Authorize]
         [ActionName("LeaveGroup")]
+        /// <summary>
+        /// Get a user out of a group
+        /// </summary>
+        /// <param name="groupName">The name of the group that the user is gonna left</param>
+        /// <returns>IActionResult of the leaving group action</returns>
         public async System.Threading.Tasks.Task<IActionResult> leaveGroup(string groupName)
         {
             User user = TokenUserManager.getUserFromToken(HttpContext, _context); //The user who tries to leave the group

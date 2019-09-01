@@ -6,8 +6,18 @@ using System.Linq;
 
 namespace API.Areas.GroupManage.Util
 {
+    /// <summary>
+    /// Class to manage the interactions of a user with a group
+    /// </summary>
     public static class InteractionManager
     {
+        /// <summary>
+        /// Manages the interaction of a user with a group
+        /// </summary>
+        /// <param name="user">The user who has interacted with the group</param>
+        /// <param name="group">The group</param>
+        /// <param name="type">The interaction id</param>
+        /// <param name="dbContext">The database context</param>
         public static void manageInteraction(User user, Group group, interactionType type, ApplicationDBContext dbContext)
         {
             List<GroupInteraction> interactions = dbContext.GroupInteractions.Where(gi => gi.groupid == group.id && gi.userid == user.id).ToList();
@@ -40,6 +50,10 @@ namespace API.Areas.GroupManage.Util
         }
     }
 
+
+    /// <summary>
+    /// The id of the interaction of a user with a group
+    /// </summary>
     public enum interactionType
     {
         NONE = 0,

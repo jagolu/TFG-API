@@ -12,6 +12,19 @@ namespace API.Areas.GroupManage.Util
 {
     public static class QuitUserFromGroup
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Removes a member of a group from it
+        /// </summary>
+        /// <param name="userGroup">The user of the group</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="hub">The notification hub</param>
+        /// <returns>True if the process was good, false otherwise</returns>
         public static async Task<bool> quitUser(UserGroup userGroup, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             List<UserGroup> members = getValidUsersInGroup(userGroup, _context);
@@ -49,6 +62,12 @@ namespace API.Areas.GroupManage.Util
             }
         }
 
+        /// <summary>
+        /// Get the valid users in a group
+        /// </summary>
+        /// <param name="caller">The caller of the function (must be a member of the group)</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The list of members of the group</returns>
         public static List<UserGroup> getValidUsersInGroup(UserGroup caller, ApplicationDBContext _context)
         {
             return _context.UserGroup.Where(ug => 
@@ -58,6 +77,16 @@ namespace API.Areas.GroupManage.Util
                     ).ToList();
         }
 
+        /// <summary>
+        /// Manages the action when the maker of a group leaves it
+        /// </summary>
+        /// <param name="members">All the members of the group</param>
+        /// <param name="maker">The group-maker role</param>
+        /// <param name="admin">The group-admin role</param>
+        /// <param name="normal">The group-normal role</param>
+        /// <param name="leave">True if the maker has leaved the group, false otherwise</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public static async Task manageQuitMaker(List<UserGroup> members, Role maker, Role admin, Role normal, bool leave, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             List<UserGroup> adminMembers = members.Where(m => m.role == admin).OrderBy(d => d.dateRole).ToList();
@@ -86,6 +115,18 @@ namespace API.Areas.GroupManage.Util
             await SendNotification.send(hub, newMaster.Group.name, newMaster.User, Alive.Models.NotificationType.MAKE_MAKER, _context);
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Removes the u fb of a user in a group
+        /// </summary>
+        /// <param name="ug">The member of the group</param>
+        /// <param name="context">The database context</param>
         private static void removeBets(UserGroup ug, ApplicationDBContext context)
         {
             context.Entry(ug).Reference("User").Load();

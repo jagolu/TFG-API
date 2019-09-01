@@ -6,8 +6,21 @@ using System.Linq;
 
 namespace API.Areas.GroupManage.Util
 {
+    /// <summary>
+    /// Class to check if a user belongs to a group
+    /// </summary>
     public static class UserFromGroup
     {
+        /// <summary>
+        /// Check if user belongs to a group
+        /// </summary>
+        /// <param name="callerId">The id of the user</param>
+        /// <param name="group">A new group object, to save the group on it</param>
+        /// <param name="groupName">The name of the group</param>
+        /// <param name="ugCaller">A new UserGroup object, to save the group member on it</param>
+        /// <param name="context">The database context</param>
+        /// <param name="matterBlock">True if for the functionality matters if the member is blocked, false if it doesn't</param>
+        /// <returns>True if the user belongs to the group, false otherwise</returns>
         public static bool isOnIt(Guid callerId, ref Group group, string groupName, ref UserGroup ugCaller, ApplicationDBContext context, bool matterBlock = true)
         {
             try

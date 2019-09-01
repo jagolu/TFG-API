@@ -8,20 +8,45 @@ namespace API.Areas.GroupManage.Controllers
     [ApiController]
     public class CheckGroupNameController : ControllerBase
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The database context of the application</value>
         private ApplicationDBContext _context;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The database context</param>
         public CheckGroupNameController(ApplicationDBContext context)
         {
             _context = context;
         }
 
-        /**
-         * Check if a group name is available
-         * @param name The new group name
-         * @return True if the new group name is available, false otherwise
-         */
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
         [HttpGet]
         [ActionName("CheckGroupName")]
+        /// <summary>
+        /// Check if a group name is available
+        /// </summary>
+        /// <param name="name">The new group name</param>
+        /// <returns>True if the new group name is available, false otherwise</returns>
         public bool checkName(string name)
         {
             //The request name is empty

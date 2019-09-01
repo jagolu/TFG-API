@@ -7,8 +7,25 @@ using static API.Areas.GroupManage.Models.GroupInfo;
 
 namespace API.Areas.GroupManage.Util
 {
+    /// <summary>
+    /// Makes a group info list
+    /// </summary>
     public static class MakeGroupInfoList
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Get a list of group and their members
+        /// </summary>
+        /// <param name="groups">The groups to get the info</param>
+        /// <param name="isAdmin">True if the caller is an admin</param>
+        /// <param name="dbContext">The database context</param>
+        /// <returns>A list of group and their members</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupInfo"/> to know the response structure
         public static List<GroupInfo> make(List<Group> groups, bool isAdmin, ApplicationDBContext dbContext)
         {
             List<GroupInfo> groupRet = new List<GroupInfo>();
@@ -33,6 +50,19 @@ namespace API.Areas.GroupManage.Util
         }
 
 
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Get a list of the members of the group
+        /// </summary>
+        /// <param name="group">The group</param>
+        /// <param name="dbContext">The database context</param>
+        /// <returns>A list of the members of the group</returns>
+        /// See <see cref="Areas.GroupManage.Models.GroupInfo.GroupMemberAdmin"/> to know the response structure
         private static List<GroupMemberAdmin> getGroupMembers(Group group, ApplicationDBContext dbContext)
         {
             dbContext.Entry(group).Collection("users").Load();
