@@ -16,11 +16,37 @@ namespace API.ScheduledTasks
 {
     public class DailyHostedService : IHostedService, IDisposable
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The scope factory to get the services</value>
         private readonly IServiceScopeFactory _scopeFactory;
+        
+        /// <value>A timer to se the next time of the action</value>
         private Timer _timer;
+        
+        /// <value>The configuration of the application</value>
         private IConfiguration _configuration;
+        
+        /// <value>The client factory to do the http request</value>
         private readonly IHttpClientFactory _http;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sf">The scope factory service</param>
+        /// <param name="config">The configuration of the application</param>
+        /// <param name="http">The http client factory</param>
         public DailyHostedService(IServiceScopeFactory sf, IConfiguration config, IHttpClientFactory http)
         {
             _scopeFactory = sf;
@@ -28,9 +54,20 @@ namespace API.ScheduledTasks
             _http = http;
         }
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //        
+
         /**
          * Start the service
          */
+        /// <summary>
+        /// Starts the timing of the service
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
         public Task StartAsync(CancellationToken cancellationToken)
         {
             nextTime(0);
@@ -44,9 +81,10 @@ namespace API.ScheduledTasks
             return Task.CompletedTask;
         }
 
-        /**
-         * If the application fails, the task and timer will cancel
-         */
+        /// <summary>
+        /// Stops the timing of the service and restart it again
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
         public Task StopAsync(CancellationToken cancellationToken)
         {
             //Restart the timer
@@ -55,9 +93,30 @@ namespace API.ScheduledTasks
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Dispose the time data
+        /// </summary>
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
+
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
         /**
          * Initialize the database for virtual bets
          */
+        /// <summary>
+        /// Update the football data in the database, pay the fb to the groups,
+        /// do the weekly pay to the groups, remove the expired user session tokens, 
+        /// remove completely the users who wants to remove his account and clean the chat history
+        /// </summary>
+        /// <param name="state">A state object</param>
         private async void DoWork(object state)
         {
             //TODO initialize the database
@@ -141,15 +200,12 @@ namespace API.ScheduledTasks
                 }
             }
         }
-        
-        /**
-         * Delete the timer
-         */
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
 
+        /// <summary>
+        /// Get the timespan to the next day at the 00:00 + addHours hours
+        /// </summary>
+        /// <param name="addHours">The hours to add</param>
+        /// <returns>The next day at the 00:00 + addHours hours</returns>
         private static TimeSpan nextTime(int addHours)
         {
             DateTime nowDay = DateTime.Now;

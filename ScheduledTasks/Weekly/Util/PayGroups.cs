@@ -7,8 +7,16 @@ using System.Linq;
 
 namespace API.ScheduledTasks.Weekly.Util
 {
+    /// <summary>
+    /// Class to manage the weekly pay of the groups
+    /// </summary>
     public static class PayGroups
     {
+        /// <summary>
+        /// Pay a group his weekly pay (only if is the correct day)
+        /// </summary>
+        /// <param name="_context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public static void pay(ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             DayOfWeek today = DateTime.Now.DayOfWeek;

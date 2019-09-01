@@ -5,8 +5,15 @@ using System.Linq;
 
 namespace API.ScheduledTasks.Weekly.Util
 {
+    /// <summary>
+    /// Class to clean the chat history
+    /// </summary>
     public static class CleanChats
     {
+        /// <summary>
+        /// Leaves every chat with 100 messages or less
+        /// </summary>
+        /// <param name="dbContext">The context of the database</param>
         public static void clean(ApplicationDBContext dbContext)
         {
             dbContext.Group.ToList().ForEach(g =>

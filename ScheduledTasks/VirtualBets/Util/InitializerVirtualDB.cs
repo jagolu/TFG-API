@@ -7,12 +7,39 @@ using System.Threading.Tasks;
 
 namespace API.ScheduledTasks.VirtualBets.Util
 {
+    /// <summary>
+    /// Initializes or update the matchdays, teams and competitions in the database
+    /// </summary>
     public class InitializerVirtualDB
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The context of the database</value>
         private ApplicationDBContext _context;
+        
+        /// <value>The configuration of the application</value>
         private IConfiguration _configuration;
+        
+        /// <value>The http client factory to do the http request to the football api</value>
         private readonly IHttpClientFactory _http;
 
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────
+        //   :::::: C O N S T R U C T O R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Initializes the class vars
+        /// </summary>
+        /// <param name="context">The database context</param>
+        /// <param name="config">The configuration of the application</param>
+        /// <param name="http">The client factory</param>
         public InitializerVirtualDB(ApplicationDBContext context, IConfiguration config, IHttpClientFactory http)
         {
             _context = context;
@@ -20,13 +47,17 @@ namespace API.ScheduledTasks.VirtualBets.Util
             _http = http;
         }
 
-        /**
-         * Function to initialze a league and its teams and matchdays in the DB
-         * @param string leagueid.
-         *      The id of the competition in the api.
-         * @return bool.
-         *      True if the initialization was well, false otherwise.
-         */
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+        
+        /// <summary>
+        /// Initializes or updates the matchs and teams of a competition
+        /// </summary>
+        /// <param name="leagueId">The id in the api of the competition</param>
         public async Task InitializeAsync(string leagueId)
         {
             string token = _configuration["footballApi:token"];

@@ -9,18 +9,30 @@ namespace API.ScheduledTasks.VirtualBets.Util
 {
     public static class APIRequest
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────
+        //   :::::: C L A S S   V A R S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────
+        //
+
+        /// <value>The base url of the football api</value>
         private static readonly string _baseUrl = "https://api.football-data.org/v2/";
 
-        /**
-         * Function to get the matches from a specific competition
-         * @param string token.
-         *      The secret token key of the api.
-         * @param string leagueid.
-         *      The id of the competition in the api.
-         * @param IHttpClientFactory _http.
-         * @return CompetitionMatches.
-         *      The matches in the competition
-         */
+
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //        
+
+        /// <summary>
+        /// Get the matches from a competition
+        /// </summary>
+        /// <param name="token">The secret token key of the api</param>
+        /// <param name="leagueId">The id of the competition in the api</param>
+        /// <param name="_http">The http factory</param>
+        /// <returns>The matches in the competition</returns>
+        /// See <see cref="ScheduledTasks.VirtualBets.Models.CompetitionMatches"/> to know the response structure
         public async static Task<CompetitionMatches> getMatchesFromCompetition(string token, string leagueId, IHttpClientFactory _http)
         {
             string path = "competitions/" + leagueId + "/matches";
@@ -41,50 +53,7 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
                     Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute & retry
 
-                    if (err.errorCode == 429) return await getMatchesFromCompetition(token, leagueId, _http);
-
-                    return null;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-        }
-
-
-        /**
-         * Function to get the matches from a specific competition in a specific matchday
-         * @param string token.
-         *      The secret token key of the api.
-         * @param string leagueid.
-         *      The id of the competition in the api.
-         * @param int matchday.
-         *      The matchday in te competition
-         * @param IHttpClientFactory _http.
-         * @return CompetitionMatches.
-         *      The matches in the competition
-         */
-        public async static Task<CompetitionMatches> getMatchesFromMatchDay__unused(string token, string leagueid, int matchday, IHttpClientFactory _http)
-        {
-            string path = "competitions/" + leagueid + "/matches?matchday="+matchday;
-
-            string result = await getRequest(path, _http, token);
-
-            try
-            {
-                CompetitionMatches comptMatchs = JsonConvert.DeserializeObject<CompetitionMatches>(result);
-                return comptMatchs;
-            }
-            catch (Exception) //Some kind of error
-            {
-                try //If ok the error is that we only can do 10 requests per min
-                {
-                    ErrorFootballApiMessage err = JsonConvert.DeserializeObject<ErrorFootballApiMessage>(result);
-
-                    Thread.Sleep(new TimeSpan(0, 1, 0)); //Wait a minute retry
-
-                    if(err.errorCode == 429) return await getMatchesFromMatchDay__unused(token, leagueid, matchday, _http);
+                    if (err.errorCode == 429) return null;
 
                     return null;
                 }
@@ -106,6 +75,14 @@ namespace API.ScheduledTasks.VirtualBets.Util
          * @return CompetitionInfo.
          *      The competition info
          */
+        /// <summary>
+        /// Get the info of a competition
+        /// </summary>
+        /// <param name="token">The secret token key of the api</param>
+        /// <param name="leagueid">The id of the competition in the api</param>
+        /// <param name="_http">The http factory</param>
+        /// <returns>The competition info</returns>
+        /// See <see cref="ScheduledTasks.VirtualBets.Models.CompetitionInfo"/> to know the response structure
         public async static Task<CompetitionInfo> getCompetitionInfo(string token, string leagueid, IHttpClientFactory _http)
         {
             string path = "competitions/" + leagueid;
@@ -138,16 +115,19 @@ namespace API.ScheduledTasks.VirtualBets.Util
         }
 
 
-        /**
-         * Funtion to do a GET Request to the football api
-         * @param string path.
-         *      The path of the GET Request
-         * @param IHttpClientFactory _http.
-         * @param string token.
-         *      The secret token key of the api
-         * @return string.
-         *      The result ready to be formatted
-         */
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Do a http request to the football api
+        /// </summary>
+        /// <param name="path">The path of the GET Request</param>
+        /// <param name="_http">The http factory</param>
+        /// <param name="token">The secret token key of the api</param>
+        /// <returns>The result ready to be formatted</returns>
         private async static Task<String> getRequest(string path, IHttpClientFactory _http, string token)
         {
             var request = new HttpRequestMessage(

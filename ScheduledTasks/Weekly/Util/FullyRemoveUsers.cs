@@ -6,8 +6,15 @@ using System.Linq;
 
 namespace API.ScheduledTasks.Weekly.Util
 {
+    /// <summary>
+    /// Remove a user completely (only his User data)
+    /// </summary>
     public static class FullyRemoveUsers
     {
+        /// <summary>
+        /// Remove a user
+        /// </summary>
+        /// <param name="dbContext">The database context</param>
         public static void remove(ApplicationDBContext dbContext)
         {
             DateTime lastWeek = DateTime.Now.AddDays(-7);

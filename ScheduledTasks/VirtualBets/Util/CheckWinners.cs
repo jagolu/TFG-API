@@ -9,8 +9,23 @@ using System.Linq;
 
 namespace API.ScheduledTasks.VirtualBets.Util
 {
+    /// <summary>
+    /// Check the winners of a fb
+    /// </summary>
     public static class CheckWinners
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Check the winner of a fb
+        /// </summary>
+        /// <param name="footballBet">The fb to check</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         public static void checkWinner(FootballBet footballBet, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             _context.Entry(footballBet).Reference("type").Load();
@@ -44,6 +59,19 @@ namespace API.ScheduledTasks.VirtualBets.Util
             launchNews(footballBet, _context, hub);
         }
 
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Calculate the winner of a fb with a score type
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="time">The time of the fb</param>
+        /// <returns>A list of exact winners and closers winners</returns>
         private static List<List<Guid>> calculateTypeScore(FootballBet fb, int time)
         {
             List<List<Guid>> ret = new List<List<Guid>>();
@@ -70,6 +98,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             return ret;
         }
 
+        /// <summary>
+        /// Calculate the winner of a fb with a winner type
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="time">The time of the bet</param>
+        /// <returns>A list of exact winners and closers winners</returns>
         private static List<List<Guid>> calculateResult(FootballBet fb, int time)
         {
             List<List<Guid>> ret = new List<List<Guid>>();
@@ -85,13 +119,26 @@ namespace API.ScheduledTasks.VirtualBets.Util
             return ret;
         }
 
-        private static int? getGoals(MatchDay md, int time, bool team/*true --> homeTeam, false --> awayTeam*/)
+        /// <summary>
+        /// Get the goals in a matchday in a time of the match
+        /// </summary>
+        /// <param name="md">The match</param>
+        /// <param name="time">The time of the fb</param>
+        /// <param name="team">True for the goals of the home team, false to the away team</param>
+        /// <returns>The goals of the team in a time of the match</returns>
+        private static int? getGoals(MatchDay md, int time, bool team)
         {
             if (time == 1) return team ? md.firstHalfHomeGoals : md.firstHalfAwayGoals;
             else if (time == 2) return team ? md.secondHalfHomeGoals : md.secondHalfAwayGoals;
             else return team ? md.fullTimeHomeGoals : md.fullTimeAwayGoals;
         }
 
+        /// <summary>
+        /// Get the winner of a match in a specific time of the match
+        /// </summary>
+        /// <param name="md">The match</param>
+        /// <param name="time">The time of the match</param>
+        /// <returns>The winner of the match. 0 (draw), 1 (home team), 2 (away team)</returns>
         private static int getWinner(MatchDay md, int time)
         {
             int? homeGoals = getGoals(md, time, true);
@@ -102,6 +149,11 @@ namespace API.ScheduledTasks.VirtualBets.Util
             else return 2;
         }
 
+        /// <summary>
+        /// Get the type of the time in the match
+        /// </summary>
+        /// <param name="time">The time of the amtch in the fb</param>
+        /// <returns>1 (first half), 2 (second half), 3 (full time)</returns>
         private static int getTypeTime(string time)
         {
             if (time.Contains("FULLTIME")) return 3;
@@ -109,6 +161,13 @@ namespace API.ScheduledTasks.VirtualBets.Util
             else return 2;
         }
 
+        /// <summary>
+        /// Pay to the winners of a exact jackpot fb
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="winners">The exact winners of the fb</param>
+        /// <param name="group">The group of the fb</param>
+        /// <param name="_context">The database context</param>
         private static void payJackpot(FootballBet fb, List<Guid> winners, Group group, ApplicationDBContext _context)
         {
             _context.Entry(group).Collection("users").Load();
@@ -128,6 +187,13 @@ namespace API.ScheduledTasks.VirtualBets.Util
 
         }
 
+        /// <summary>
+        /// Pay to the winners of a closer jackpot fb
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="winners">The closer winners of the fb</param>
+        /// <param name="group">The group of the fb</param>
+        /// <param name="_context">The database context</param>
         private static void payJackpotCloser(FootballBet fb, List<List<Guid>> winners, Group group, ApplicationDBContext _context)
         {
             _context.Entry(group).Collection("users").Load();
@@ -145,6 +211,13 @@ namespace API.ScheduledTasks.VirtualBets.Util
             });
         }
 
+        /// <summary>
+        /// Pay to the winners of a solo fb
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="winners">The exact winners of the fb</param>
+        /// <param name="group">The group of the fb</param>
+        /// <param name="_context">The database context</param> 
         private static void paySoloBet(FootballBet fb, List<Guid> winners, Group group, ApplicationDBContext _context)
         {
             _context.Entry(fb).Reference("type").Load();
@@ -162,6 +235,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             });
         }
 
+        /// <summary>
+        /// Launch the news and notifications for the group and users of the fb
+        /// </summary>
+        /// <param name="fb">The fb</param>
+        /// <param name="_context">The database context</param>
+        /// <param name="hub">The notification hub</param>
         private static void launchNews(FootballBet fb, ApplicationDBContext _context, IHubContext<NotificationHub> hub)
         {
             _context.Entry(fb).Reference("Group").Load();

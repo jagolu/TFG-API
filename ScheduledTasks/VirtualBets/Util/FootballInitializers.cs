@@ -6,23 +6,26 @@ using System.Linq;
 
 namespace API.ScheduledTasks.VirtualBets.Util
 {
+    /// <summary>
+    /// Class to manage the football data in the database with the football api
+    /// </summary>
     public static class FootballInitializers
     {
+        //
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P U B L I C   F U N C T I O N S : :  :   :    :     :        :          :
+        // ──────────────────────────────────────────────────────────────────────────────────
+        //
 
-        /**
-         * Function that insert in the database a new matchday
-         * @param Match match. 
-         *      The match of the matchday
-         * @param Competition league. 
-         *      The league to which the matchday belongs
-         * @param Team homeTeam. 
-         *      The home team which plays the match
-         * @param Team awayTeam. 
-         *      The away team which plays the match
-         * @return bool
-         *      True if the matchday was updated succesfully
-         *      False otherwise
-         */
+        /// <summary>
+        /// Function that insert/update in the database a new matchday
+        /// </summary>
+        /// <param name="match">The match of the matchday</param>
+        /// <param name="league">The league to which the matchday belongs</param>
+        /// <param name="homeTeam">The home team which plays the match</param>
+        /// <param name="awayTeam">The away team which plays the match</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>True if the matchday was updated succesfully, false otherwise</returns>
         public static bool updateMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, ApplicationDBContext _context)
         {
             try
@@ -64,43 +67,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             }
         }
 
-
-        /**
-         * Function to update a matchday if it's ended
-         * @param Match match. 
-         *      The match of the matchday
-         * @param Competition league. 
-         *      The league to which the matchday belongs
-         * @param Team homeTeam. 
-         *      The home team which plays the match
-         * @param Team awayTeam. 
-         *      The away team which plays the match
-         */
-        public static void updateExistingMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, MatchDay md, ApplicationDBContext _context)
-        {
-            if (match.status != "FINISHED") return; //If the match isnt ended dont update
-
-            md.status = match.status;
-            md.firstHalfHomeGoals = match.score.halfTime.homeTeam;
-            md.firstHalfAwayGoals = match.score.halfTime.awayTeam;
-            md.secondHalfHomeGoals = match.score.fullTime.homeTeam-match.score.halfTime.homeTeam;
-            md.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
-            md.fullTimeHomeGoals = match.score.fullTime.homeTeam;
-            md.fullTimeAwayGoals = match.score.fullTime.awayTeam;
-            md.season = match.season.id;
-
-            _context.MatchDays.Update(md);
-        }
-
-
-        /**
-         * Function that insert a new team  in the DB
-         * @param string teamName.
-         *      The name of the team
-         * @return Team.
-         *      The select of the team if its exists, the new team otherwise. 
-         *      Null if any exception occurs 
-         */
+        /// <summary>
+        /// Initialize a team in the database
+        /// </summary>
+        /// <param name="teamName">The name of the team</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The team object of the database</returns>
         public static Team initializeTeam(string teamName, ApplicationDBContext _context)
         {
             try
@@ -121,15 +93,12 @@ namespace API.ScheduledTasks.VirtualBets.Util
             }
         }
 
-
-        /**
-         * Function that inserts a new competition in the DB
-         * @param string leagueName.
-         *      The name of the new competition
-         * @return Competition.
-         *      The select of the competition if its exists, the new competition otherwise. 
-         *      Null if any exception occurs 
-         */
+        /// <summary>
+        /// Initialize a competition in the database
+        /// </summary>
+        /// <param name="leagueName">The name of the competition</param>
+        /// <param name="_context">The database context</param>
+        /// <returns>The competition object of the database</returns>
         public static Competition initializeLeague(string leagueName, ApplicationDBContext _context)
         {
             try
@@ -150,10 +119,43 @@ namespace API.ScheduledTasks.VirtualBets.Util
             }
         }
 
-        /**
-         * Function that parses a utcDate string value to
-         * a DateTime value
-         */
+
+        //
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //   :::::: P R I V A T E   F U N C T I O N S : :  :   :    :     :        :          :
+        // ────────────────────────────────────────────────────────────────────────────────────
+        //
+
+        /// <summary>
+        /// Update a matchday in the datbase
+        /// </summary>
+        /// <param name="match">The match of the matchday</param>
+        /// <param name="league">The league to which the matchday belongs</param>
+        /// <param name="homeTeam">The home team which plays the match</param>
+        /// <param name="awayTeam">The away team which plays the match</param>
+        /// <param name="md">The matchday to update</param>
+        /// <param name="_context">The database context</param>
+        private static void updateExistingMatchDay(Match match, Competition league, Team homeTeam, Team awayTeam, MatchDay md, ApplicationDBContext _context)
+        {
+            if (match.status != "FINISHED") return; //If the match isnt ended dont update
+
+            md.status = match.status;
+            md.firstHalfHomeGoals = match.score.halfTime.homeTeam;
+            md.firstHalfAwayGoals = match.score.halfTime.awayTeam;
+            md.secondHalfHomeGoals = match.score.fullTime.homeTeam-match.score.halfTime.homeTeam;
+            md.secondHalfAwayGoals = match.score.fullTime.awayTeam-match.score.halfTime.awayTeam;
+            md.fullTimeHomeGoals = match.score.fullTime.homeTeam;
+            md.fullTimeAwayGoals = match.score.fullTime.awayTeam;
+            md.season = match.season.id;
+
+            _context.MatchDays.Update(md);
+        }
+
+        /// <summary>
+        /// Parse a date string to datetime
+        /// </summary>
+        /// <param name="date">The string date to parse</param>
+        /// <returns>The datetime parsed</returns>
         private static DateTime parse(string date)
         {
             DateTime dateret = DateTime.MinValue;
